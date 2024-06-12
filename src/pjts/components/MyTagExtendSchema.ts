@@ -1,6 +1,6 @@
-import Schema from '../framework/Schema';
+import WebComponentSchema from '../../framework/common/WebComponentSchema';
 
-class MyTagExtendSchema extends Schema {
+class MyTagExtendSchema extends WebComponentSchema {
   $text: any;
   constructor() {
     super();
@@ -28,7 +28,9 @@ class MyTagExtendSchema extends Schema {
       </style>
     `;
   }
-
+  static defineCustomElements() {
+    window.customElements.define('my-tag-extend-schema', MyTagExtendSchema);
+  }
   /* mapComponentAttributes() {
     const attributesMapping = ['text'];
     attributesMapping.forEach((key: string) => {

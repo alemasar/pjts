@@ -2,7 +2,7 @@
   [index: string]: string;
 } */
 
-class Schema extends HTMLElement {
+class WebComponentSchema extends HTMLElement {
   shadowDOM: ShadowRoot;
   // attributes: HTMLElement;
   constructor() {
@@ -33,4 +33,4 @@ class Schema extends HTMLElement {
   template() {}
   initComponent() {}
 }
-export default Schema;
+export default WebComponentSchema;

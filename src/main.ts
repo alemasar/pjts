@@ -1,7 +1,6 @@
 import typescriptLogo from './typescript.svg';
 import viteLogo from '/vite.svg';
 import { setupCounter } from './counter.ts';
-import MyTagExtendSchema from './components/MyTagExtendSchema';
 import './main.css';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -21,5 +20,4 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     </p>
   </div>
 `;
-window.customElements.define('my-tag-extend-schema', MyTagExtendSchema);
 setupCounter(document.querySelector<HTMLButtonElement>('#counter')!);
