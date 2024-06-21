@@ -1,7 +1,8 @@
-import WebComponentSchema from '../../framework/common/WebComponentSchema';
+import WebComponentSchema from '@framework/common/WebComponentSchema';
 
 class MyTagExtendSchema extends WebComponentSchema {
   $text: any;
+
   constructor() {
     super();
   }
@@ -9,16 +10,10 @@ class MyTagExtendSchema extends WebComponentSchema {
     this.$text = this.shadowDOM.querySelector('.tag');
   }
 
-  template() {
+  template(tpl: string) {
     // ${this.attributes.text.value}
     return `
-      <link rel="stylesheet" href="/src/main.css">
-      <h1 class="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      <div class="tag">
-        ${this.attributes.getNamedItem('text')?.value}
-      </div>
+      ${tpl}
     `;
   }
 

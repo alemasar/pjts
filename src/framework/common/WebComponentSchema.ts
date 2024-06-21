@@ -24,13 +24,17 @@ class WebComponentSchema extends HTMLElement {
   render() {
     this.shadowDOM.innerHTML = `
       ${this.templateCss()}
-      ${this.template()}
+      ${this.template(this.attributes.item(0)?.value as string)}
     `;
   }
 
   // mapComponentAttributes() {}
   templateCss() {}
-  template() {}
+  template(tpl: string) {
+    return `
+      ${tpl}
+    `;
+  }
   initComponent() {}
 }
 export default WebComponentSchema;

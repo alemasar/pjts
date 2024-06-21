@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-const fileRegex = /main.ts$/
+const fileRegex = /PJTS.ts$/
 
 export function readAllFiles(dir) {
   const files = fs.readdirSync(dir, { withFileTypes: true });
@@ -8,17 +8,19 @@ export function readAllFiles(dir) {
 
   for (const file of files) {
     if (file.isDirectory()) {
-      readAllFiles(path.join(dir, file.name.replace('.ts', '')));
-    } else {
+      readAllFiles(path.join(dir, file.name));
+    } else if (file.name.includes('.cat') === true) {
       filesObj.push({
         path: dir.replace('src/', ''),
-        name: file.name.replace('.ts', '')
+        name: file.name.replace('.cat', '').trim()
       })
     }
   }
   return filesObj
 }
-
+const transformSrc = (src) => {
+  
+}
 export default function myPlugin(options) {
   const virtualModuleId = 'virtual:my-module'
   const resolvedVirtualModuleId = '\0' + virtualModuleId
@@ -27,29 +29,22 @@ export default function myPlugin(options) {
   let imports = ''
   let defines = ''
   components.forEach((cmp) => {
-    exports += `export { default as ${cmp.name} } from "@/${cmp.path.replace('\/', '/')}/${cmp.name}";`
-    imports += `import { ${cmp.name} } from 'virtual:my-module';`
-    defines += `${cmp.name}.defineCustomElements()`
+    const cmpName = cmp.name.trim()
+    imports += `import ${cmpName} from "@${cmp.path.replace('\/', '/')}/${cmpName}.cat";`
+    // exports += `export { default as ${cmp.name} } from "@/${cmp.path.replace('\/', '/')}/${cmp.name}.cat";`
+    // imports += `import { ${cmpName} } from 'virtual:my-module';`
+    // defines += `${cmpName}.defineCustomElements()`
   })
   // readAllFiles(`@/${options.components.base}/${options.components.path}`)
   // console.log()
   return {
     name: 'vite-plugin-add-components', // required, will show up in warnings and errors
-    resolveId(id) {
-      if (id === virtualModuleId) {
-        return resolvedVirtualModuleId
-      }
-    },
-    load(id) {
-      if (id === resolvedVirtualModuleId) {
-        return exports
-      }
-    },
     transform(src, id) {
       if (fileRegex.test(id)) {
+        transformSrc(src)
+        // ${imports}
         const srcModified = `
                               ${imports}
-                              ${defines}
                               ${src}
                             `
         return {
