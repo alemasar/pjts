@@ -4,6 +4,9 @@ import pageWebComponentTemplate from '../../src/framework/templates/PageWebCompo
 const fileRegex = /main.ts$/
 const fileEndsWith = '.cat'
 const templateRegExp = /<template>(.|\n)*?<\/template>/g
+const configRegExp = /<config>(.|\n)*?<\/config>/g
+const tagsHTMLRegExp = /<(\w+)[^>]*>/g
+const tagNameRegExp = /<(\w+)/g
 
 export function readAllFiles(dir) {
   const files = fs.readdirSync(dir, { withFileTypes: true });
@@ -20,16 +23,19 @@ export function readAllFiles(dir) {
   }
   return filesObj
 }
+const getConfig = (src) => {
+  return JSON.parse(src.match(configRegExp)[0].replace(/\n/g, '').replace('<config>', '').replace('</config>', ''))
+}
 const getTpl = (src) => {
-  return src.match(templateRegExp)[0].replace(/\n/g, '').replace('<template>', '').replace('</template>', '')
+  return src.match(templateRegExp)[0].replace(/\n/g, '').replace('<template>', '').replace('</template>', '').trim()
   // pageWebComponentTemplate()
 }
 export default function myPlugin(options) {
   const virtualModuleId = 'virtual:my-module'
   const resolvedVirtualModuleId = '\0' + virtualModuleId
+  let template = []
   let imports = ''
   let exports = ''
-  let template = ''
   let pageTemplate = ''
 
   const components = readAllFiles(`src/${options.components.base}/${options.components.path}`)
@@ -73,9 +79,13 @@ export default function myPlugin(options) {
           map: null, // provide source map if available
         }
       } else if (id.endsWith(fileEndsWith)) {
-        const tpl = getTpl(src).trim()
-        template += tpl
-        console.log('CAT FILE::::::::::::', template)
+        const config = getConfig(src)
+        const tpl = getTpl(src)
+        template[config.tag]= {
+          tag: config.tag,
+          template: tpl,
+        }
+        console.log('CAT FILE::::::::::::', config.tag)
         return {
           code: `export const component = ${JSON.stringify(tpl)};
                  console.log('entro EN CAT FILE');
@@ -85,11 +95,18 @@ export default function myPlugin(options) {
       }
     },
     transformIndexHtml(html) {
+      let indexHtml = html
+      const tags = Object.keys(template)
+      const indexTags = indexHtml.match(tagsHTMLRegExp)
       console.log(template)
-      return html.replace(
-        /<div id="app">(.*?)<\/div>/,
-        `<div id="app">${template}</div>`,
-      )
+      tags.forEach((t) => {
+                console.log(t)
+        console.log(t.includes(t.tag))
+        indexHtml = indexHtml.replace(`<${t}>`, template[t].template).replace(`</${t}>`, '')
+      })
+      console.log(indexHtml)
+
+      return indexHtml;
     },
   }
 }

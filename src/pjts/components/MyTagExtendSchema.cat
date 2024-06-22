@@ -1,3 +1,8 @@
+<config>
+  {
+    "tag": "my-tag-extends-schema"
+  }
+</config>
 <template>
   <h1 class="hola">HELLO WORLD FROM WEB COMPONENT</h1>
 </template>
