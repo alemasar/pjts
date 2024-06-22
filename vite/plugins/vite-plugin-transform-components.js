@@ -57,7 +57,7 @@ export default function myPlugin(options) {
         return exports;
       }
     },
-    async transform(src, id) {
+    transform(src, id) {
       console.log('FILES:::::',id)
       if (fileRegex.test(id)) {
         // const component = await import('../../src/pjts/components/MyTagExtendSchema.cat?raw')
@@ -83,6 +83,13 @@ export default function myPlugin(options) {
           map: null, // provide source map if available
         }
       }
+    },
+    transformIndexHtml(html) {
+      console.log(template)
+      return html.replace(
+        /<div id="app">(.*?)<\/div>/,
+        `<div id="app">${template}</div>`,
+      )
     },
   }
 }
