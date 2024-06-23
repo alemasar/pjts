@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import pageWebComponentTemplate from '../../src/framework/templates/PageWebComponent.template'
+
 const fileRegex = /main.ts$/
 const fileEndsWith = '.cat'
 const templateRegExp = /<template>(.|\n)*?<\/template>/g
@@ -34,15 +34,12 @@ const getTpl = (src) => {
 const transformTemplate = (tpl, template) => {
   const tags = Object.keys(template)
   let indexHtml = tpl
-
-  tags.reduce((t, tag) => {
-    console.log(indexHtml.includes(`<${t}`))
-    if (t && indexHtml.includes(`<${t}`) === true) {
-      console.log('HTML T:::::::::::', indexHtml.replaceAll(`<${t}`, template[t].template.replace(/>$/, '')).replaceAll(`</${t}>`, ''))
-      indexHtml = indexHtml.replaceAll(`<${t}`, template[t].template.replace(/>$/, '')).replaceAll(`</${t}>`, '')
-    }
-    if (tag && indexHtml.includes(`<${tag}`) === true) {
-      indexHtml = indexHtml.replaceAll(`<${tag}`, template[tag].template.replace(/>$/, '')).replaceAll(`</${tag}>`, '')
+  tags.forEach((tag) => {
+    while (new RegExp(`<${tag}`).test(indexHtml) === true) {
+      const iniPointTag = new RegExp(`<${tag}`).exec(indexHtml).index
+      const endPointTag = new RegExp(`</${tag}>`).exec(indexHtml).index
+      const codeToReplace = indexHtml.slice(iniPointTag, endPointTag + tag.length + 3)
+      indexHtml = indexHtml.replaceAll(codeToReplace, template[tag].template)
     }
   })
   console.log(indexHtml)
