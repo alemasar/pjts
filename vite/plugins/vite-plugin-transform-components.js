@@ -30,6 +30,22 @@ const getTpl = (src) => {
   return src.match(templateRegExp)[0].replace(/\n/g, '').replace('<template>', '').replace('</template>', '').trim()
   // pageWebComponentTemplate()
 }
+
+const transformTemplate = (tpl, template) => {
+  const tags = Object.keys(template)
+  let indexHtml = tpl
+
+  tags.reduce((t, tag) => {
+    if (t) {
+      indexHtml = indexHtml.replace(`<${t}>`, template[t].template).replace(`</${t}>`, '')
+    }
+    if (tag) {
+      indexHtml = indexHtml.replace(`<${tag}>`, template[tag].template).replace(`</${tag}>`, '')
+    }
+  })
+  console.log(indexHtml)
+  return indexHtml
+}
 export default function myPlugin(options) {
   const virtualModuleId = 'virtual:my-module'
   const resolvedVirtualModuleId = '\0' + virtualModuleId
@@ -96,16 +112,7 @@ export default function myPlugin(options) {
     },
     transformIndexHtml(html) {
       let indexHtml = html
-      const tags = Object.keys(template)
-      const indexTags = indexHtml.match(tagsHTMLRegExp)
-      console.log(template)
-      tags.forEach((t) => {
-                console.log(t)
-        console.log(t.includes(t.tag))
-        indexHtml = indexHtml.replace(`<${t}>`, template[t].template).replace(`</${t}>`, '')
-      })
-      console.log(indexHtml)
-
+      indexHtml = transformTemplate(indexHtml, template)
       return indexHtml;
     },
   }

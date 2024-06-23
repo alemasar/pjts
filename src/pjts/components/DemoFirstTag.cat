@@ -1,0 +1,8 @@
+<config>
+  {
+    "tag": "demo-first-tag"
+  }
+</config>
+<template>
+  <h1 class="hola">HELLO WORLD FROM DEMO FIRST TAG WEB COMPONENT</h1>
+</template>

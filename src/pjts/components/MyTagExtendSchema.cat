@@ -4,5 +4,5 @@
   }
 </config>
 <template>
-  <h1 class="hola">HELLO WORLD FROM WEB COMPONENT</h1>
+  <h1 class="hola">HELLO WORLD FROM MY TAG EXTEND SCHEMA CAT FILE</h1>
 </template>
