@@ -36,11 +36,13 @@ const transformTemplate = (tpl, template) => {
   let indexHtml = tpl
 
   tags.reduce((t, tag) => {
-    if (t) {
-      indexHtml = indexHtml.replace(`<${t}>`, template[t].template).replace(`</${t}>`, '')
+    console.log(indexHtml.includes(`<${t}`))
+    if (t && indexHtml.includes(`<${t}`) === true) {
+      console.log('HTML T:::::::::::', indexHtml.replaceAll(`<${t}`, template[t].template.replace(/>$/, '')).replaceAll(`</${t}>`, ''))
+      indexHtml = indexHtml.replaceAll(`<${t}`, template[t].template.replace(/>$/, '')).replaceAll(`</${t}>`, '')
     }
-    if (tag) {
-      indexHtml = indexHtml.replace(`<${tag}>`, template[tag].template).replace(`</${tag}>`, '')
+    if (tag && indexHtml.includes(`<${tag}`) === true) {
+      indexHtml = indexHtml.replaceAll(`<${tag}`, template[tag].template.replace(/>$/, '')).replaceAll(`</${tag}>`, '')
     }
   })
   console.log(indexHtml)
