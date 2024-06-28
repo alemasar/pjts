@@ -1,4 +1,4 @@
-import * as component from "virtual:my-module";
+import "virtual:my-module";
 import DataBindingComponentElement from "@framework/template-components/data-binding-component";
 import Observable from "@framework/common/Observable";
 
@@ -36,30 +36,32 @@ const updateValue = (html: string, posIni: number) => {
 customElements.define("data-binding-component", DataBindingComponentElement);
 
 console.log(document.querySelectorAll('.databinding'));
-document.querySelectorAll('.databinding').forEach((db: any)=>{
-  db.content.replaceChildren();
-  db.content.append("HOLA")
-  console.log(db.innerHTML)
-})
+
 const elementsToBinding = document.querySelectorAll('.databinding-element');
-const bindings: any[] = []
+let bindings: any[] = []
 elementsToBinding.forEach((dbe: any, index: number)=>{
+  const nameProperty = dbe.getAttribute('binding-id')?.split(':').pop();
   const observable = new Observable(dbe.shadowRoot.innerHTML);
+  console.log(dbe)
   observable.subscribe((newValue: any) => {
     dbe.shadowRoot.innerHTML = newValue
     console.log(dbe.shadowRoot.innerHTML)
   })
   dbe.setAttribute('data-component-id', index)
-  bindings.push(observable)
-})
-
-setTimeout(()=> {
-  const index = document.querySelector("data-binding-component[data-component-id='0']")?.getAttribute('data-component-id')
-  if (index !== undefined) {
-    bindings[parseInt(index as string)].value='BYE.... BYE..... GUAY'
+  if (Array.isArray(bindings[nameProperty]) === false) {
+    bindings[nameProperty]=[]
   }
+  bindings[nameProperty].push(observable)
+})
+const changeProperty=(name: string, value: any) => {
+  bindings[name].forEach((b: any) => {
+    b.value = value;
+  })
+}
+setTimeout(()=> {
+    changeProperty('hello', 'BYE.... BYE..... GUAY');
 }, 1000)
-console.log(component)
+
 /* const name = new Observable("john");
 const lastName = new Observable("doe");
 const country = new Observable("India");

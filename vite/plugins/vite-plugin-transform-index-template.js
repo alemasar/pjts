@@ -7,6 +7,7 @@ export default function transformIndextemplate(options) {
   const virtualModuleId = 'virtual:my-module'
   const resolvedVirtualModuleId = '\0' + virtualModuleId
   let template = []
+  let contDataBinding = 0;
   let imports = ''
   let exports = ''
   let pageTemplate = ''
@@ -52,12 +53,11 @@ export default function transformIndextemplate(options) {
           map: null, // provide source map if available
         }
       } else if (id.endsWith(fileEndsWith) === true) {
-        console.log('CAT FILE:::::::::::::::::::', id)
-        const config = getConfig(src)
-        let tpl = getTpl(src)
-        const cmpNameKeys = Object.keys(template)
-        let key = ''
-
+        
+        const config = getConfig(src);
+        const cmpNameKeys = Object.keys(template);
+        let tpl = getTpl(src);
+        let key = '';
         cmpNameKeys.forEach((cnk) => {         
           if (id.includes(cnk) === true) {
             let posData = tpl.indexOf("{{");
@@ -69,6 +69,7 @@ export default function transformIndextemplate(options) {
                 name: cnk,
                 properties: [...objProperties],
               };
+              key = cnk;
             }
             while (posData > -1) {
               const nameArray = tpl
@@ -82,18 +83,21 @@ export default function transformIndextemplate(options) {
                 name,
                 pos: posData,
               })
+              console.log('CAT FILE:::::::::::::::::::', contDataBinding)
               tpl = tpl.replaceAll(
                 `{{ ${type}:${name}:${defaultValue} }}`,
-                `<data-binding-component binding-id="${name}">${JSON.parse(
+                `<data-binding-component binding-id="${cnk}:${name}">${JSON.parse(
                   JSON.stringify(defaultValue)
                 )}</data-binding-component>`
               );
+              contDataBinding++;
               template[cnk] = {
                 tag: config.tag,
                 template: tpl,
                 name: cnk,
                 properties: [...objProperties],
               };
+              key = cnk;
               posData = tpl.indexOf("{{", posData + 1);
             }
           }
