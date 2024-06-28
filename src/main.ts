@@ -44,8 +44,11 @@ elementsToBinding.forEach((dbe: any, index: number)=>{
   const observable = new Observable(dbe.shadowRoot.innerHTML);
   console.log(dbe)
   observable.subscribe((newValue: any) => {
-    dbe.shadowRoot.innerHTML = newValue
-    console.log(dbe.shadowRoot.innerHTML)
+    const templateHTML = dbe.querySelector('.databinding');
+    dbe.shadowRoot.innerHTML = newValue;
+    dbe.innerHTML = newValue;
+    templateHTML.innerHTML = newValue;
+    dbe.appendChild(templateHTML)
   })
   dbe.setAttribute('data-component-id', index)
   if (Array.isArray(bindings[nameProperty]) === false) {
