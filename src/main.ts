@@ -1,42 +1,80 @@
-import WebComponentSchema from '@framework/common/WebComponentSchema';
+import * as component from "virtual:my-module";
+import Computed from "@framework/common/Computed";
+import Observable from "@framework/common/Observable";
 
-class MyTagExtendSchema extends WebComponentSchema {
-  $text: any;
+/* singleton.value = 'BYE BYE WORLD'
 
-  constructor() {
-    super();
-  }
-  initComponent() {
-    this.$text = this.shadowDOM.querySelector('.tag');
-  }
+const parseComponentHTML = (html: string) => {
+    singleton.subscribe((newValue) => {
+      let templateHTML = html
+      let pos = templateHTML.indexOf("{{ data:", 0)
+      templateHTML = updateValue(templateHTML, pos, posFinal);
+      console.log(html)
+      document.body.innerHTML = document.body.innerHTML.replace(html, templateHTML);
+    })
 
-  template(tpl: string) {
-    // ${this.attributes.text.value}
-    return `
-      ${tpl}
-    `;
+  console.log(html)
+  let templateHTML = html
+  let pos = templateHTML.indexOf("{{ data:", 0)
+  while (pos > -1) {
+    const posFinal = templateHTML.indexOf(" }}", pos + 1);
+    templateHTML = updateValue(templateHTML, pos, posFinal); 
+    console.log('DATA::::::::::::::', templateHTML);
+    pos = templateHTML.indexOf("{{ data:", pos + 1)
   }
+  return templateHTML;
+} */
+/* const originalHTML = document.body.innerHTML;
+const hello = new Observable("Hello World");
+const test = new Observable("Bye... Bye... World");
 
-  templateCss() {
-    return `
-      <style>
-      </style>
-    `;
-  }
-  static defineCustomElements() {
-    window.customElements.define('my-tag-extend-schema', MyTagExtendSchema);
-  }
-  /* mapComponentAttributes() {
-    const attributesMapping = ['text'];
-    attributesMapping.forEach((key: string) => {
-      if (!this.attributes) {
-        this.attributes[key] = { value: '' };
-      }
-    });
-  } */
-}
+const updateValue = (html: string, posIni: number) => {
+  const posFinal = html.indexOf(" }}", posIni + 1);
+  console.log(posFinal)
+  // return html.substring(0, posIni) + singleton.value + html.substring(posFinal + 3);
+} */
+console.log(component);
+const name = new Observable("john");
+const lastName = new Observable("doe");
+const country = new Observable("India");
+name.subscribe(() => {
+  document.body.innerHTML = myInfo(name.value, lastName.value, country.value);
+})
+lastName.subscribe(() => {
+  document.body.innerHTML = myInfo(name.value, lastName.value, country.value);
+})
+country.subscribe(() => {
+  document.body.innerHTML = myInfo(name.value, lastName.value, country.value);
+})
+name.value = 'Aleix Main';
+lastName.value = 'Masague Main';
+country.value = 'Catalunya Main';
 
-export default MyTagExtendSchema;
+// const componentKeys = Object.keys(component);
+// document.body.innerHTML
+// componentKeys.forEach((k: any) => {
+  
+  // console.log('COMPONENT:::::', component[k]);
+  // console.log('TEMPLATE::::::::', parseComponentHTML(component[componentKeys[k]]))
+  // console.log('TEMPLATE::::::::', parseComponentHTML(component[k]))
+  /* singleton.subscribe((newValue) => {
+    let templateHTML = component[k]
+    let pos = templateHTML.indexOf("{{ data:", 0)
+    while (pos > -1) {
+      templateHTML = updateValue(templateHTML, pos);
+      console.log(templateHTML)
+      document.body.innerHTML = document.body.innerHTML.replace(component[k], templateHTML);
+      pos = templateHTML.indexOf("{{ data:", pos + 1)
+    }
+  }) */
+// })
+
+// console.log(singleton.subscribe((newValue: any) => { return newValue }))
+// singleton.subscribe((newValue: any) => {console.log('NEW VALUE INSIDE PAGE', newValue)})
+// singleton.value = 'BYE BYE WORLD'
+
+// console.log(document.body.innerHTML)
+
 /* import typescriptLogo from '@/typescript.svg';
 import viteLogo from '/vite.svg';
 import { setupCounter } from '@/counter.ts';

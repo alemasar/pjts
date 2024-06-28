@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import path from 'path';
 import config from './src/pjts/pjts.config'
-import transformComponentsPlugin from './vite/plugins/vite-plugin-transform-components'
+import transformIndexTemplatePlugin from './vite/plugins/vite-plugin-transform-index-template'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
@@ -9,13 +9,13 @@ export default defineConfig({
     port: 3000,
     https: true,
   },
-  optimizeDeps: {
-    include: ['my-lib/components/**/*.vue'],
-  },
   plugins: [
     basicSsl(),
     // addComponentsPlugin(config),
-    transformComponentsPlugin(config)
+    {
+      ...transformIndexTemplatePlugin(config),
+      enforce: 'pre',
+    },
   ],
   resolve: {
     alias: {
