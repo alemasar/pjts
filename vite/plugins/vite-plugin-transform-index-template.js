@@ -10,14 +10,14 @@ export default function transformIndextemplate(options) {
   let imports = ''
   let exports = ''
   let pageTemplate = ''
-
+  console.log(`src/${options.components.base}/${options.components.path}`)
   const components = readAllFiles(`src/${options.components.base}/${options.components.path}`)
-  
+  console.log(components)
   components.forEach((cmp) => {
     const cmpName = cmp.name.trim()
-    imports += `import { ${cmpName} } from "@pjts/components/${cmpName}.cat";\n`
+    imports += `import { ${cmpName} } from "@pjts/${options.components.path}/${cmpName}.cat";\n`
     exports += `
-      import * as ${cmpName} from "@pjts/components/${cmpName}.cat";
+      import * as ${cmpName} from "@pjts/${options.components.path}/${cmpName}.cat";
 
       console.log(${cmpName}.component)
       export const ${cmpName}Export = ${cmpName}.component;
@@ -46,39 +46,56 @@ export default function transformIndextemplate(options) {
         // ${imports}
         const srcModified = `
                               ${src}
-                              
-                              export default function myInfo(fname, lname, country) {
-                                return "My name is " + fname + " " + lname + ". " + country + " is my favorite country";
-                              }
                             `
         return {
           code: srcModified,
           map: null, // provide source map if available
         }
       } else if (id.endsWith(fileEndsWith) === true) {
+        console.log('CAT FILE:::::::::::::::::::', id)
         const config = getConfig(src)
-        const tpl = getTpl(src)
+        let tpl = getTpl(src)
         const cmpNameKeys = Object.keys(template)
         let key = ''
+
         cmpNameKeys.forEach((cnk) => {         
           if (id.includes(cnk) === true) {
-            let posData = tpl.indexOf("{{")
-            const objProperties = []
+            let posData = tpl.indexOf("{{");
+            const objProperties = [];
+            if (posData === -1) {
+              template[cnk] = {
+                tag: config.tag,
+                template: tpl,
+                name: cnk,
+                properties: [...objProperties],
+              };
+            }
             while (posData > -1) {
+              const nameArray = tpl
+                .substring(posData + 2, tpl.indexOf("}}", posData + 1))
+                .trim()
+                .split(":");
+              const type = nameArray.shift();
+              const name = nameArray.shift();
+              const defaultValue = nameArray.shift();
               objProperties.push({
-                name: tpl.substring(posData + 2, tpl.indexOf("}}") + 2),
+                name,
                 pos: posData,
               })
-              posData = tpl.indexOf("{{", posData + 1)
+              tpl = tpl.replaceAll(
+                `{{ ${type}:${name}:${defaultValue} }}`,
+                `<data-binding-component binding-id="${name}">${JSON.parse(
+                  JSON.stringify(defaultValue)
+                )}</data-binding-component>`
+              );
+              template[cnk] = {
+                tag: config.tag,
+                template: tpl,
+                name: cnk,
+                properties: [...objProperties],
+              };
+              posData = tpl.indexOf("{{", posData + 1);
             }
-            template[cnk] = {
-              tag: config.tag,
-              template: tpl,
-              name: cnk,
-              properties: [...objProperties]
-            }
-            key = cnk
-            console.log(template[cnk].properties)
           }
         })
         console.log(template)
@@ -93,13 +110,11 @@ export default function transformIndextemplate(options) {
     },
     transformIndexHtml(html) {
       const bodyPos = html.indexOf('<body');
-      console.log('CAT FILE::::::::::::', bodyPos)
       const closeScriptPos = html.indexOf('<script', bodyPos + 1)
       let indexHtml = html
       let bodyHTML = ''
       bodyHTML = html.substring(bodyPos, closeScriptPos)
       bodyHTML = bodyHTML.replace('<body>', '');
-      console.log('CAT FILE::::::::::::', bodyHTML)
       const test = 'TEST'
       indexHtml = `
       ${transformTemplate(indexHtml, template, bodyHTML)}

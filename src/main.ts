@@ -1,5 +1,5 @@
 import * as component from "virtual:my-module";
-import Computed from "@framework/common/Computed";
+import DataBindingComponentElement from "@framework/template-components/data-binding-component";
 import Observable from "@framework/common/Observable";
 
 /* singleton.value = 'BYE BYE WORLD'
@@ -33,8 +33,34 @@ const updateValue = (html: string, posIni: number) => {
   console.log(posFinal)
   // return html.substring(0, posIni) + singleton.value + html.substring(posFinal + 3);
 } */
-console.log(component);
-const name = new Observable("john");
+customElements.define("data-binding-component", DataBindingComponentElement);
+
+console.log(document.querySelectorAll('.databinding'));
+document.querySelectorAll('.databinding').forEach((db: any)=>{
+  db.content.replaceChildren();
+  db.content.append("HOLA")
+  console.log(db.innerHTML)
+})
+const elementsToBinding = document.querySelectorAll('.databinding-element');
+const bindings: any[] = []
+elementsToBinding.forEach((dbe: any, index: number)=>{
+  const observable = new Observable(dbe.shadowRoot.innerHTML);
+  observable.subscribe((newValue: any) => {
+    dbe.shadowRoot.innerHTML = newValue
+    console.log(dbe.shadowRoot.innerHTML)
+  })
+  dbe.setAttribute('data-component-id', index)
+  bindings.push(observable)
+})
+
+setTimeout(()=> {
+  const index = document.querySelector("data-binding-component[data-component-id='0']")?.getAttribute('data-component-id')
+  if (index !== undefined) {
+    bindings[parseInt(index as string)].value='BYE.... BYE..... GUAY'
+  }
+}, 1000)
+console.log(component)
+/* const name = new Observable("john");
 const lastName = new Observable("doe");
 const country = new Observable("India");
 name.subscribe(() => {
@@ -45,10 +71,7 @@ lastName.subscribe(() => {
 })
 country.subscribe(() => {
   document.body.innerHTML = myInfo(name.value, lastName.value, country.value);
-})
-name.value = 'Aleix Main';
-lastName.value = 'Masague Main';
-country.value = 'Catalunya Main';
+}) */
 
 // const componentKeys = Object.keys(component);
 // document.body.innerHTML
