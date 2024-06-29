@@ -4,5 +4,5 @@
   }
 </config>
 <template>
-  <h1 class="hola">{{ data:hello:"HELLO WORLD" }} FROM {{ data:test:["HELLO", "BYE"] }} WEB COMPONENT</h1>
+  <h1 class="hola">{{ data:hello.message:"HELLO WORLD" }} FROM <span cat-for="t in data:test:["HELLO", "BYE"]">{{ t }}</span> WEB COMPONENT</h1>
 </template>

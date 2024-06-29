@@ -26,24 +26,59 @@ export const getTpl = (src) => {
   return src.match(templateRegExp)[0].replace(/\n/g, '').replace('<template>', '').replace('</template>', '').trim()
   // pageWebComponentTemplate()
 }
-
-const parseTpl=(tpl) => {
-  let templateHTML = tpl
-  let pos = templateHTML.indexOf("{{ data:", 0)
-  while (pos > -1) {
-    const dataProperty = templateHTML.substring(pos, templateHTML.indexOf("}}", pos + 1)+2)
-    const dataPropertyValue = dataProperty.replace("{{", "").replace("}}", "").trim().split(":").pop();
-    templateHTML = templateHTML.replace(dataProperty, '${singleton.subscribe((newValue) => newValue)}')
-    console.log('DATA::::::::::::::', JSON.parse(dataPropertyValue))
-    pos = templateHTML.indexOf("{{ data:", 0)
+export const setDataBindings = (tag, componentNameKey, tpl, template) => {
+  const templateObj = [...template];
+  const objProperties = [];
+  let key = '';
+  let posData = tpl.indexOf("{{");
+  if (posData === -1) {
+    templateObj[componentNameKey] = {
+      tag,
+      template: tpl,
+      name: componentNameKey,
+      properties: [...objProperties],
+    };
+    key = componentNameKey;
   }
-  return templateHTML;
+  while (posData > -1) {
+    const nameArray = tpl
+      .substring(posData + 2, tpl.indexOf("}}", posData + 1))
+      .trim()
+      .split(":");
+    const type = nameArray.shift();
+    const name = nameArray.shift();
+    let defaultValue = ''
+    if (nameArray.length > 0) {
+      defaultValue = nameArray.shift();
+    }
+    objProperties.push({
+      name,
+      pos: posData,
+    })
+    tpl = tpl.replaceAll(
+      `{{ ${type}:${name}:${defaultValue} }}`,
+      `<data-binding-component binding-id="${componentNameKey}:${name}">${JSON.parse(
+        JSON.stringify(defaultValue)
+      )}</data-binding-component>`
+    );
+    templateObj[componentNameKey] = {
+      tag,
+      template: tpl,
+      name: componentNameKey,
+      properties: [...objProperties],
+    };
+    key = componentNameKey;
+    posData = tpl.indexOf("{{", posData + 1);
+  }
+  return {
+    template: {...templateObj[componentNameKey]},
+    key,
+  }
 }
-
 export const transformTemplate = (tpl, template, bodyHTML) => {
   const templateElementsValues = Object.values(template)
   let indexHtml = tpl
-  console.log(templateElementsValues)
+
   templateElementsValues.forEach((element) => {
     while (new RegExp(`<${element.tag}`).test(indexHtml) === true) {
       const iniPointTag = new RegExp(`<${element.tag}`).exec(indexHtml).index
@@ -53,6 +88,5 @@ export const transformTemplate = (tpl, template, bodyHTML) => {
     }
   })
   indexHtml = indexHtml.replace('</body>', `<template id="indexTemplate">${bodyHTML}</template>`)
-  console.log(indexHtml)
   return indexHtml
 }
