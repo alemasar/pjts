@@ -1,6 +1,11 @@
-class DataBindingComponentElement extends HTMLElement {
-  static observedAttributes = ["color", "size"];
 
+import Observable from "@framework/common/Observable";
+interface IDataBindings {
+     [index: string]: Observable;
+}
+const dataBindings = {} as IDataBindings;
+
+class DataBindingComponentElement extends HTMLElement {
   constructor() {
     super();
     const template = document.createElement('template');
@@ -13,23 +18,25 @@ class DataBindingComponentElement extends HTMLElement {
   }
 
   connectedCallback() {
-
-    // shadowRoot.appendChild(templateNodes);
-    // this.shadowRoot.appendChild(templateNodes);
-    // this.element = templateNodes
-    /* this.observable = new Observable(this.innerHTML);
-    this.observable.subscribe((element: any = this, newValue: string) => {*/
-      /* const template = document.createElement('template');
-      template.innerHTML = newValue
-      // shadowRoot.innerHTML = newValue
-      const templateNodes = template.content.cloneNode(true);
-      // this.shadowRoot.appendChild(templateNodes);
-      // this.element.innerHTML = this.shadowRoot.innerHTML;
-      console.log("DataBindingComponentElement", this) */
-/*      console.log(element)
-      element.innerHTML = newValue;
-    })*/
     console.log("Custom element added to page.", this.innerHTML);
+    const nameProperty = this.getAttribute('binding-id')?.split(':').pop() as string;
+    const shadowRoot = this.shadowRoot as unknown as ShadowRoot;
+    const observable = new Observable(shadowRoot.innerHTML);
+    console.log(this)
+    observable.subscribe((newValue: any) => {
+      const templateHTML = this.querySelector('.databinding') as unknown as Element;
+      shadowRoot.innerHTML = newValue;
+      this.innerHTML = newValue;
+      templateHTML.innerHTML = newValue;
+      this.appendChild(templateHTML)
+    })
+    // this.setAttribute('data-component-id', index)
+    const keysDatabindings = Object.keys(dataBindings);
+
+    if (keysDatabindings.includes(nameProperty) === false) {
+      dataBindings[nameProperty]=[]
+    }
+    dataBindings[nameProperty].push(observable)
   }
 
   disconnectedCallback() {
@@ -43,6 +50,16 @@ class DataBindingComponentElement extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     console.log(`Attribute ${name} has changed.`);
   }
-}
 
-export default DataBindingComponentElement;
+
+}
+customElements.define("data-binding-component", DataBindingComponentElement);
+
+const changeProperty = (name: any, value: any) => {
+  dataBindings[name].forEach((b: any, index:any) => {
+    console.log('INDDEX::::::', name)
+    b.value = value;
+  })
+};
+
+export default changeProperty

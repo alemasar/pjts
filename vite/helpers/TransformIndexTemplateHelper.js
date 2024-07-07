@@ -26,20 +26,67 @@ export const getTpl = (src) => {
   return src.match(templateRegExp)[0].replace(/\n/g, '').replace('<template>', '').replace('</template>', '').trim()
   // pageWebComponentTemplate()
 }
-export const setDataBindings = (tag, componentNameKey, tpl, template) => {
-  const templateObj = [...template];
-  const objProperties = [];
-  let key = '';
-  let posData = tpl.indexOf("{{");
-  if (posData === -1) {
-    templateObj[componentNameKey] = {
-      tag,
-      template: tpl,
-      name: componentNameKey,
-      properties: [...objProperties],
-    };
-    key = componentNameKey;
+export const setTemplateConfigObj = (tag, componentNameKey, tpl) => {
+  return {
+    tag,
+    template: tpl,
+    name: componentNameKey,
+    properties: [],
   }
+}
+
+const getPosTagClose = (posForTagName, tpl, tagName) =>{
+  let lastTagFound = false;
+  let posCloseTagName = tpl.lastIndexOf(`</${tagName}>`);
+  let posTagName = tpl.lastIndexOf(`<${tagName}`, posCloseTagName);
+  // console.log('TEMPLATE CAT FOR', tpl.substring(posTagName, posCloseTagName + `</${tagName}>`.length))
+  console.log('POS CLOSE TAG', posCloseTagName)
+  console.log('POS CLOSE TAG NAME', tpl.substring(posForTagName, posCloseTagName))
+  while(lastTagFound === false) {
+    if (tpl.lastIndexOf(`</${tagName}>`, posCloseTagName - 1) > -1){
+      posCloseTagName = tpl.lastIndexOf(`</${tagName}>`, posCloseTagName - 1);
+      lastTagFound = true;
+    }
+    // posTagName = tpl.lastIndexOf(`<${tagName}`, posCloseTagName);
+    console.log('POS CLOSE TAG', posCloseTagName);
+    console.log('POS CLOSE TAG NAME', tpl.substring(posForTagName, posCloseTagName))
+    // console.log('POS TAG',posTagName)
+    // console.log('TEMPLATE CAT FOR', tpl.substring(posTagName + `<${tagName}`.length, posCloseTagName + `</${tagName}>`.length))
+  }
+  console.log('POS CLOSE TAG NAME', posCloseTagName)
+  console.log('POS CLOSE TAG NAME', tpl.substring(posForTagName, posCloseTagName))
+  return posCloseTagName + `</${tagName}>`.length ;
+}
+
+export const setCatFor = (tag, componentNameKey, tpl, template) => {
+  const templateObj = {...template};
+  const objForProperties = [];
+  let posTagClose = 0;
+  let posFor = tpl.indexOf("cat-for=");
+  const posIniTag = tpl.lastIndexOf("<", posFor);
+
+  if (posFor === -1) {
+    console.log(templateObj)
+    // templateObj[componentNameKey].forProperties = [...objForProperties];
+  } else {
+    while (posFor > -1) {
+      const tagFor = tpl.substring(posIniTag + 1, tpl.indexOf(">", posFor + 1)).trim()
+      const tagName = tagFor.split(" ").shift().trim();
+      posTagClose = getPosTagClose(posFor, tpl, tagName);
+      posFor = tpl.indexOf("cat-for=", posFor + 1);
+    }
+          console.log('TAG FOR', tpl.substring(posIniTag, posTagClose))
+  }
+  return {
+    template: {...templateObj},
+  }
+}
+
+export const setDataBindings = (tag, componentNameKey, tpl, template) => {
+  let templateObj = {...template};
+  const objProperties = {};
+  let posData = tpl.indexOf("{{ data:");
+
   while (posData > -1) {
     const nameArray = tpl
       .substring(posData + 2, tpl.indexOf("}}", posData + 1))
@@ -51,28 +98,21 @@ export const setDataBindings = (tag, componentNameKey, tpl, template) => {
     if (nameArray.length > 0) {
       defaultValue = nameArray.shift();
     }
-    objProperties.push({
-      name,
-      pos: posData,
-    })
+    objProperties.name = name;
+    console.log(`{{ ${type}:${name}:${defaultValue} }}`)
     tpl = tpl.replaceAll(
       `{{ ${type}:${name}:${defaultValue} }}`,
       `<data-binding-component binding-id="${componentNameKey}:${name}">${JSON.parse(
         JSON.stringify(defaultValue)
       )}</data-binding-component>`
     );
-    templateObj[componentNameKey] = {
-      tag,
-      template: tpl,
-      name: componentNameKey,
-      properties: [...objProperties],
-    };
-    key = componentNameKey;
-    posData = tpl.indexOf("{{", posData + 1);
+    templateObj = {...setTemplateConfigObj(tag, componentNameKey, tpl)}
+    templateObj.properties.push({...objProperties});
+    posData = tpl.indexOf("{{ data:", posData + 1);
   }
+
   return {
-    template: {...templateObj[componentNameKey]},
-    key,
+    template: {...templateObj},
   }
 }
 export const transformTemplate = (tpl, template, bodyHTML) => {

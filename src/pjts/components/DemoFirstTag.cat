@@ -4,5 +4,11 @@
   }
 </config>
 <template>
-  <h1 class="hola">{{ data:hello.message:"HELLO WORLD" }} FROM <span cat-for="t in data:test:["HELLO", "BYE"]">{{ t }}</span> WEB COMPONENT</h1>
+  <h1 class="hola">{{ data:hello.message:"HELLO WORLD" }} FROM 
+  <span cat-for="t in data:test:['HELLO', 'BYE']">
+    <span>
+      VAIG A LIAR-LA
+    </span>
+    {{ t }}
+  </span> <span>WEB COMPONENT</span></h1>
 </template>

@@ -1,4 +1,4 @@
-import { readAllFiles, getConfig, getTpl, transformTemplate, setDataBindings } from "../helpers/TransformIndexTemplateHelper"
+import { readAllFiles, getConfig, getTpl, transformTemplate, setDataBindings, setCatFor, setTemplateConfigObj } from "../helpers/TransformIndexTemplateHelper"
 
 const fileRegex = /main.ts$/
 const fileEndsWith = '.cat'
@@ -47,19 +47,21 @@ export default function transformIndextemplate(options) {
         const config = getConfig(src);
         const cmpNameKeys = Object.keys(template);
         let tpl = getTpl(src);
-        let key = '';
+        let code = '';
         cmpNameKeys.forEach((cnk) => {
           if (id.includes(cnk) === true) {
-            const dataBindingObj = setDataBindings(config.tag, cnk, tpl, template);
-            template[cnk] = dataBindingObj.template;
-            key = dataBindingObj.key;
+            template[cnk] = setTemplateConfigObj(config.tag, cnk, tpl);
+            template[cnk] = setDataBindings(config.tag, cnk, tpl, template[cnk]).template;
+            template[cnk] = setCatFor(config.tag, cnk, tpl, template[cnk]).template;
+            // const dataForObj = setCatFor(config.tag, cnk, tpl, template)
+            code = `
+              export const component = ${JSON.stringify(Object.assign({}, {...template[cnk]}))};
+              console.log('entro EN CAT FILE', component);
+            `
           }
         })
         return {
-          code: `
-                 export const component = ${JSON.stringify(Object.assign({}, {...template[key]}))};
-                 console.log('entro EN CAT FILE', component);
-              `,
+          code,
           map: null, // provide source map if available
         }
       }
