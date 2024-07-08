@@ -38,23 +38,13 @@ export const setTemplateConfigObj = (tag, componentNameKey, tpl) => {
 const getPosTagClose = (posForTagName, tpl, tagName) =>{
   let lastTagFound = false;
   let posCloseTagName = tpl.lastIndexOf(`</${tagName}>`);
-  let posTagName = tpl.lastIndexOf(`<${tagName}`, posCloseTagName);
-  // console.log('TEMPLATE CAT FOR', tpl.substring(posTagName, posCloseTagName + `</${tagName}>`.length))
-  console.log('POS CLOSE TAG', posCloseTagName)
-  console.log('POS CLOSE TAG NAME', tpl.substring(posForTagName, posCloseTagName))
+
   while(lastTagFound === false) {
     if (tpl.lastIndexOf(`</${tagName}>`, posCloseTagName - 1) > -1){
       posCloseTagName = tpl.lastIndexOf(`</${tagName}>`, posCloseTagName - 1);
       lastTagFound = true;
     }
-    // posTagName = tpl.lastIndexOf(`<${tagName}`, posCloseTagName);
-    console.log('POS CLOSE TAG', posCloseTagName);
-    console.log('POS CLOSE TAG NAME', tpl.substring(posForTagName, posCloseTagName))
-    // console.log('POS TAG',posTagName)
-    // console.log('TEMPLATE CAT FOR', tpl.substring(posTagName + `<${tagName}`.length, posCloseTagName + `</${tagName}>`.length))
   }
-  console.log('POS CLOSE TAG NAME', posCloseTagName)
-  console.log('POS CLOSE TAG NAME', tpl.substring(posForTagName, posCloseTagName))
   return posCloseTagName + `</${tagName}>`.length ;
 }
 
@@ -84,7 +74,9 @@ export const setCatFor = (tag, componentNameKey, tpl, template) => {
 
 export const setDataBindings = (tag, componentNameKey, tpl, template) => {
   let templateObj = {...template};
-  const objProperties = {};
+  const objProperties = {
+    
+  };
   let posData = tpl.indexOf("{{ data:");
 
   while (posData > -1) {
