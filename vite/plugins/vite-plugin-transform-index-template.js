@@ -9,6 +9,7 @@ export default function transformIndextemplate(options) {
   let template = []
   let imports = ''
   let exports = ''
+  
 
   const components = readAllFiles(`src/${options.components.base}/${options.components.path}`)
   components.forEach((cmp) => {
@@ -17,7 +18,7 @@ export default function transformIndextemplate(options) {
     exports += `
       import * as ${cmpName} from "@pjts/${options.components.path}/${cmpName}.cat";
 
-      console.log(${cmpName}.component)
+      console.log(${cmpName})
       export const ${cmpName}Export = ${cmpName}.component;
     `
     template[cmpName] = {}

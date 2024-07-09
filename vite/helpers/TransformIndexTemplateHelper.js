@@ -55,18 +55,13 @@ export const setCatFor = (tag, componentNameKey, tpl, template) => {
   let posFor = tpl.indexOf("cat-for=");
   const posIniTag = tpl.lastIndexOf("<", posFor);
 
-  if (posFor === -1) {
-    console.log(templateObj)
-    // templateObj[componentNameKey].forProperties = [...objForProperties];
-  } else {
-    while (posFor > -1) {
-      const tagFor = tpl.substring(posIniTag + 1, tpl.indexOf(">", posFor + 1)).trim()
-      const tagName = tagFor.split(" ").shift().trim();
-      posTagClose = getPosTagClose(posFor, tpl, tagName);
-      posFor = tpl.indexOf("cat-for=", posFor + 1);
-    }
-          console.log('TAG FOR', tpl.substring(posIniTag, posTagClose))
+  while (posFor > -1) {
+    const tagFor = tpl.substring(posIniTag + 1, tpl.indexOf(">", posFor + 1)).trim()
+    const tagName = tagFor.split(" ").shift().trim();
+    posTagClose = getPosTagClose(posFor, tpl, tagName);
+    posFor = tpl.indexOf("cat-for=", posFor + 1);
   }
+  console.log('TAG FOR', tpl.substring(posIniTag, posTagClose))
   return {
     template: {...templateObj},
   }
@@ -74,9 +69,7 @@ export const setCatFor = (tag, componentNameKey, tpl, template) => {
 
 export const setDataBindings = (tag, componentNameKey, tpl, template) => {
   let templateObj = {...template};
-  const objProperties = {
-    
-  };
+  const objProperties = {};
   let posData = tpl.indexOf("{{ data:");
 
   while (posData > -1) {
@@ -84,16 +77,18 @@ export const setDataBindings = (tag, componentNameKey, tpl, template) => {
       .substring(posData + 2, tpl.indexOf("}}", posData + 1))
       .trim()
       .split(":");
-    const type = nameArray.shift();
+    const source = nameArray.shift();
     const name = nameArray.shift();
     let defaultValue = ''
     if (nameArray.length > 0) {
       defaultValue = nameArray.shift();
     }
     objProperties.name = name;
-    console.log(`{{ ${type}:${name}:${defaultValue} }}`)
+    objProperties.source = source;
+
+    console.log(`{{ ${source}:${name}:${defaultValue} }}`)
     tpl = tpl.replaceAll(
-      `{{ ${type}:${name}:${defaultValue} }}`,
+      `{{ ${source}:${name}:${defaultValue} }}`,
       `<data-binding-component binding-id="${componentNameKey}:${name}">${JSON.parse(
         JSON.stringify(defaultValue)
       )}</data-binding-component>`
@@ -102,7 +97,7 @@ export const setDataBindings = (tag, componentNameKey, tpl, template) => {
     templateObj.properties.push({...objProperties});
     posData = tpl.indexOf("{{ data:", posData + 1);
   }
-
+  console.log('DATA BINDING:::::::', templateObj)
   return {
     template: {...templateObj},
   }

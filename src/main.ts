@@ -1,10 +1,23 @@
-import "virtual:my-module";
-import changeProperty from "@framework/template-components/data-binding-component";
+import * as components from "virtual:my-module";
+import { changeByNameValue, changeByObjectValue } from "@framework/template-components/data-binding-component";
+
+
+
+console.log(components)
 
 setTimeout(()=> {
-    changeProperty('hello.message', 'BYE.... BYE..... GUAY');
+    changeByNameValue('DemoFirstTag', 'hello.message', 'BYE.... BYE..... GUAY');
 }, 1000)
 
 setTimeout(()=> {
-    changeProperty('hello.message', 'HELLO WORLD AGAIN..... GUAY');
+  changeByObjectValue('DemoFirstTag', {
+    hello: {
+      title: 'AMAZING TITLE',
+      message: 'HELLO WORLD AGAIN..... GUAY'
+    },
+    bye: {
+      message: 'BYE BYE AGAIN..... GUAY',
+      footer: 'AMAZING FOOTER'
+    }
+  });
 }, 2000)
