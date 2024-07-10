@@ -72,9 +72,9 @@ export default function transformIndextemplate(options) {
       const closeScriptPos = html.indexOf('<script', bodyPos + 1)
       let indexHtml = html
       let bodyHTML = ''
+      
       bodyHTML = html.substring(bodyPos, closeScriptPos)
       bodyHTML = bodyHTML.replace('<body>', '');
-      const test = 'TEST'
       indexHtml = `
       ${transformTemplate(indexHtml, template, bodyHTML)}
       `

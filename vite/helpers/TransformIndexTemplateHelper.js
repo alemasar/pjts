@@ -114,6 +114,8 @@ export const transformTemplate = (tpl, template, bodyHTML) => {
       indexHtml = indexHtml.replaceAll(codeToReplace, template[element.name].template)
     }
   })
-  indexHtml = indexHtml.replace('</body>', `<template id="indexTemplate">${bodyHTML}</template>`)
+  indexHtml = indexHtml.replace('</body>', `<template id="indexTemplate">${bodyHTML}</template>
+  </body>`)
+  console.log(indexHtml)
   return indexHtml
 }

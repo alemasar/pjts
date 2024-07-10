@@ -12,3 +12,5 @@
     {{ t }}
   </span> <span>WEB COMPONENT</span></h1>
 </template>
+<script>
+</script>

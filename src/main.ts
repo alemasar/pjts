@@ -1,9 +1,6 @@
-import * as components from "virtual:my-module";
+import "virtual:my-module";
 import { changeByNameValue, changeByObjectValue } from "@framework/template-components/data-binding-component";
 
-
-
-console.log(components)
 
 setTimeout(()=> {
     changeByNameValue('DemoFirstTag', 'hello.message', 'BYE.... BYE..... GUAY');
