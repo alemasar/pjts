@@ -13,4 +13,30 @@
   </span> <span>WEB COMPONENT</span></h1>
 </template>
 <script>
+import { changeByObjectValue } from "@framework/template-components/data-binding-component";
+class DemoFirstTag {
+  constructor() {
+    const handler = () => {
+      console.log('HELLO WORLD DESDE SCRIPT DE COMPONENT')
+      this.changeByObjectValue()
+      setTimeout(()=> {
+        changeByObjectValue('DemoFirstTag', {
+          hello: {
+            title: 'AMAZING TITLE',
+            message: 'HELLO WORLD AGAIN..... GUAY'
+          },
+          bye: {
+            message: 'BYE BYE AGAIN..... GUAY',
+            footer: 'AMAZING FOOTER'
+          }
+        });
+      }, 2000)
+    }
+    document.addEventListener("DOMContentLoaded", handler)
+  }
+  changeByObjectValue() {
+    console.log('CHANGE OBJECT VALUE FROM CLASS')
+  }
+}
+
 </script>

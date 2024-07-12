@@ -1,37 +1,24 @@
-import { readAllFiles, getConfig, getTpl, transformTemplate, setDataBindings, setCatFor, setTemplateConfigObj } from "../helpers/TransformIndexTemplateHelper"
+import { getCatFileCode, transformTemplate, initCatConfigComponents } from "../helpers/TransformIndexTemplateHelper"
 
 const fileRegex = /main.ts$/
 const fileEndsWith = '.cat'
 
 export default function transformIndextemplate(options) {
-  const virtualModuleId = 'virtual:my-module'
-  const resolvedVirtualModuleId = '\0' + virtualModuleId
-  let template = []
-  let imports = ''
-  let exports = ''
-  
+  const virtualComponentsId = 'virtual:components'
+  const resolvedVirtualComponentId = '\0' + virtualComponentsId
+  const catConfigComponent = initCatConfigComponents(options)
+  const exports = catConfigComponent.exports;
+  let template = {...catConfigComponent.template};
 
-  const components = readAllFiles(`src/${options.components.base}/${options.components.path}`)
-  components.forEach((cmp) => {
-    const cmpName = cmp.name.trim()
-    imports += `import { ${cmpName} } from "@pjts/${options.components.path}/${cmpName}.cat";\n`
-    exports += `
-      import * as ${cmpName} from "@pjts/${options.components.path}/${cmpName}.cat";
-
-      console.log(${cmpName})
-      export const ${cmpName}Export = ${cmpName}.component;
-    `
-    template[cmpName] = {}
-  })
   return {
     name: 'vite-plugin-transform-components', // required, will show up in warnings and errors
     resolveId(id) {
-      if (id === virtualModuleId) {
-        return resolvedVirtualModuleId
+      if (id === virtualComponentsId) {
+        return resolvedVirtualComponentId
       }
     },
     load(id) {
-      if (id === resolvedVirtualModuleId) {
+      if (id === resolvedVirtualComponentId) {
         return exports;
       }
     },
@@ -45,24 +32,11 @@ export default function transformIndextemplate(options) {
           map: null, // provide source map if available
         }
       } else if (id.endsWith(fileEndsWith) === true) {
-        const config = getConfig(src);
-        const cmpNameKeys = Object.keys(template);
-        let tpl = getTpl(src);
-        let code = '';
-        cmpNameKeys.forEach((cnk) => {
-          if (id.includes(cnk) === true) {
-            template[cnk] = setTemplateConfigObj(config.tag, cnk, tpl);
-            template[cnk] = setDataBindings(config.tag, cnk, tpl, template[cnk]).template;
-            template[cnk] = setCatFor(config.tag, cnk, tpl, template[cnk]).template;
-            // const dataForObj = setCatFor(config.tag, cnk, tpl, template)
-            code = `
-              export const component = ${JSON.stringify(Object.assign({}, {...template[cnk]}))};
-              console.log('entro EN CAT FILE', component);
-            `
-          }
-        })
+        const catConfig = getCatFileCode(id, src, template)
+        console.log("TREMPLATE", catConfig.template)
+        template = JSON.parse(JSON.stringify(catConfig.template))
         return {
-          code,
+          code: catConfig.code,
           map: null, // provide source map if available
         }
       }
@@ -72,7 +46,7 @@ export default function transformIndextemplate(options) {
       const closeScriptPos = html.indexOf('<script', bodyPos + 1)
       let indexHtml = html
       let bodyHTML = ''
-      
+      console.log("TREMPLATE", template)
       bodyHTML = html.substring(bodyPos, closeScriptPos)
       bodyHTML = bodyHTML.replace('<body>', '');
       indexHtml = `
