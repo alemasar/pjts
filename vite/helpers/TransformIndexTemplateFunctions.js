@@ -43,41 +43,6 @@ class TransformIndexTemplateFunctions {
     }
   }
 
-  setDataBindings(tag, componentNameKey, tpl, template) {
-    let templateObj = {...template};
-    const objProperties = {};
-    let posData = tpl.indexOf("{{ data:");
-
-    while (posData > -1) {
-      const nameArray = tpl
-        .substring(posData + 2, tpl.indexOf("}}", posData + 1))
-        .trim()
-        .split(":");
-      const source = nameArray.shift();
-      const name = nameArray.shift();
-      let defaultValue = ''
-      if (nameArray.length > 0) {
-        defaultValue = nameArray.shift();
-      }
-      objProperties.name = name;
-      objProperties.source = source;
-
-      tpl = tpl.replaceAll(
-        `{{ ${source}:${name}:${defaultValue} }}`,
-        `<data-binding-component binding-id="${componentNameKey}:${name}">${JSON.parse(
-          JSON.stringify(defaultValue)
-        )}</data-binding-component>`
-      );
-      templateObj = {...this.setTemplateComponentObj(tag, componentNameKey, tpl)}
-      templateObj.properties.push({...objProperties});
-      posData = tpl.indexOf("{{ data:", posData + 1);
-    }
-
-    return {
-      template: {...templateObj},
-    }
-  }
-
   setCatFor(tag, componentNameKey, tpl, template) {
     const templateObj = {...template};
     const objForProperties = [];
@@ -153,7 +118,7 @@ class TransformIndexTemplateFunctions {
     }
     return returnValue;
   }
-  
+
   getScriptTpl(src) {
     const scriptTpl = src.match(this.scriptRegExp);
     let returnValue = '';

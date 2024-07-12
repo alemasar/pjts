@@ -1,4 +1,4 @@
-import { getCatFileCode, transformTemplate, initCatConfigComponents } from "../helpers/TransformIndexTemplateHelper"
+import transformIndexTemplateHelper from "../helpers/TransformIndexTemplateHelper"
 
 const fileRegex = /main.ts$/
 const fileEndsWith = '.cat'
@@ -6,7 +6,7 @@ const fileEndsWith = '.cat'
 export default function transformIndextemplate(options) {
   const virtualComponentsId = 'virtual:components'
   const resolvedVirtualComponentId = '\0' + virtualComponentsId
-  const catConfigComponent = initCatConfigComponents(options)
+  const catConfigComponent = transformIndexTemplateHelper.initCatConfigComponents(options)
   const exports = catConfigComponent.exports;
   let template = {...catConfigComponent.template};
 
@@ -32,7 +32,7 @@ export default function transformIndextemplate(options) {
           map: null, // provide source map if available
         }
       } else if (id.endsWith(fileEndsWith) === true) {
-        const catConfig = getCatFileCode(id, src, template)
+        const catConfig = transformIndexTemplateHelper.getCatFileCode(id, src, template)
         console.log("TREMPLATE", catConfig.template)
         template = JSON.parse(JSON.stringify(catConfig.template))
         return {
@@ -50,7 +50,7 @@ export default function transformIndextemplate(options) {
       bodyHTML = html.substring(bodyPos, closeScriptPos)
       bodyHTML = bodyHTML.replace('<body>', '');
       indexHtml = `
-      ${transformTemplate(indexHtml, template, bodyHTML)}
+      ${transformIndexTemplateHelper.transformTemplate(indexHtml, template, bodyHTML)}
       `
       return indexHtml;
     },
