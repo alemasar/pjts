@@ -5,8 +5,8 @@ class TransformIndexTemplateHelper {
     let template = []
     // let imports = ''
     let exports = ''
-    
-    const components = transformIndexTemplateFunctions.readAllFiles(path.normalize(`src/${options.components.base}/${options.components.path}`));
+    const components = transformIndexTemplateFunctions.readAllFiles(path.normalize(`src/${options.components.base}/${options.components.path}`), '.cat');
+
     components.forEach((cmp) => {
       const cmpName = cmp.name.trim()
       // imports += `import { ${cmpName} } from "@pjts/${options.components.path}/${cmpName}.cat";\n`
@@ -27,7 +27,7 @@ class TransformIndexTemplateHelper {
   }
 
   getCatFileCode(id, src, template) {
-    const tplObj = JSON.parse(JSON.stringify(template));
+    const tplObj = structuredClone(template);
     const config = transformIndexTemplateFunctions.getConfig(src);
     const scriptTpl = transformIndexTemplateFunctions.getScriptTpl(src);
     const cmpNameKeys = Object.keys(tplObj);
@@ -56,20 +56,25 @@ class TransformIndexTemplateHelper {
     };
   }
 
-  transformTemplate(tpl, template, bodyHTML) {
+  transformTemplate(options, tpl, template) {
     const templateElementsValues = Object.values(template)
-    let indexHtml = tpl
-
-    templateElementsValues.forEach((element) => {
-      while (new RegExp(`<${element.tag}`).test(indexHtml) === true) {
-        const iniPointTag = new RegExp(`<${element.tag}`).exec(indexHtml).index
-        const endPointTag = new RegExp(`</${element.tag}>`).exec(indexHtml).index
-        const codeToReplace = indexHtml.slice(iniPointTag, endPointTag + element.tag.length + 3)
-        indexHtml = indexHtml.replaceAll(codeToReplace, template[element.name].template)
-      }
+    const pathHtmlPages = path.normalize(`src/${options.pages.base}/${options.pages.path}`)
+    const pages = transformIndexTemplateFunctions.readAllFiles(pathHtmlPages, '.html');
+    let indexHtml = ''
+    
+    pages.forEach((p) => {
+      let pageHTML = transformIndexTemplateFunctions.getFileContents(`src/${options.pages.base}/${options.pages.path}/${p.name}.html`)
+      templateElementsValues.forEach((element) => {
+        while (new RegExp(`<${element.tag}`).test(pageHTML) === true) {
+          const iniPointTag = new RegExp(`<${element.tag}`).exec(pageHTML).index
+          const endPointTag = new RegExp(`</${element.tag}>`).exec(pageHTML).index
+          const codeToReplace = pageHTML.slice(iniPointTag, endPointTag + element.tag.length + 3)
+          pageHTML = pageHTML.replaceAll(codeToReplace, template[element.name].template)
+        }
+      })
+      // indexHtml = indexHtml.replace('</body>', `<template id="${p.name}Template">${pageHTML}</template></body>`);
+      indexHtml += `<template id="${p.name}Template">\r\n${pageHTML}\r\n</template>\r\n`
     })
-    indexHtml = indexHtml.replace('</body>', `<template id="indexTemplate">${bodyHTML}</template>
-    </body>`)
 
     return indexHtml
   }

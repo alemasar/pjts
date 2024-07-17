@@ -33,8 +33,8 @@ export default function transformIndextemplate(options) {
         }
       } else if (id.endsWith(fileEndsWith) === true) {
         const catConfig = transformIndexTemplateHelper.getCatFileCode(id, src, template)
-        console.log("TREMPLATE", catConfig.template)
-        template = JSON.parse(JSON.stringify(catConfig.template))
+        
+        template = structuredClone(catConfig.template)
         return {
           code: catConfig.code,
           map: null, // provide source map if available
@@ -43,16 +43,18 @@ export default function transformIndextemplate(options) {
     },
     transformIndexHtml(html) {
       const bodyPos = html.indexOf('<body');
-      const closeScriptPos = html.indexOf('<script', bodyPos + 1)
-      let indexHtml = html
-      let bodyHTML = ''
-      console.log("TREMPLATE", template)
-      bodyHTML = html.substring(bodyPos, closeScriptPos)
-      bodyHTML = bodyHTML.replace('<body>', '');
+      const openScriptPos = html.indexOf('<script', bodyPos + 1);
+      const closeBody = html.indexOf('</body>', bodyPos + 1);
+      let returnHtml = html.substring(0, openScriptPos)
+      let indexHtml = html;
+      let bodyHTML = '';
+
+      returnHtml += '<cat-page></cat-page>'
+      bodyHTML = html.substring(html.indexOf(">", bodyPos + 1) + 1, closeBody).trim();
       indexHtml = `
-      ${transformIndexTemplateHelper.transformTemplate(indexHtml, template, bodyHTML)}
-      `
-      return indexHtml;
+      ${transformIndexTemplateHelper.transformTemplate(options, indexHtml, template)}
+      `;
+      return returnHtml + indexHtml + bodyHTML + '</body></html>';
     },
   }
 }

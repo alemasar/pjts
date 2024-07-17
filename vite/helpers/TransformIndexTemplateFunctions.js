@@ -8,6 +8,10 @@ class TransformIndexTemplateFunctions {
     this.scriptRegExp = /<script>(.|\n)*?<\/script>/g
   }
 
+  getFileContents(src) {
+    return fs.readFileSync(src, { encoding: 'utf8', flag: 'r' });
+  }
+
   setDataBindings(tag, componentNameKey, tpl, template) {
     let templateObj = {...template};
     const objProperties = {};
@@ -84,16 +88,16 @@ class TransformIndexTemplateFunctions {
     }
   }
 
-  readAllFiles(dir) {
+  readAllFiles(dir, extension) {
     const files = fs.readdirSync(dir, { withFileTypes: true });
     const filesObj = []
     for (const file of files) {
       if (file.isDirectory()) {
         readAllFiles(path.join(dir, file.name));
-      } else if (file.name.includes('.cat') === true) {
+      } else if (file.name.includes(extension) === true) {
         filesObj.push({
           path: dir.replace('src/', ''),
-          name: file.name.replace('.cat', '').trim()
+          name: file.name.replace(extension, '').trim()
         })
       }
     }
