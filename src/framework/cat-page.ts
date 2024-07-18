@@ -30,10 +30,16 @@ class CatPage extends HTMLElement {
     links.forEach((l)=> {
       l.addEventListener('click', (event) => {
         const link = event.target as HTMLAnchorElement
+        const hrefValue = link.getAttribute("href") as string
+        const url = hrefValue.split("/").pop()
         event.preventDefault()
         console.log("Custom element added to page.", link.getAttribute("href"));
-        history.pushState({}, 'newUrl', link.getAttribute("href"));
-        this.templateId = link.getAttribute("href")?.split("/").pop() + 'Template'
+        history.pushState({}, 'newUrl', '/' + url);
+        if (url === '') {
+          this.templateId = 'indexTemplate'
+        } else {
+          this.templateId = url + 'Template'
+        }
         this.innerHTML = document.getElementById(this.templateId)?.innerHTML as string;
       }, false)
     })
