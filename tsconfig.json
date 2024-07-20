@@ -17,7 +17,13 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".", // root of your "paths" below. Required if "paths" is defined
+    "paths": {
+      "@/*": ["src/*"],
+      "@framework/*": ["src/framework/*"],
+      "@pjts/*": ["src/pjts/*"]
+    }
   },
   "include": ["src"]
 }

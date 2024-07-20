@@ -22,7 +22,7 @@ class CatForComponentElement extends HTMLElement {
     console.log("Custom element moved to new page.");
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  attributeChangedCallback(name: string) {
     console.log(`Attribute ${name} has changed.`);
   }
 }

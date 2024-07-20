@@ -1,7 +1,7 @@
 
 import Observable from "@framework/common/Observable";
 interface IDataBindings {
-     [index: string]: Observable;
+     [index: string]: Observable[];
 }
 
 interface IDataBindingsProperty {
@@ -52,7 +52,7 @@ class DataBindingComponentElement extends HTMLElement {
     console.log("Custom element moved to new page.");
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  attributeChangedCallback(name: string) {
     console.log(`Attribute ${name} has changed.`);
   }
 
@@ -65,7 +65,7 @@ const changePropertyByName = (component: string, name: any, value: any) => {
   const dataBindingsKeys = Object.keys(dataBindings);
   // VALIDACIO DE LES KEYS, QUE EXISTAN EN EL ARRAY DATABINDING
   if (dataBindingsKeys.includes(key) === true) {
-    dataBindings[key].forEach((b: any, index:any) => {
+    dataBindings[key].forEach((b: any) => {
       console.log('INDDEX::::::', key)
       b.value = value;
     })

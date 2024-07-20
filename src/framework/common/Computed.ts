@@ -3,14 +3,14 @@ class Computed extends Observable {
   constructor(value: any, deps: any) {
     super(value());
     const listener = () => {
-      this._value = value();
+      this.value = value();
       this.notify();
     }
-    deps.forEach(dep => dep.subscribe(listener));
+    deps.forEach((dep: any) => dep.subscribe(listener));
   }
 
-  get value() {
-    return this._value;
+  get value(): any {
+    return this.value;
   }
 
   set value(_) {
