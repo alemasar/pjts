@@ -1,25 +1,28 @@
-interface IPageLinks{
-  obj: HTMLAnchorElement
-  handler: (evt: any) => void;
-}
-
-const pageLinks: IPageLinks[] = []
-
 class Router {
   path: string;
   constructor() {
-        const event = new CustomEvent("page-loaded");
-
     this.path = ''
-    window.addEventListener('popstate', (evt) => {
-      const event = new CustomEvent("page-loaded");
 
-      evt.preventDefault()
-      
-      console.log('POPSTATE::::::::', evt)
-      document.dispatchEvent(event);
-    })
+    window.addEventListener('popstate', this.popstateHandler.bind(this), false)
+  }
+
+  popstateHandler() {
+    const event = new CustomEvent("url-changed");
+    
+    console.log('POPSTATE::::::::', window.location.pathname)
+    // this.changePageTemplateFromLocation()
     document.dispatchEvent(event);
+    this.pushHistoryState({
+      stateValue: {},
+      title: '',
+      path: this.path
+    });
+  }
+  pushHistoryState(state: any) {
+    const {stateValue={}, title='', path=''} = {...state}
+    history.pushState(stateValue, title, path);
   }
 }
 
+// export type {Router};
+export default Router
