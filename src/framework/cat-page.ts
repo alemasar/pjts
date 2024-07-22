@@ -12,14 +12,14 @@ class CatPage extends HTMLElement {
   constructor() {
     super();
 
+    this.templateId = ''
     this.router = new Router()
     document.addEventListener('url-changed', this.changePageTemplateFromLocation.bind(this), false)
-    this.changePageTemplateFromLocation()
-    this.templateId = ''
   }
 
   connectedCallback() {
-
+    console.log("Custom element added to page.");
+    this.changePageTemplateFromLocation()
   }
 
   disconnectedCallback() {
@@ -35,6 +35,39 @@ class CatPage extends HTMLElement {
     console.log(`Attribute ${name} has changed.`);
   }
 
+  getPathFromUrl() {
+    const pathname = window.location.pathname.split('/')
+    let goToUrl = ''
+
+    pathname.shift()
+    if (pathname.length > 0){
+      if (pathname[0] !== '') {
+        goToUrl = pathname[0]
+      }
+    }
+    return goToUrl
+  }
+  
+  clickHandler(evt: any) {
+    return this.linkHandler(evt)
+  }
+
+  linkHandler(evt: any) {
+    const link = evt.target as HTMLAnchorElement
+    const hrefValue = link.getAttribute("href") as string
+    const url = hrefValue.split("/").pop() as string
+
+    evt.preventDefault()
+    this.changePageWithUrl(url)
+  }
+
+  removeLinksClickEvent() {
+    pageLinks.forEach((pl) => {
+      pl.obj.removeEventListener("click", pl.handler, false)
+    })
+    pageLinks.splice(0)
+  }
+
   attachEventClickLinks() {
     const links = this.querySelectorAll("a")
     this.removeLinksClickEvent()
@@ -46,13 +79,6 @@ class CatPage extends HTMLElement {
       l.addEventListener('click', this.clickHandler.bind(this) , false);
       pageLinks.push(returnObj);
     })
-  }
-
-  removeLinksClickEvent() {
-    pageLinks.forEach((pl) => {
-      pl.obj.removeEventListener("click", pl.handler, false)
-    })
-    pageLinks.splice(0)
   }
 
   changePageTemplateFromLocation() {
@@ -73,32 +99,6 @@ class CatPage extends HTMLElement {
     this.innerHTML = document.getElementById(this.templateId)?.innerHTML as string
     this.attachEventClickLinks()
     document.dispatchEvent(event)
-  }
-  
-  clickHandler(evt: any) {
-    return this.linkHandler(evt)
-  }
-
-  linkHandler(evt: any) {
-    const link = evt.target as HTMLAnchorElement
-    const hrefValue = link.getAttribute("href") as string
-    const url = hrefValue.split("/").pop() as string
-
-    evt.preventDefault()
-    this.changePageWithUrl(url)
-  }
-
-  getPathFromUrl() {
-    const pathname = window.location.pathname.split('/')
-    let goToUrl = ''
-
-    pathname.shift()
-    if (pathname.length > 0){
-      if (pathname[0] !== '') {
-        goToUrl = pathname[0]
-      }
-    }
-    return goToUrl
   }
 
   changePageWithUrl(url: string) {
