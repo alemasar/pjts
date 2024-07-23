@@ -13,8 +13,7 @@ class TransformIndexTemplateHelper {
       exports += `
         import * as ${cmpName} from "@pjts/${options.components.path}/${cmpName}.cat";
 
-        console.log(${cmpName})
-        export const ${cmpName}Export = ${cmpName}.component;
+        export const ${cmpName}Export = ${cmpName};
       `
       template[cmpName] = {}
     })
@@ -44,23 +43,25 @@ class TransformIndexTemplateHelper {
           code = `
             ${scriptTpl}
             export default new ${cnk}();
-            // component = ${JSON.stringify(Object.assign({}, {...tplObj[cnk]}))};
             console.log('entro EN CAT FILE');
           `
         }
+        tplObj[cnk].code = code
       }
     })
+
     return {
       code,
       template: tplObj,
     };
   }
 
-  transformTemplate(options, tpl, template) {
+  transformTemplate(options, tpl, template, originalURL) {
     const templateElementsValues = Object.values(template)
     const pathHtmlPages = path.normalize(`src/${options.pages.base}/${options.pages.path}`)
     const pages = transformIndexTemplateFunctions.readAllFiles(pathHtmlPages, '.html');
     let indexHtml = ''
+    let fallbackTemplate = ''
     
     pages.forEach((p) => {
       let pageHTML = transformIndexTemplateFunctions.getFileContents(`src/${options.pages.base}/${options.pages.path}/${p.name}.html`)
@@ -69,14 +70,21 @@ class TransformIndexTemplateHelper {
           const iniPointTag = new RegExp(`<${element.tag}`).exec(pageHTML).index
           const endPointTag = new RegExp(`</${element.tag}>`).exec(pageHTML).index
           const codeToReplace = pageHTML.slice(iniPointTag, endPointTag + element.tag.length + 3)
+
           pageHTML = pageHTML.replaceAll(codeToReplace, template[element.name].template)
         }
       })
       // indexHtml = indexHtml.replace('</body>', `<template id="${p.name}Template">${pageHTML}</template></body>`);
       indexHtml += `<template id="${p.name}Template">\r\n${pageHTML}\r\n</template>\r\n`
+      if (p.name === originalURL) {
+        fallbackTemplate = pageHTML
+      }
     })
 
-    return indexHtml
+    return {
+      indexHtml,
+      fallbackTemplate,
+    }
   }
 }
 

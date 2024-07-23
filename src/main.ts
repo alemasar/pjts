@@ -1,7 +1,9 @@
-import "virtual:components";
 import { changeByNameValue } from "@framework/template-components/data-binding-component";
 import CatPage from "@framework/cat-page";
 
+document.addEventListener('DOMContentLoaded', () => {
+  customElements.define("cat-page", CatPage);
+},false)
 
 // document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('page-loaded', (event) => {
@@ -11,6 +13,3 @@ import CatPage from "@framework/cat-page";
     }, 1000)
   }, false)
 // },false)
-document.addEventListener('DOMContentLoaded', () => {
-  customElements.define("cat-page", CatPage);
-},false)

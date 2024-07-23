@@ -1,55 +1,54 @@
-import fs from 'fs';
-import path from 'path';
-const fileRegex = /PJTS.ts$/
+import transformIndexTemplateHelper from "../helpers/TransformIndexTemplateHelper"
 
-export function readAllFiles(dir) {
-  const files = fs.readdirSync(dir, { withFileTypes: true });
-  const filesObj = []
+const fileRegex = /main.ts$/
+const fileEndsWith = '.cat'
 
-  for (const file of files) {
-    if (file.isDirectory()) {
-      readAllFiles(path.join(dir, file.name));
-    } else if (file.name.includes('.cat') === true) {
-      filesObj.push({
-        path: dir.replace('src/', ''),
-        name: file.name.replace('.cat', '').trim()
-      })
-    }
-  }
-  return filesObj
-}
-const transformSrc = (src) => {
-  
-}
-export default function myPlugin(options) {
-  const virtualModuleId = 'virtual:my-module'
-  const resolvedVirtualModuleId = '\0' + virtualModuleId
-  const components = readAllFiles(`src/${options.components.base}/${options.components.path}`)
-  let exports = ''
-  let imports = ''
-  let defines = ''
-  components.forEach((cmp) => {
-    const cmpName = cmp.name.trim()
-    imports += `import ${cmpName} from "@${cmp.path.replace('\/', '/')}/${cmpName}.cat";`
-    // exports += `export { default as ${cmp.name} } from "@/${cmp.path.replace('\/', '/')}/${cmp.name}.cat";`
-    // imports += `import { ${cmpName} } from 'virtual:my-module';`
-    // defines += `${cmpName}.defineCustomElements()`
-  })
-  // readAllFiles(`@/${options.components.base}/${options.components.path}`)
-  // console.log()
+export default function transformIndextemplate(options) {
+  const virtualComponentsId = 'virtual:components'
+  const resolvedVirtualComponentId = '\0' + virtualComponentsId
+  const catConfigComponent = transformIndexTemplateHelper.initCatConfigComponents(options)
+  const exports = catConfigComponent.exports;
+  let template = {...catConfigComponent.template};
+  let originalUrl = ''
+
   return {
-    name: 'vite-plugin-add-components', // required, will show up in warnings and errors
-    transform(src, id) {
-      if (fileRegex.test(id)) {
-        transformSrc(src)
-        // ${imports}
-        const srcModified = `
-                              ${imports}
-                              ${src}
-                            `
-        return {
-          code: srcModified,
-          map: null, // provide source map if available
+    name: 'vite-plugin-transform-components', // required, will show up in warnings and errors
+    resolveId: {
+      handler(id) {
+        if (id === virtualComponentsId) {
+          console.log('ENTRO EN RESOLVEID', id)
+          return resolvedVirtualComponentId
+        }
+      }
+    },
+    load: {
+      handler(id) {
+        if (id === resolvedVirtualComponentId) {
+          console.log('ENTRO EN LOAD', id)
+          return exports;
+        }
+      }
+    },
+    transform: {
+      handler(src, id) {
+        console.log('ENTRO EN TRANSFORM', id)
+        //console.log(ctx.originalUrl)
+        if (fileRegex.test(id) === true) {
+          const srcModified = `
+                                ${src}
+                              `
+          return {
+            code: srcModified,
+            map: null, // provide source map if available
+          }
+        } else if (id.endsWith(fileEndsWith) === true) {
+          const catConfig = transformIndexTemplateHelper.getCatFileCode(id, src, template, originalUrl)
+          
+          template = structuredClone(catConfig.template)
+          return {
+            code: catConfig.code,
+            map: null, // provide source map if available
+          }
         }
       }
     },

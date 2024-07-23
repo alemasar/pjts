@@ -14,6 +14,7 @@ class CatPage extends HTMLElement {
 
     this.templateId = ''
     this.router = new Router()
+
     document.addEventListener('url-changed', this.changePageTemplateFromLocation.bind(this), false)
   }
 
@@ -83,6 +84,7 @@ class CatPage extends HTMLElement {
 
   changePageTemplateFromLocation() {
     let goToUrl = this.getPathFromUrl()
+    console.log(goToUrl)
     const templatesSelectors = document.body.querySelectorAll("template")
     const templates = Array.from(templatesSelectors)
     const templateIds = templates.map((t) => t.id)
@@ -96,6 +98,9 @@ class CatPage extends HTMLElement {
       this.templateId = '404Template'
       goToUrl = '404'
     }
+    console.log(this.templateId)
+    console.log(document.getElementById(this.templateId)?.innerHTML)
+
     this.innerHTML = document.getElementById(this.templateId)?.innerHTML as string
     this.attachEventClickLinks()
     document.dispatchEvent(event)
