@@ -79,10 +79,11 @@ export default function transformIndextemplate(options) {
           originalUrl = ctx.originalUrl
           bodyHTML = html.substring(html.indexOf(">", bodyPos + 1) + 1, closeBody).trim();
           indexHtml = `
-          ${templates.indexHtml}
+            <cat-page>
+              ${templates.indexHtml}
+            </cat-page>
           `;
-          returnHtml += `<cat-page></cat-page>`
-    
+  console.log(bodyHTML)
           return returnHtml + indexHtml + bodyHTML + '</body></html>';
         }
       }

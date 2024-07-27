@@ -5,14 +5,22 @@ interface IPageLinks{
 }
 
 const pageLinks: IPageLinks[] = []
+const templates: any[] = []
 
 class CatPage extends HTMLElement {
   router: Router;
   templateId: string;
+  _root: any;
   constructor() {
     super();
-
+    
+    this._root = this.attachShadow({ mode: "closed" });
+    const templatePages = this.querySelectorAll('template')
+    templatePages.forEach((tp) => {
+      templates[tp.getAttribute('id') as any] = tp
+    })
     this.templateId = ''
+    this.innerHTML = ''
     this.router = new Router()
 
     document.addEventListener('url-changed', this.changePageTemplateFromLocation.bind(this), false)
@@ -84,24 +92,23 @@ class CatPage extends HTMLElement {
 
   changePageTemplateFromLocation() {
     let goToUrl = this.getPathFromUrl()
-    console.log(goToUrl)
-    const templatesSelectors = document.body.querySelectorAll("template")
-    const templates = Array.from(templatesSelectors)
-    const templateIds = templates.map((t) => t.id)
     const template = (goToUrl === '') ? 'indexTemplate' : goToUrl + 'Template';
+    let templatesSelector = templates[template as any]
     const event = new CustomEvent("page-loaded");
 
     this.router.path = goToUrl
-    if (templateIds.includes(template) === true) {
+    if (templatesSelector !== null) {
       this.templateId = template
-    } else if (templateIds.includes(goToUrl + 'Template') === false) {
+    } else {
       this.templateId = '404Template'
       goToUrl = '404'
+      templatesSelector = templates[this.templateId as any]
     }
     console.log(this.templateId)
-    console.log(document.getElementById(this.templateId)?.innerHTML)
+    console.log(templatesSelector)
 
-    this.innerHTML = document.getElementById(this.templateId)?.innerHTML as string
+    this._root.innerHTML = ''
+    this._root.appendChild(templatesSelector?.content.cloneNode(true))
     this.attachEventClickLinks()
     document.dispatchEvent(event)
   }
@@ -121,7 +128,8 @@ class CatPage extends HTMLElement {
       path: urlToGo,
     })
 
-    this.innerHTML = document.getElementById(this.templateId)?.innerHTML as string
+    this._root.innerHTML = ''
+    this._root.appendChild(templates[this.templateId as any].content.cloneNode(true))
     this.attachEventClickLinks()
     document.dispatchEvent(event)
   }
