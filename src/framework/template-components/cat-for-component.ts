@@ -26,5 +26,5 @@ class CatForComponentElement extends HTMLElement {
     console.log(`Attribute ${name} has changed.`);
   }
 }
-
+customElements.define("cat-for-component", CatForComponentElement);
 export default CatForComponentElement;

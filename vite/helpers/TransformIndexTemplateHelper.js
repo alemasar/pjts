@@ -38,7 +38,7 @@ class TransformIndexTemplateHelper {
         tplObj[cnk] = transformIndexTemplateFunctions.setTemplateComponentObj(config.tag, cnk, tpl);
         tplObj[cnk] = transformIndexTemplateFunctions.setDataBindings(config.tag, cnk, tpl, tplObj[cnk]).template;
         tplObj[cnk] = transformIndexTemplateFunctions.setCatFor(config.tag, cnk, tpl, tplObj[cnk]).template;
-        // const dataForObj = setCatFor(config.tag, cnk, tpl, template)
+
         if (scriptTpl !== '') {
           code = `
             ${scriptTpl}
