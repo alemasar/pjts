@@ -55,6 +55,7 @@ class TransformIndexTemplateFunctions {
     let templateObj = {...template};
 
     templateObj = this.parseDataBinding('data', tag, componentNameKey, tpl, templateObj)
+    console.log("TEMPLATE OBJ DATABINDING", templateObj)
 
     return {
       template: {...templateObj},
@@ -75,17 +76,53 @@ class TransformIndexTemplateFunctions {
   setCatFor(tag, componentNameKey, tpl, template) {
     const templateObj = structuredClone(template);
     const objForProperties = [];
+    const catForPattern = 'cat-for="'
+    const catForPatternLength = catForPattern.length
     let posTagClose = 0;
-    let posFor = templateObj.template.indexOf("cat-for=");
+    let posFor = templateObj.template.indexOf(catForPattern);
     
     while (posFor > -1) {
       const posIniTag = templateObj.template.lastIndexOf("<", posFor);
-      const tagFor = templateObj.template.substring(posIniTag + 1, templateObj.template.indexOf(">", posFor + 1)).trim()
-      const tagName = tagFor.split(" ").shift().trim();
+      const tagCatFor = templateObj.template.substring(posIniTag + 1, templateObj.template.indexOf(">", posFor + 1)).trim()
+      const tagName = tagCatFor.split(" ").shift().trim();
+      let replaceCatForHTML = ''
+      let replaceCatForHTMLParsed = ''
+      let replaceCatForHTMLItem = ''
+      let catForSentence = ''
+      let catForSentenceArray = []
+      let dataSource = ''
+      let dataName = ''
+      let dataArrayId = ''
+      let arrayCatFor = []
+
       posTagClose = this.getPosTagClose(templateObj.template, tagName);
-      posFor = templateObj.template.indexOf("cat-for=", posFor + 1);
-      console.log(templateObj.template.substring(posIniTag, posTagClose))
+      replaceCatForHTML = templateObj.template.substring(posIniTag, posTagClose);
+      replaceCatForHTMLItem = templateObj.template.substring(templateObj.template.indexOf(">", posIniTag) + 1, posTagClose - tagName.length - 3)
+      catForSentence = templateObj.template.substring(posFor + catForPatternLength, templateObj.template.indexOf('"', posFor + catForPatternLength))
+      catForSentenceArray = catForSentence.split(':')
+      console.log('DATA FOR SENTENCE ARRAY::::::::::', catForSentenceArray)
+      dataName = catForSentenceArray.shift()
+      dataName = dataName.substring(0, dataName.indexOf(' in')).trim()
+      dataSource = dataName.substring(dataName.indexOf('in ') + 3).trim()
+      dataArrayId = catForSentenceArray.shift()
+      arrayCatFor = catForSentenceArray.shift().replace('[', '').replace(']', '').split(',').map((item) => item.replace(/'/gi, '').trim())
+      arrayCatFor.forEach((value, index) => {
+        replaceCatForHTMLParsed += replaceCatForHTMLItem.replaceAll(`{{ ${dataName} }}`, value)
+      })
+      // dataName = catForSentenceArray.shift()
+      console.log('DATA NAME:::::::::::::::::::::::', dataName)
+      console.log('DATA ARRAY ID:::::::::::::::::::', dataArrayId)
+      console.log('ARRAY CAT FOR:::::::::::::::::::', arrayCatFor)
+      console.log('SENTENCE::::::::::::::::::::::::', replaceCatForHTMLParsed)
+
+      templateObj.template = templateObj.template.replaceAll(
+        `${replaceCatForHTML}`,
+        `<cat-for-component cat-for-id="${componentNameKey}:test">${JSON.parse(
+          JSON.stringify(replaceCatForHTMLParsed)
+        )}</cat-for-component>`
+      );
       // cat-for-component
+      posFor = templateObj.template.indexOf(catForPattern, posFor + 1);
     }
 
     return {

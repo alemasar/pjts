@@ -83,7 +83,6 @@ export default function transformIndextemplate(options) {
               ${templates.indexHtml}
             </cat-page>
           `;
-  console.log(bodyHTML)
           return returnHtml + indexHtml + bodyHTML + '</body></html>';
         }
       }
