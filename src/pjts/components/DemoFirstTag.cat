@@ -13,7 +13,7 @@
   </span> <span>WEB COMPONENT</span> {{ data:hello.title:"HELLO WORLD......" }}</h1>
 </template>
 <script>
-import { changeByObjectValue } from "@framework/template-components/data-binding-component";
+import { changeByObjectValue } from "@framework/template-components/cat-data-binding-component";
 class DemoFirstTag {
   constructor() {
     const handler = () => {

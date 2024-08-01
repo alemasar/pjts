@@ -1,47 +1,45 @@
-
 import Observable from "@framework/common/Observable";
-interface IDataBindings {
-     [index: string]: Observable[];
-}
+import singleton from "@framework/common/Singleton";
 
 interface IDataBindingsProperty {
      [index: string]: string[];
 }
-const dataBindings = {} as IDataBindings;
+
+// const dataBindings = {} as IDataBindings;
 
 class DataBindingComponentElement extends HTMLElement {
+  _root: any;
   constructor() {
     super();
-    const template = document.createElement('template');
-    const shadowRoot = this.attachShadow({mode: 'open'});
+    this._root = this.attachShadow({ mode: "closed" });
+    // const template = document.createElement('template');
     this.setAttribute('class', 'databinding-element');
-    template.setAttribute('class', 'databinding');
-    template.innerHTML = this.innerHTML
-    this.appendChild(template);
-    shadowRoot.appendChild(template.content.cloneNode(true));
+    // template.setAttribute('class', 'databinding');
+    // template.innerHTML = this.innerHTML
+    // this.appendChild(template);
+    this._root.appendChild(this.firstChild?.cloneNode(true));
   }
 
   connectedCallback() {
-    console.log("Custom element added to page.", this.innerHTML);
+    console.log("Custom element added to page.", singleton.value);
     const bingdingIdArray = this.getAttribute('binding-id')?.split(':')
     const nameProperty = bingdingIdArray?.pop() as string;
     const nameComponent = bingdingIdArray?.pop() as string;
-    const shadowRoot = this.shadowRoot as unknown as ShadowRoot;
-    const observable = new Observable(shadowRoot.innerHTML);
+    // const shadowRoot = this.shadowRoot as unknown as ShadowRoot;
+    const observable = new Observable(singleton.value);
     observable.subscribe((newValue: any) => {
-      const templateHTML = this.querySelector('.databinding') as unknown as Element;
-      shadowRoot.innerHTML = newValue;
-      this.innerHTML = newValue;
-      templateHTML.innerHTML = newValue;
-      this.appendChild(templateHTML)
+      // const templateHTML = this.querySelector('.databinding') as unknown as Element;
+      const textValue = document.createTextNode(newValue)
+      this.innerHTML = ''
+      this._root.innerHTML = ''
+      this._root.appendChild(textValue.cloneNode(true));
+      // this.innerHTML = newValue;
+      // templateHTML.innerHTML = newValue;
+      this.appendChild(textValue.cloneNode(true))
     })
     // this.setAttribute('data-component-id', index)
-    const keysDatabindings = Object.keys(dataBindings);
     const key = `${nameComponent}:${nameProperty}`;
-    if (keysDatabindings.includes(key) === false) {
-      dataBindings[key]=[]
-    }
-    dataBindings[key].push(observable)
+    singleton.addElement(key, observable)
   }
 
   disconnectedCallback() {
@@ -58,18 +56,11 @@ class DataBindingComponentElement extends HTMLElement {
 
 
 }
-customElements.define("data-binding-component", DataBindingComponentElement);
+customElements.define("cat-data-binding-component", DataBindingComponentElement);
 
 const changePropertyByName = (component: string, name: any, value: any) => {
   const key = `${component}:${name}`
-  const dataBindingsKeys = Object.keys(dataBindings);
-  // VALIDACIO DE LES KEYS, QUE EXISTAN EN EL ARRAY DATABINDING
-  if (dataBindingsKeys.includes(key) === true) {
-    dataBindings[key].forEach((b: any) => {
-      console.log('INDDEX::::::', key)
-      b.value = value;
-    })
-  }
+  singleton.modifyElementValue(key, value)
 };
 
 const parseKeysFromObjectToString = (obj: object, parentKey: string, returnKeys: IDataBindingsProperty) => {

@@ -15,9 +15,9 @@ class TransformIndexTemplateFunctions {
   replaceCodeDataBinding(tpl, index, indexToReplace, codeToReplace) {
     tpl = tpl.replaceAll(
       `{{ ${index} }}`,
-      `<data-binding-component binding-id="${indexToReplace}">${JSON.parse(
+      `<cat-data-binding-component binding-id="${indexToReplace}">${JSON.parse(
         JSON.stringify(codeToReplace)
-      )}</data-binding-component>`
+      )}</cat-data-binding-component>`
     );
 
     return tpl;
@@ -26,27 +26,48 @@ class TransformIndexTemplateFunctions {
   parseDataBinding(source, tag, componentNameKey, tpl, templateObj) {
     const objProperties = {};
     let returnTemplateObj = structuredClone(templateObj);
-    let posData = tpl.indexOf(`{{ ${source}:`);
+    let pattern = `{{ ${source}:`
+    if (source === '') {
+      pattern = `{{ `
+    }
+    let posData = tpl.indexOf(pattern);
 
     while (posData > -1) {
       const nameArray = tpl
         .substring(posData + 2, tpl.indexOf("}}", posData + 1))
         .trim()
         .split(":");
-      const source = nameArray.shift();
-      const name = nameArray.shift();
+      let src = ''
+      let name = ''
       let defaultValue = ''
+      let id = []
+      // nameArray.shift();
+      if (source !== '') {
+        src = nameArray.shift()
+        name = nameArray.shift()
+        id.push(source)
+        id.push(name)
+      } else {
+        name = nameArray.shift()
+        id.push(name)
+      }
       if (nameArray.length > 0) {
         defaultValue = nameArray.shift();
+        id.push(defaultValue)
       }
       objProperties.name = name;
-      objProperties.source = source;
-
-      tpl = this.replaceCodeDataBinding(tpl, `${source}:${name}:${defaultValue}`, `${componentNameKey}:${name}`, defaultValue)
-
-      returnTemplateObj = {...this.setTemplateComponentObj(tag, componentNameKey, tpl)}
-      returnTemplateObj.properties.push({...objProperties});
-      posData = tpl.indexOf(`{{ ${source}:`, posData + 1);
+      objProperties.source = src;
+      console.log(id.join(':'))
+      tpl = this.replaceCodeDataBinding(tpl, `${id.join(':')}`, `${componentNameKey}:${name}`, defaultValue)
+      if (returnTemplateObj.properties.length === 0) {
+        returnTemplateObj = {...this.setTemplateComponentObj(tag, componentNameKey, tpl)}
+        returnTemplateObj.properties.push({...objProperties});
+      } else {
+        returnTemplateObj.properties.push({...objProperties});
+        returnTemplateObj.template = tpl
+      }
+      console.log('RETURN TEMPLATE OBJ', returnTemplateObj)
+      posData = tpl.indexOf(pattern, posData + 1);
     }
     return returnTemplateObj
   }
@@ -55,8 +76,8 @@ class TransformIndexTemplateFunctions {
     let templateObj = {...template};
 
     templateObj = this.parseDataBinding('data', tag, componentNameKey, tpl, templateObj)
-    console.log("TEMPLATE OBJ DATABINDING", templateObj)
-
+    templateObj = this.parseDataBinding('', tag, componentNameKey, templateObj.template, templateObj)
+    // console.log('TEMPLATE OBJECT:::::::::::', templateObj)
     return {
       template: {...templateObj},
     }
@@ -65,9 +86,9 @@ class TransformIndexTemplateFunctions {
   replaceCodeCatFor(tpl, index, indexToReplace, codeToReplace) {
     tpl = tpl.replaceAll(
       `{{ ${index} }}`,
-      `<data-binding-component binding-id="${indexToReplace}">${JSON.parse(
+      `<cat-data-binding-component binding-id="${indexToReplace}">${JSON.parse(
         JSON.stringify(codeToReplace)
-      )}</data-binding-component>`
+      )}</cat-data-binding-component>`
     );
 
     return tpl;
@@ -86,19 +107,13 @@ class TransformIndexTemplateFunctions {
       const tagCatFor = templateObj.template.substring(posIniTag + 1, templateObj.template.indexOf(">", posFor + 1)).trim()
       const tagName = tagCatFor.split(" ").shift().trim();
       let replaceCatForHTML = ''
-      let replaceCatForHTMLParsed = ''
       let replaceCatForHTMLItem = ''
-      let catForSentence = ''
-      let catForSentenceArray = []
-      let dataSource = ''
-      let dataName = ''
-      let dataArrayId = ''
-      let arrayCatFor = []
+      let template = ''
 
       posTagClose = this.getPosTagClose(templateObj.template, tagName);
       replaceCatForHTML = templateObj.template.substring(posIniTag, posTagClose);
       replaceCatForHTMLItem = templateObj.template.substring(templateObj.template.indexOf(">", posIniTag) + 1, posTagClose - tagName.length - 3)
-      catForSentence = templateObj.template.substring(posFor + catForPatternLength, templateObj.template.indexOf('"', posFor + catForPatternLength))
+      /* catForSentence = templateObj.template.substring(posFor + catForPatternLength, templateObj.template.indexOf('"', posFor + catForPatternLength))
       catForSentenceArray = catForSentence.split(':')
       console.log('DATA FOR SENTENCE ARRAY::::::::::', catForSentenceArray)
       dataName = catForSentenceArray.shift()
@@ -108,21 +123,23 @@ class TransformIndexTemplateFunctions {
       arrayCatFor = catForSentenceArray.shift().replace('[', '').replace(']', '').split(',').map((item) => item.replace(/'/gi, '').trim())
       arrayCatFor.forEach((value, index) => {
         replaceCatForHTMLParsed += replaceCatForHTMLItem.replaceAll(`{{ ${dataName} }}`, value)
-      })
+      }) */
       // dataName = catForSentenceArray.shift()
-      console.log('DATA NAME:::::::::::::::::::::::', dataName)
-      console.log('DATA ARRAY ID:::::::::::::::::::', dataArrayId)
-      console.log('ARRAY CAT FOR:::::::::::::::::::', arrayCatFor)
-      console.log('SENTENCE::::::::::::::::::::::::', replaceCatForHTMLParsed)
-
-      templateObj.template = templateObj.template.replaceAll(
+      
+      posFor = templateObj.template.indexOf(catForPattern, posFor + 1);
+      template = templateObj.template.replaceAll(
         `${replaceCatForHTML}`,
         `<cat-for-component cat-for-id="${componentNameKey}:test">${JSON.parse(
-          JSON.stringify(replaceCatForHTMLParsed)
+          JSON.stringify(replaceCatForHTML)
         )}</cat-for-component>`
       );
-      // cat-for-component
-      posFor = templateObj.template.indexOf(catForPattern, posFor + 1);
+      template = template.replaceAll(
+        `${replaceCatForHTMLItem}`,
+        `<cat-for-item-component cat-for-id="${componentNameKey}:test">${JSON.parse(
+          JSON.stringify(replaceCatForHTMLItem)
+        )}</cat-for-item-component>`
+      );
+      templateObj.template = template
     }
 
     return {
@@ -199,4 +216,3 @@ class TransformIndexTemplateFunctions {
 }
 
 export default new TransformIndexTemplateFunctions();
-

@@ -1,4 +1,6 @@
-import { changeByNameValue } from "@framework/template-components/data-binding-component";
+import { changeByNameValue } from "@framework/template-components/cat-data-binding-component";
+import "@framework/template-components/cat-for-component";
+import "@framework/template-components/cat-for-item-component";
 import CatPage from "@framework/cat-page";
 
 document.addEventListener('DOMContentLoaded', () => {
