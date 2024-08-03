@@ -1,9 +1,9 @@
-import Observable from "@framework/common/Observable";
-import singleton from "@framework/common/Singleton";
+// import Observable from "@framework/common/Observable";
+// import singleton from "@framework/common/Singleton";
 
-interface IDataBindingsProperty {
+/* interface IDataBindingsProperty {
      [index: string]: string[];
-}
+} */
 
 // const dataBindings = {} as IDataBindings;
 
@@ -17,17 +17,25 @@ class DataBindingComponentElement extends HTMLElement {
     // template.setAttribute('class', 'databinding');
     // template.innerHTML = this.innerHTML
     // this.appendChild(template);
-    this._root.appendChild(this.firstChild?.cloneNode(true));
+    if (this.firstChild !== null) {
+      const firstChilds = this.firstChild
+      console.log(firstChilds)
+      // firstChildS.forEach((fc) => {
+      this._root.appendChild(firstChilds.cloneNode(true));
+      // })
+    }
   }
 
   connectedCallback() {
-    console.log("Custom element added to page.", singleton.value);
-    const bingdingIdArray = this.getAttribute('binding-id')?.split(':')
+    /* const bingdingIdArray = this.getAttribute('binding-id')?.split(':')
     const nameProperty = bingdingIdArray?.pop() as string;
-    const nameComponent = bingdingIdArray?.pop() as string;
+    const nameComponent = bingdingIdArray?.pop() as string; */
     // const shadowRoot = this.shadowRoot as unknown as ShadowRoot;
-    const observable = new Observable(singleton.value);
+    const idBinding = this.getAttribute('binding-id') as string
+    /* const observable = new Observable(this.innerHTML);
+    
     observable.subscribe((newValue: any) => {
+      console.log("ENTRO EN SUBSCRIBE")
       // const templateHTML = this.querySelector('.databinding') as unknown as Element;
       const textValue = document.createTextNode(newValue)
       this.innerHTML = ''
@@ -36,10 +44,11 @@ class DataBindingComponentElement extends HTMLElement {
       // this.innerHTML = newValue;
       // templateHTML.innerHTML = newValue;
       this.appendChild(textValue.cloneNode(true))
-    })
+    }) */
     // this.setAttribute('data-component-id', index)
-    const key = `${nameComponent}:${nameProperty}`;
-    singleton.addElement(key, observable)
+    // const key = `${nameComponent}:${nameProperty}`;
+    // singleton.addElement(key, observable.value)
+    console.log("Custom element added to page.", idBinding);
   }
 
   disconnectedCallback() {
@@ -58,7 +67,7 @@ class DataBindingComponentElement extends HTMLElement {
 }
 customElements.define("cat-data-binding-component", DataBindingComponentElement);
 
-const changePropertyByName = (component: string, name: any, value: any) => {
+/* const changePropertyByName = (component: string, name: any, value: any) => {
   const key = `${component}:${name}`
   singleton.modifyElementValue(key, value)
 };
@@ -100,4 +109,4 @@ const changePropertyByObject = (component: string, value: object) => {
 }
 
 export const changeByNameValue = changePropertyByName
-export const changeByObjectValue = changePropertyByObject
+export const changeByObjectValue = changePropertyByObject */

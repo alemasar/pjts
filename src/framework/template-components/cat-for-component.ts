@@ -1,13 +1,13 @@
 class CatForComponentElement extends HTMLElement {
   constructor() {
     super();
-    const template = document.createElement('template');
+    /* const template = document.createElement('template');
     const shadowRoot = this.attachShadow({mode: 'open'});
     this.setAttribute('class', 'databinding-element');
     template.setAttribute('class', 'databinding');
     template.innerHTML = this.innerHTML
     this.appendChild(template);
-    shadowRoot.appendChild(template.content.cloneNode(true));
+    shadowRoot.appendChild(template.content.cloneNode(true)); */
   }
 
   connectedCallback() {

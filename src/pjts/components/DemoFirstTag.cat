@@ -13,10 +13,9 @@
   </span> <span>WEB COMPONENT</span> {{ data:hello.title:"HELLO WORLD......" }}</h1>
 </template>
 <script>
-import { changeByObjectValue } from "@framework/template-components/cat-data-binding-component";
 class DemoFirstTag {
   constructor() {
-    const handler = () => {
+    /* const handler = () => {
       console.log('HELLO WORLD DESDE SCRIPT DE COMPONENT')
       this.changeByObjectValue()
       setTimeout(()=> {
@@ -32,7 +31,7 @@ class DemoFirstTag {
         });
       }, 2000)
     }
-    document.addEventListener("DOMContentLoaded", handler)
+    document.addEventListener("DOMContentLoaded", handler) */
   }
   changeByObjectValue() {
     console.log('CHANGE OBJECT VALUE FROM CLASS')

@@ -1,7 +1,7 @@
-import Observable from "@framework/common/Observable";
+// import Observable from "@framework/common/Observable";
 
 interface IDataBindings {
-  [index: string]: Observable[];
+  [index: string]: [];
 }
 
 /**
@@ -43,8 +43,9 @@ class Singleton {
    * Finally, any singleton can define some business logic, which can be
    * executed on its instance.
    */
-  public existsElement(index: string) {
+  /* public existsElement(index: string) {
     const keysDatabindings = Object.keys(this._value);
+    console.log('KEYS DATA BIDINGS', keysDatabindings)
     return keysDatabindings.includes(index)
   }
   public modifyElementValue(index: string, value: any) {
@@ -56,14 +57,16 @@ class Singleton {
     }
   }
   public addElement(index: string, element: Observable ) {
+    console.log('EXISTS ELEMENT', this.existsElement(index))
     if (this.existsElement(index) === false) {
       this._value[index]=[]
     }
     this._value[index].push(element)
+    console.log('VALUE SINGLETON :::::::::::::::::', this._value[index])
   }
   public deleteElement(index: string) {
     delete this._value[index]
-  }
+  } */
 }
 
 const singleton = Singleton.instance
