@@ -9,7 +9,7 @@ class Router {
   popstateHandler() {
     const event = new CustomEvent("url-changed");
     
-    console.log('POPSTATE::::::::', window.location.pathname)
+    // console.log('POPSTATE::::::::', window.location.pathname)
     // this.changePageTemplateFromLocation()
     document.dispatchEvent(event);
     this.pushHistoryState({

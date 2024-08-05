@@ -27,21 +27,21 @@ class CatPage extends HTMLElement {
   }
 
   connectedCallback() {
-    console.log("Custom element added to page.");
+    // console.log("Custom element added to page.");
     this.changePageTemplateFromLocation()
   }
 
   disconnectedCallback() {
-    console.log("Custom element removed from page.");
+    // console.log("Custom element removed from page.");
     document.removeEventListener("url-changed", this.changePageTemplateFromLocation.bind(this), false)
   }
 
   adoptedCallback() {
-    console.log("Custom element moved to new page.");
+    // console.log("Custom element moved to new page.");
   }
 
   attributeChangedCallback(name: string) {
-    console.log(`Attribute ${name} has changed.`);
+    // console.log(`Attribute ${name} has changed.`);
   }
 
   getPathFromUrl() {
@@ -104,8 +104,8 @@ class CatPage extends HTMLElement {
       goToUrl = '404'
       templatesSelector = templates[this.templateId as any]
     }
-    console.log(this.templateId)
-    console.log(templatesSelector)
+    // console.log(this.templateId)
+    // console.log(templatesSelector)
 
     this._root.innerHTML = ''
     this._root.appendChild(templatesSelector?.content.cloneNode(true))

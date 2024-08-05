@@ -1,5 +1,6 @@
 /* maps observable properties to a Set of
 observer functions, which use the property */
+// const componentObservables = new Map()
 const observers = new WeakMap()
 
 /* contains the triggered observer functions,
@@ -15,15 +16,18 @@ class Observable  {
   by wrapping it into a proxy, it also adds a blank
   Map for property-observer pairs to be saved later */
   observable (obj: any) {
+    // componentObservables.set(key, obj)
     observers.set(obj, new Map())
+    // console.log('OBSERVERS',observers)
     return new Proxy(obj, {get: this.getHandler.bind(this), set: this.setHandler.bind(this)})
   }
-
+  deleteObserver(key: any) {
+    observers.delete(key)
+  }
   /* this trap intercepts get operations,
   it does nothing if no observer is executing
   at the moment */
   private getHandler (target: any, key: string, receiver: any) {
-    console.log(this)
     const result = Reflect.get(target, key, receiver)
     if (currentObserver) {
       this.registerObserver(target, key, currentObserver)
@@ -55,7 +59,6 @@ class Observable  {
   private setHandler (target: any, p: string | symbol, newValue: any, receiver: any): boolean {
     const observersForKey = observers.get(target).get(p)
     if (observersForKey) {
-      console.log(this)
       observersForKey.forEach(this.queueObserver.bind(this))
     }
     return Reflect.set(target, p, newValue, receiver)

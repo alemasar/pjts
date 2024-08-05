@@ -1,5 +1,5 @@
-// import { changeByNameValue } from "@framework/template-components/cat-data-binding-component";
-import Observable from "@framework/common/Observable"
+import "@framework/template-components/cat-data-binding-component";
+// import Observable from "@framework/common/Observable"
 import "@framework/template-components/cat-for-component";
 import "@framework/template-components/cat-for-item-component";
 import CatPage from "@framework/cat-page";
@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }, false)
 // },false) */
 
-const person = Observable.observable({data: {name: 'John'}})
+/* const data = Observable.observable({hello: {message: 'HELLO WORLD'}})
 
 function print () {
-  console.log(person.data.name)
+  console.log(data.hello.message)
 }
 
 // outputs 'John' to the console
 Observable.observe(print)
 
 // does nothing
-setTimeout(() => person.data.name = 'Dave', 100)
+setTimeout(() => data.hello.message = 'BYE BYE WORLD', 100) */

@@ -12,20 +12,20 @@ class CatForComponentElement extends HTMLElement {
   }
 
   connectedCallback() {
-    console.log("Custom element added to page.", this.innerHTML);
+    // console.log("Custom element added to page.", this.innerHTML);
   }
 
   disconnectedCallback() {
-    console.log("Custom element removed from page.");
+    // console.log("Custom element removed from page.");
   }
 
   adoptedCallback() {
-    console.log("Custom element moved to new page.");
+    // console.log("Custom element moved to new page.");
   }
 
-  attributeChangedCallback(name: string) {
-    console.log(`Attribute ${name} has changed.`);
-  }
+  /* attributeChangedCallback(name: string) {
+    // console.log(`Attribute ${name} has changed.`);
+  } */
 }
 customElements.define("cat-for-item-component", CatForComponentElement);
 export default CatForComponentElement;

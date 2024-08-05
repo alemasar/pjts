@@ -1,22 +1,22 @@
 // import Observable from "@framework/common/Observable";
-
+/*
 interface IDataBindings {
   [index: string]: [];
 }
-
-/**
+*/
+/*
  * The Singleton class defines an `instance` getter, that lets clients access
  * the unique singleton instance.
  */
 class Singleton {
   static #instance: Singleton;
-  private _value: IDataBindings;
+  private _value: Map<string, any>;
   /**
    * The Singleton's constructor should always be private to prevent direct
    * construction calls with the `new` operator.
    */
   private constructor() {
-    this._value = {} as IDataBindings
+    this._value = new Map()
   }
 
   /**
