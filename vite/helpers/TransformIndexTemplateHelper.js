@@ -42,7 +42,7 @@ class TransformIndexTemplateHelper {
         if (scriptTpl !== '') {
           code = `
             ${scriptTpl}
-            export default new ${cnk}();
+            customElements.define('${config.tag}', ${cnk});
             console.log('entro EN CAT FILE');
           `
         }
@@ -65,13 +65,16 @@ class TransformIndexTemplateHelper {
     
     pages.forEach((p) => {
       let pageHTML = transformIndexTemplateFunctions.getFileContents(`src/${options.pages.base}/${options.pages.path}/${p.name}.html`)
+      let resultHTML = ''
       templateElementsValues.forEach((element) => {
-        while (new RegExp(`<${element.tag}`).test(pageHTML) === true) {
-          const iniPointTag = new RegExp(`<${element.tag}`).exec(pageHTML).index
-          const endPointTag = new RegExp(`</${element.tag}>`).exec(pageHTML).index
-          const codeToReplace = pageHTML.slice(iniPointTag, endPointTag + element.tag.length + 3)
+        let posElement = pageHTML.indexOf(`<${element.tag}`)
+        while (posElement > 0) {
+          const endPointTag = pageHTML.indexOf(`</${element.tag}>`, posElement)
+          const codeToReplace = pageHTML.slice(posElement, endPointTag + element.tag.length + 3)
 
-          pageHTML = pageHTML.replaceAll(codeToReplace, template[element.name].template)
+          pageHTML = pageHTML.replaceAll(codeToReplace, `<${element.tag}>${template[element.name].template}</${element.tag}>`)
+          posElement = pageHTML.indexOf(`<${element.tag}`, posElement + 1)
+          console.log(posElement)
         }
       })
       // indexHtml = indexHtml.replace('</body>', `<template id="${p.name}Template">${pageHTML}</template></body>`);

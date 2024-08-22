@@ -1,4 +1,6 @@
 import Router from '@framework/common/Router'
+import CatHTMLElement from '@framework/common/generic/CatHTMLElement'
+
 interface IPageLinks{
   obj: HTMLAnchorElement
   handler: (evt: any) => void;
@@ -7,14 +9,14 @@ interface IPageLinks{
 const pageLinks: IPageLinks[] = []
 const templates: any[] = []
 
-class CatPage extends HTMLElement {
+class CatPage extends CatHTMLElement {
   router: Router;
   templateId: string;
-  _root: any;
+  // _root: any;
   constructor() {
     super();
     
-    this._root = this.attachShadow({ mode: "closed" });
+    // this._root = this.attachShadow({ mode: "closed" });
     const templatePages = this.querySelectorAll('template')
     templatePages.forEach((tp) => {
       templates[tp.getAttribute('id') as any] = tp
@@ -27,6 +29,7 @@ class CatPage extends HTMLElement {
   }
 
   connectedCallback() {
+    CatHTMLElement.prototype.connectedCallback.call(this);
     // console.log("Custom element added to page.");
     this.changePageTemplateFromLocation()
   }
@@ -40,9 +43,9 @@ class CatPage extends HTMLElement {
     // console.log("Custom element moved to new page.");
   }
 
-  attributeChangedCallback(name: string) {
+  /* attributeChangedCallback(name: string) {
     // console.log(`Attribute ${name} has changed.`);
-  }
+  } */
 
   getPathFromUrl() {
     const pathname = window.location.pathname.split('/')

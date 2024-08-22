@@ -1,4 +1,6 @@
-class CatForComponentElement extends HTMLElement {
+import CatHTMLElement from '@framework/common/generic/CatHTMLElement'
+
+class CatForComponentElement extends CatHTMLElement {
   constructor() {
     super();
     /* const template = document.createElement('template');

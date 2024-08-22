@@ -1,9 +1,11 @@
-class CatForComponentElement extends HTMLElement {
-  _root: any
+import CatHTMLElement from '@framework/common/generic/CatHTMLElement'
+
+class CatForComponentElement extends CatHTMLElement {
+  // _root: any
   constructor() {
     super();
     const template = document.createElement('template');
-    this._root = this.attachShadow({mode: 'closed'});
+    // this._root = this.attachShadow({mode: 'closed'});
     this.setAttribute('class', 'databinding-element');
     template.setAttribute('class', 'databinding');
     template.innerHTML = this.innerHTML

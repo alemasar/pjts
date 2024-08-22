@@ -47,7 +47,7 @@ export default function transformIndextemplate(options) {
             template = structuredClone(catConfig.template)
             code = template[componentName].code
           }
-
+          console.log(code)
           return {
             code,
             map: null, // provide source map if available

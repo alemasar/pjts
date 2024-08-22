@@ -13,27 +13,23 @@
   </span> <span>WEB COMPONENT</span> {{ data:hello.title:"HELLO WORLD......" }}</h1>
 </template>
 <script>
-class DemoFirstTag {
+// import Singleton from "@framework/common/Singleton"
+import CatHTMLElement from '@framework/common/generic/CatHTMLElement'
+
+class DemoFirstTag extends CatHTMLElement {
   constructor() {
-    // console.log('INSIDE COMPONENT CLASS')
-    
-    /* const handler = () => {
-      console.log('HELLO WORLD DESDE SCRIPT DE COMPONENT')
-      this.changeByObjectValue()
-      setTimeout(()=> {
-        changeByObjectValue('DemoFirstTag', {
-          hello: {
-            title: 'AMAZING TITLE',
-            message: 'HELLO WORLD AGAIN..... GUAY'
-          },
-          bye: {
-            message: 'BYE BYE AGAIN..... GUAY',
-            footer: 'AMAZING FOOTER'
-          }
-        });
-      }, 2000)
-    }
-    document.addEventListener("DOMContentLoaded", handler) */
+    super();
+  }
+  connectedCallback() {
+    CatHTMLElement.prototype.connectedCallback.call(this);
+    console.log('CONNECTED CALLBACK DEMOFIRST TAG')
+    console.log(this.querySelectorAll(".data-databinding-element"))
+    this.data.commit(this.id, {
+      hello: "world"
+    })
+    this.data.push()
+    this.data.pull(this.id)
+    this.data.subscribe()
   }
   changeByObjectValue() {
     console.log('CHANGE OBJECT VALUE FROM CLASS')

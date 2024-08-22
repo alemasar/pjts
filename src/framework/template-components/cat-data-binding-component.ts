@@ -1,4 +1,6 @@
-import Observable from "@framework/common/Observable"
+import CatHTMLElement from '@framework/common/generic/CatHTMLElement'
+// import Observable from "@framework/common/Observable"
+// import singleton from "@framework/common/Singleton"
 
 // import Observable from "@framework/common/Observable";
 // import singleton from "@framework/common/Singleton";
@@ -22,63 +24,78 @@ const getObjString = (objArray: string[], objStringParsed: string, defaultValue:
   return objString
 }
 
-const parseObjToJSONString = (objString: string, defaultValue: any) => {
+/* const parseObjToJSONString = (objString: string, defaultValue: any) => {
   const objArray = objString.split(".")
   let returnStringObj = ''
 
   returnStringObj = getObjString(objArray, '', defaultValue)
   return returnStringObj
-}
+} */
 
 const getObj = (keys: string[], obj: any) => {
   let objString = obj
   let returnObj = objString
+  let returnValue = null
+  let key: string =''
+
   if (keys.length > 0) {
-    const key: string = keys.shift() as string
-    console.log(objString[key])
-    returnObj = getObj(keys, objString[key]) as unknown as object
+    key = keys.shift() as string
+    if (objString[key]) {
+      returnObj = getObj(keys, objString[key]) as unknown as object
+      returnValue = returnObj
+    }
   }
-  return returnObj
+  return returnValue
 }
 
-const getDataObjValue = (obj: any, property: any) => {
+/* const getDataObjValue = (obj: any, property: any) => {
   const keysArray = property.split('.')
   let returnObject = {}
 
   returnObject = getObj(keysArray, obj)
   console.log('OBJECT::::::::::', returnObject)
   return returnObject
-}
+} */
 
-class DataBindingComponentElement extends HTMLElement {
-  _root: any;
-  data: any;
+class DataBindingComponentElement extends CatHTMLElement {
   nameProperty: string
   constructor() {
     super();
-    const bingdingIdArray = this.getAttribute('binding-id')?.split(':')
-    this.nameProperty = bingdingIdArray?.pop() as string;
-    // const nameComponent = bingdingIdArray?.pop() as string;
-    const objString = parseObjToJSONString(this.nameProperty, this.innerHTML)
-    console.log('OBJECT STRING:::::::::::', JSON.parse(objString))
-    this._root = this.attachShadow({ mode: "closed" });
-    this.data = Observable.observable(JSON.parse(objString))
-    Observable.observe(this.changeHTML.bind(this))
-    // const template = document.createElement('template');
-    this.setAttribute('class', 'databinding-element');
-    // template.setAttribute('class', 'databinding');
-    // template.innerHTML = this.innerHTML
-    // this.appendChild(template);
-    if (this.firstChild !== null) {
-      const firstChilds = this.firstChild
-      // console.log(firstChilds)
-      // firstChildS.forEach((fc) => {
-      this._root.appendChild(firstChilds.cloneNode(true));
-      // })
+    const source = this.getAttribute('binding-source') as string
+    this.nameProperty = ''
+    if (source === 'data') {
+      const bindingId = this.getAttribute('binding-id') as string
+      const bingdingIdArray = bindingId.split(':')
+      this.nameProperty = bingdingIdArray?.pop() as string;
+      // const nameComponent = bingdingIdArray?.pop() as string;
+      // const objString = parseObjToJSONString(this.nameProperty, this.innerHTML)
+      // const text = getDataObjValue(singleton.value, this.nameProperty) as string
+      
+
+      // this._root = this.attachShadow({ mode: "closed" });
+      // if (text === null) {
+        /* singleton.value = Observable.observable(bindingId, JSON.parse(objString))
+        Observable.observe(this.changeHTML.bind(this)) */
+        // singleton.value = JSON.parse(objString)
+        // console.log('SINGLETON VALUE:::::::::::', singleton.value)
+        // console.log('HELLO MESSAGE VALUE:::::::::::', singleton.value.hello.message)
+      // }
+      // const template = document.createElement('template');
+      // template.setAttribute('class', 'databinding');
+      // template.innerHTML = this.innerHTML
+      // this.appendChild(template);
+      if (this.firstChild !== null) {
+        const firstChilds = this.firstChild
+        // console.log(firstChilds)
+        // firstChildS.forEach((fc) => {
+        this._root.appendChild(firstChilds.cloneNode(true));
+        // })
+      }
     }
   }
 
   connectedCallback() {
+    CatHTMLElement.prototype.connectedCallback.call(this);
     /* const bingdingIdArray = this.getAttribute('binding-id')?.split(':')
     const nameProperty = bingdingIdArray?.pop() as string;
     const nameComponent = bingdingIdArray?.pop() as string; */
@@ -94,19 +111,19 @@ class DataBindingComponentElement extends HTMLElement {
     
     // console.log("Custom element added to page.", this.data);
 
-    this.data.hello.message = 'BYE BYE WORLD'
   }
   changeHTML() {
     // const templateHTML = this.querySelector('.databinding') as unknown as Element;
-    const text = getDataObjValue(this.data, this.nameProperty) as string
-    console.log('DATA::::::', text)
+    /* const text = getDataObjValue(singleton.value, this.nameProperty) as string
+    const bindingId = this.getAttribute('binding-id') as string
+    console.log('DATA::::::', bindingId)
     const textValue = document.createTextNode(text)
     this.innerHTML = ''
     this._root.innerHTML = ''
     this._root.appendChild(textValue.cloneNode(true));
     // this.innerHTML = newValue;
     // templateHTML.innerHTML = newValue;
-    this.appendChild(textValue.cloneNode(true))
+    this.appendChild(textValue.cloneNode(true)) */
   }
   disconnectedCallback() {
     // console.log("Custom element removed from page.");

@@ -12,10 +12,10 @@ class TransformIndexTemplateFunctions {
     return fs.readFileSync(src, { encoding: 'utf8', flag: 'r' });
   }
 
-  replaceCodeDataBinding(tpl, index, indexToReplace, codeToReplace) {
+  replaceCodeDataBinding(tpl, index, indexToReplace, codeToReplace, source) {
     tpl = tpl.replaceAll(
       `{{ ${index} }}`,
-      `<cat-data-binding-component binding-id="${indexToReplace}">${JSON.parse(
+      `<cat-data-binding-component class="${source}-databinding-element" binding-source="${source}" binding-id="${indexToReplace}">${JSON.parse(
         JSON.stringify(codeToReplace)
       )}</cat-data-binding-component>`
     );
@@ -27,11 +27,10 @@ class TransformIndexTemplateFunctions {
     const objProperties = {};
     let returnTemplateObj = structuredClone(templateObj);
     let pattern = `{{ ${source}:`
-    if (source === '') {
+    if (source === 'cat-for') {
       pattern = `{{ `
     }
     let posData = tpl.indexOf(pattern);
-
     while (posData > -1) {
       const nameArray = tpl
         .substring(posData + 2, tpl.indexOf("}}", posData + 1))
@@ -42,13 +41,14 @@ class TransformIndexTemplateFunctions {
       let defaultValue = ''
       let id = []
       // nameArray.shift();
-      if (source !== '') {
+      if (source !== 'cat-for') {
         src = nameArray.shift()
         name = nameArray.shift()
         id.push(source)
         id.push(name)
       } else {
         name = nameArray.shift()
+        src = source
         id.push(name)
       }
       if (nameArray.length > 0) {
@@ -57,8 +57,8 @@ class TransformIndexTemplateFunctions {
       }
       objProperties.name = name;
       objProperties.source = src;
-      console.log(id.join(':'))
-      tpl = this.replaceCodeDataBinding(tpl, `${id.join(':')}`, `${componentNameKey}:${name}`, defaultValue)
+      tpl = this.replaceCodeDataBinding(tpl, `${id.join(':')}`, `${componentNameKey}:${name}`, defaultValue, source)
+
       if (returnTemplateObj.properties.length === 0) {
         returnTemplateObj = {...this.setTemplateComponentObj(tag, componentNameKey, tpl)}
         returnTemplateObj.properties.push({...objProperties});
@@ -66,7 +66,6 @@ class TransformIndexTemplateFunctions {
         returnTemplateObj.properties.push({...objProperties});
         returnTemplateObj.template = tpl
       }
-      console.log('RETURN TEMPLATE OBJ', returnTemplateObj)
       posData = tpl.indexOf(pattern, posData + 1);
     }
     return returnTemplateObj
@@ -76,7 +75,7 @@ class TransformIndexTemplateFunctions {
     let templateObj = {...template};
 
     templateObj = this.parseDataBinding('data', tag, componentNameKey, tpl, templateObj)
-    templateObj = this.parseDataBinding('', tag, componentNameKey, templateObj.template, templateObj)
+    templateObj = this.parseDataBinding('cat-for', tag, componentNameKey, templateObj.template, templateObj)
     // console.log('TEMPLATE OBJECT:::::::::::', templateObj)
     return {
       template: {...templateObj},
