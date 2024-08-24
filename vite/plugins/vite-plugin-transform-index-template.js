@@ -47,7 +47,7 @@ export default function transformIndextemplate(options) {
             template = structuredClone(catConfig.template)
             code = template[componentName].code
           }
-          console.log(code)
+
           return {
             code,
             map: null, // provide source map if available
@@ -83,6 +83,7 @@ export default function transformIndextemplate(options) {
               ${templates.indexHtml}
             </cat-page>
           `;
+          console.log(returnHtml + indexHtml + bodyHTML + '</body></html>')
           return returnHtml + indexHtml + bodyHTML + '</body></html>';
         }
       }

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 class TransformIndexTemplateFunctions {
   constructor() {
@@ -13,13 +14,14 @@ class TransformIndexTemplateFunctions {
   }
 
   replaceCodeDataBinding(tpl, index, indexToReplace, codeToReplace, source) {
+    const id = uuidv4();
     tpl = tpl.replaceAll(
       `{{ ${index} }}`,
-      `<cat-data-binding-component class="${source}-databinding-element" binding-source="${source}" binding-id="${indexToReplace}">${JSON.parse(
+      `<cat-data-binding-component cat-data-id="${id}" class="${source}-databinding-element" binding-source="${source}" binding-id="${indexToReplace}">${JSON.parse(
         JSON.stringify(codeToReplace)
       )}</cat-data-binding-component>`
     );
-
+    console.log('TEMPLATE:::::::::::::', tpl)
     return tpl;
   }
   

@@ -20,11 +20,17 @@ class CatHTMLElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.id = uuidv4();
+    // console.log('ID::::::::::::::::', this.getAttribute('cat-data-id'))
+    if (this.getAttribute('cat-data-id') === null) {
+      this.id = uuidv4();
+      this.setAttribute('cat-data-id', this.id)
+    } else {
+      this.id = this.getAttribute('cat-data-id');
+    }
     this.data = new Data();
     this.data.id = this.id;
     // this.data.pull(this.id)
-    this.setAttribute('cat-data-id', this.id)
+    //const dataBindingElements = this.querySelectorAll(".data-databinding-element")
     // this.mapComponentAttributes();
   }
 }

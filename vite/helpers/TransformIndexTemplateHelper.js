@@ -74,7 +74,7 @@ class TransformIndexTemplateHelper {
 
           pageHTML = pageHTML.replaceAll(codeToReplace, `<${element.tag}>${template[element.name].template}</${element.tag}>`)
           posElement = pageHTML.indexOf(`<${element.tag}`, posElement + 1)
-          console.log(posElement)
+          //console.log(posElement)
         }
       })
       // indexHtml = indexHtml.replace('</body>', `<template id="${p.name}Template">${pageHTML}</template></body>`);

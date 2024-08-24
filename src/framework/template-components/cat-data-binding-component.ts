@@ -5,10 +5,6 @@ import CatHTMLElement from '@framework/common/generic/CatHTMLElement'
 // import Observable from "@framework/common/Observable";
 // import singleton from "@framework/common/Singleton";
 
-/* interface IDataBindingsProperty {
-     [index: string]: string[];
-} */
-
 // const dataBindings = {} as IDataBindings;
 
 const getObjString = (objArray: string[], objStringParsed: string, defaultValue: any) => {
@@ -96,6 +92,12 @@ class DataBindingComponentElement extends CatHTMLElement {
 
   connectedCallback() {
     CatHTMLElement.prototype.connectedCallback.call(this);
+    const event: CustomEvent<any> = new CustomEvent<any>('cat-databinding-loaded', {detail: { id: this.id, catElement: this}});
+    
+    console.log('DATABINDING CONNECTED CALLBACK::::::::')
+    // this.changePageTemplateFromLocation()
+    document.dispatchEvent(event);
+
     /* const bingdingIdArray = this.getAttribute('binding-id')?.split(':')
     const nameProperty = bingdingIdArray?.pop() as string;
     const nameComponent = bingdingIdArray?.pop() as string; */
@@ -112,7 +114,8 @@ class DataBindingComponentElement extends CatHTMLElement {
     // console.log("Custom element added to page.", this.data);
 
   }
-  changeHTML() {
+  changeHTML(value: any) {
+    console.log('VALUE', value)
     // const templateHTML = this.querySelector('.databinding') as unknown as Element;
     /* const text = getDataObjValue(singleton.value, this.nameProperty) as string
     const bindingId = this.getAttribute('binding-id') as string

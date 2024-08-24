@@ -19,17 +19,17 @@ import CatHTMLElement from '@framework/common/generic/CatHTMLElement'
 class DemoFirstTag extends CatHTMLElement {
   constructor() {
     super();
+    this._root.innerHTML = this.innerHTML
   }
   connectedCallback() {
     CatHTMLElement.prototype.connectedCallback.call(this);
-    console.log('CONNECTED CALLBACK DEMOFIRST TAG')
-    console.log(this.querySelectorAll(".data-databinding-element"))
+    // console.log(this.data.databindings)
+    // this.data.subscribe(this.id, dbe, handler)
     this.data.commit(this.id, {
       hello: "world"
     })
     this.data.push()
     this.data.pull(this.id)
-    this.data.subscribe()
   }
   changeByObjectValue() {
     console.log('CHANGE OBJECT VALUE FROM CLASS')

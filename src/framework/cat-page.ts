@@ -24,7 +24,7 @@ class CatPage extends CatHTMLElement {
     this.templateId = ''
     this.innerHTML = ''
     this.router = new Router()
-
+    this.addEventListener('cat-databinding-loaded', this.handler.bind(this) as EventListener, false)
     document.addEventListener('url-changed', this.changePageTemplateFromLocation.bind(this), false)
   }
 
@@ -46,6 +46,20 @@ class CatPage extends CatHTMLElement {
   /* attributeChangedCallback(name: string) {
     // console.log(`Attribute ${name} has changed.`);
   } */
+  handler(e: CustomEvent<any>) {
+    const subscribeFunction = (value: any, element:CatHTMLElement) => {
+      element._root.innerHTML=''
+      element._root.innerHTML=value
+    }
+    console.log('querySelector databindings size:::::::::', this)
+    this.data.setDataBinding(e.detail.id, subscribeFunction)
+    console.log('databindings size:::::::::', this.data.databindings.size)
+    if (this.data.databindings.size === this.querySelectorAll(".data-databinding-element").length) {
+      const event: CustomEvent<any> = new CustomEvent<any>('cat-page-databinding-loaded');
+      console.log('ALL DATABINDINGS LOADED')
+      document.dispatchEvent(event);
+    }
+  }
 
   getPathFromUrl() {
     const pathname = window.location.pathname.split('/')
