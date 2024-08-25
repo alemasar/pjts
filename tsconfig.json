@@ -21,8 +21,10 @@
     "baseUrl": ".", // root of your "paths" below. Required if "paths" is defined
     "paths": {
       "@/*": ["src/*"],
-      "@framework/*": ["src/framework/*"],
-      "@pjts/*": ["src/pjts/*"]
+      "@cat/*": ["src/cat/src/*"],
+      "@cat-server/*": ["src/cat/src/server/*"],
+      "@cat-client/*": ["src/cat/src/client/*"],
+      "@pjts-game/*": ["src/pjts/*"]
     }
   },
   "include": ["src"]

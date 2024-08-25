@@ -1,19 +1,19 @@
 import { defineConfig } from 'vite'
 import path from 'path';
-import config from './src/pjts/pjts.config'
-import transformIndexTemplatePlugin from './vite/plugins/vite-plugin-transform-index-template'
+/* import config from './src/pjts/pjts.config' */
+import catTransformPlugin from './src/cat/vite-plugins/vite-plugin-cat-transform'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
   server: {
-    port: 3000,
+    port: 8080,
     https: true,
   },
   plugins: [
     basicSsl(),
     // addComponentsPlugin(config),
     {
-      ...transformIndexTemplatePlugin(config),
+      ...catTransformPlugin(),
       enforce: 'post',
     },
   ],
@@ -27,8 +27,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@framework': path.resolve(__dirname, './src/framework'),
-      '@pjts': path.resolve(__dirname, './src/pjts'),
+      '@cat': path.resolve(__dirname, './src/cat/src'),
+      '@cat-server': path.resolve(__dirname, './src/cat/src/server'),
+      '@cat-client': path.resolve(__dirname, './src/cat/src/client'),
+      '@pjts-game': path.resolve(__dirname, './src/pjts'),
     },
   }
 })

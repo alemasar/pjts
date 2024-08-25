@@ -1,8 +1,0 @@
-<config>
-  {
-    "tag": "demo-second-tag"
-  }
-</config>
-<template>
-  <h1 class="hola">HELLO WORLD FROM DEMO SECOND TAG WEB COMPONENT</h1>
-</template>
