@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import path from 'path';
-/* import config from './src/pjts/pjts.config' */
+import config from './src/pjts/pjts.config'
 import catTransformPlugin from './src/cat/vite-plugins/vite-plugin-cat-transform'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
@@ -13,8 +13,7 @@ export default defineConfig({
     basicSsl(),
     // addComponentsPlugin(config),
     {
-      ...catTransformPlugin(),
-      enforce: 'post',
+      ...catTransformPlugin(config),
     },
   ],
   build: {

@@ -1,3 +1,9 @@
-export default function () {
-  console.log('HELLO WORLD.CAT')
-}
+<config>
+  {
+    "name": "HelloWorld",
+    "tag": "demo-second-tag"
+  }
+</config>
+<template>
+  <h1 class="hola">HELLO WORLD FROM DEMO SECOND TAG WEB COMPONENT</h1>
+</template>

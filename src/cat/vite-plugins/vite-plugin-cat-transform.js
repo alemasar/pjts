@@ -1,4 +1,5 @@
 import path from 'path';
+import catTransformHelper from './plugin-helpers/CatTransformHelper'
 
 const fileRegex = /main.ts$/
 const fileEndsWith = '.cat'
@@ -6,6 +7,10 @@ const fileEndsWith = '.cat'
 export default function transformIndextemplate(options) {
   const virtualComponentsId = 'virtual:components'
   const resolvedVirtualComponentId = '\0' + virtualComponentsId
+  const allCatFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.components.base}/${options.components.path}`), '.cat')
+  allCatFiles.forEach((cf) => {
+    console.log(cf)
+  })
   const exports = `
     import helloWorld from "@pjts-game/components/hello-world.cat";
     console.log('VIRTUAL COMPONENT CAT FILE')
@@ -41,11 +46,11 @@ export default function transformIndextemplate(options) {
           }
         } else */ 
         if (id.endsWith(fileEndsWith) === true) {
-          console.log('PASO PER TRANSFORM CAT FILE')
-          /* return {
-            code: src,
-            map: null, // provide source map if available
-          } */
+          const catConfigComponent = catTransformHelper.getConfig(code)
+          console.log('PASO PER TRANSFORM CAT FILE', catConfigComponent)
+          code = `export default function () {
+            console.log('HELLO WORLD.CAT')
+          }`
         }
         return {
           code,
