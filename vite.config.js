@@ -14,15 +14,16 @@ export default defineConfig({
     // addComponentsPlugin(config),
     {
       ...catTransformPlugin(config),
+      enforce: 'post',
     },
   ],
-  build: {
+  /* build: {
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
     },
-  },
+  }, */
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

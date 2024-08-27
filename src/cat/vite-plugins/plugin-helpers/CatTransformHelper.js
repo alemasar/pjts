@@ -26,10 +26,19 @@ class CatTransformHelper {
   getConfig(code) {
     const config = code.match(this.configRegExp)
     let returnValue = '';
-    console.log('GET CONFIG', config)
 
     if (config !== null) {
       returnValue = JSON.parse(JSON.stringify(config[0].replace('<config>', '').replace('</config>', '')));
+    }
+    return returnValue;
+  }
+  getTemplate(code) {
+    const template = code.match(this.templateRegExp)
+    let returnValue = '';
+    console.log('GET TEMPLATE', template)
+
+    if (template !== '') {
+      returnValue = template[0];
     }
     return returnValue;
   }

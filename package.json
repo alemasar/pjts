@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run build && vite",
+    "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .ts .scss",
@@ -32,6 +32,7 @@
     "vite": "^5.3.1"
   },
   "dependencies": {
+    "hookable": "^5.5.3",
     "uuid": "^10.0.0"
   }
 }

@@ -1,7 +1,6 @@
 import cat from '@cat/index'
 
-cat()
-
-export default function() {
+export default async function() {
+  await cat()
   console.log('INDEX FROM PJTS')
 }
