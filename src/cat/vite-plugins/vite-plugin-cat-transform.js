@@ -36,8 +36,8 @@ allCatFiles.forEach((cf, index) => {
     console.log('VIRTUAL COMPONENT CAT FILE', arrayComponents)
     // helloWorld()
     export default {
+      routes: arrayPages,
       components: arrayComponents,
-      pages: arrayPages,
     }
 `
   return {
@@ -87,12 +87,12 @@ allCatFiles.forEach((cf, index) => {
                 `
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4()
-          console.log('hola')
+
           code = `const returnTemplate = \`<template>${src}</template>\`
           export default {
                     id: '${uuid}',
-                    page: returnTemplate
-                    route: ${path.normalize(id).split('//').pop().replace('.html', '')}
+                    template: \`${code}\`,
+                    route: \`${id.split(path.sep).pop().replace('.html', '')}\`
                   }
                 `
         }

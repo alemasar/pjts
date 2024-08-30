@@ -8,8 +8,8 @@ const catContextInstance = CatContext.instance
 elements.components.forEach((c: any) => {
   catContextInstance.component = c
 })
-elements.pages.forEach((c: any) => {
-  catContextInstance.pages = c
+elements.routes.forEach((p: any) => {
+  catContextInstance.route = p
 })
 
 pjts().then(()=>{
