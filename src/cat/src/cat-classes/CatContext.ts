@@ -2,26 +2,38 @@
  
  interface ICatComponent{
   id: string
-  tag: string
   template: string
+  tag: string
+}
+
+interface IPageRoute{
+  id: string
+  template: string
+  route: string
 }
 
 class CatContext {
   static #instance: CatContext;
   private _internalId: string
-  private _getTagFromId: Map<string, string>
-  private _getIdFromId: Map<string, string>
+  private _getTagById: Map<string, string>
+  private _getComponentIdById: Map<string, string>
+  private _getRouteTemplateById: Map<string, string>
+  private _getRouteIdById: Map<string, string>
   private _cat: {
     components: Map<string, ICatComponent>
+    routes: Map<string, IPageRoute>
   };
 
   private constructor() {
     this._cat = {
-      components: new Map<string, ICatComponent>()
+      components: new Map<string, ICatComponent>(),
+      routes: new Map<string, IPageRoute>(),
     }
     this._internalId = ''
-    this._getTagFromId=new Map<string, string>()
-    this._getIdFromId=new Map<string, string>()
+    this._getTagById=new Map<string, string>()
+    this._getComponentIdById=new Map<string, string>()
+    this._getRouteTemplateById=new Map<string, string>()
+    this._getRouteIdById=new Map<string, string>()
   }
 
   public static get instance(): CatContext {
@@ -45,20 +57,46 @@ class CatContext {
       tag: newValue.tag,
       template: newValue.template,
     })
-    this._getTagFromId.set(newValue.tag, this._internalId)
-    this._getIdFromId.set(newValue.id, this._internalId)
+    this._getTagById.set(newValue.tag, this._internalId)
+    this._getComponentIdById.set(newValue.id, this._internalId)
   }
   get getComponentByTag() {
     return (tag: string) => {
-      return this._cat.components.get(this._getTagFromId.get(tag) as string)
+      return this._cat.components.get(this._getTagById.get(tag) as string)
     }
   }
   get getComponentById() {
     return (id: string) => {
-      return this._cat.components.get(this._getIdFromId.get(id) as string)
+      return this._cat.components.get(this._getComponentIdById.get(id) as string)
     }
   }
+  get routes() {
+    /* return (id: string) => {
+      return this._cat.components.get(id)
+    } */
+    return this._cat.routes
+  }
+  set route(newValue: IPageRoute) {
+    this._internalId = uuidv4()
 
+    this._cat.routes.set(this._internalId, {
+      id: newValue.id,
+      route: newValue.route,
+      template: newValue.template,
+    })
+    this._getRouteTemplateById.set(newValue.route, this._internalId)
+    this._getRouteIdById.set(newValue.id, this._internalId)
+  }
+  get getRoutePageByRoute() {
+    return (route: string) => {
+      return this._cat.routes.get(this._getRouteTemplateById.get(route) as string)
+    }
+  }
+  get getRoutePageById() {
+    return (id: string) => {
+      return this._cat.routes.get(this._getRouteIdById.get(id) as string)
+    }
+  }
   mergeObj(master: any, merge: any) {
     const masterKeys = Object.keys(master)
     const mergeKeys = Object.keys(merge)

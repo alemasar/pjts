@@ -18,8 +18,7 @@ export default function transformIndextemplate(options) {
 `
   let beforeExportPagesFiles = `const arrayPages = []
 `
-  let exports = `arrayCOmponents = []
-`
+  let exports = ``
 allPagesFiles.forEach((pf, index) => {
     pagesFilesImports += `import page${index} from "@pjts-game/${options.pages.path}/${pf.name}.html";
 `
@@ -70,7 +69,7 @@ allCatFiles.forEach((cf, index) => {
             catConfigComponent = JSON.parse(catTransformHelper.getConfig(code))
           }catch(e) {
             // console.error(`%c${e}`, 'color: red;')
-            console.log(`\x1b[31m%s\x1b[0m`, e);
+            console.error(`\x1b[31m%s\x1b[0m`, e);
           }
           const catTemplateComponent = catTransformHelper.getTemplate(code).replace('<template>', `<template cat-id="${uuid}">`)
           const tagName = catConfigComponent.tag
@@ -81,15 +80,21 @@ allCatFiles.forEach((cf, index) => {
           templates[tagName].set(uuid, catTemplateComponent)
           code = `const returnTemplate = \`${templates[tagName].get(uuid)}\`
                   export default {
-                    tag: '${tagName}',
                     id: '${uuid}',
                     template: returnTemplate
+                    tag: '${tagName}',
                   }
                 `
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
+          const uuid = uuidv4()
           console.log('hola')
           code = `const returnTemplate = \`<template>${src}</template>\`
-          export default returnTemplate`
+          export default {
+                    id: '${uuid}',
+                    page: returnTemplate
+                    route: ${path.normalize(id).split('//').pop().replace('.html', '')}
+                  }
+                `
         }
         return {
           code,

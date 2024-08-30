@@ -8,7 +8,9 @@ const catContextInstance = CatContext.instance
 elements.components.forEach((c: any) => {
   catContextInstance.component = c
 })
-
+elements.pages.forEach((c: any) => {
+  catContextInstance.pages = c
+})
 
 pjts().then(()=>{
   console.log('HELLO WORLD FROM MAIN', elements)
