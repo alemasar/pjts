@@ -3,23 +3,44 @@ import { v4 as uuidv4 } from 'uuid';
 import catTransformHelper from './plugin-helpers/CatTransformHelper'
 
 const fileRegex = /main.ts$/
-const fileEndsWith = '.cat'
+const fileCatEndsWith = '.cat'
+const fileHTMLEndsWith = '.html'
 const templates = []
 let transformIndexState = 'before'
 export default function transformIndextemplate(options) {
   const virtualComponentsId = 'virtual:components'
   const resolvedVirtualComponentId = '\0' + virtualComponentsId
+  const allPagesFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.pages.base}/${options.pages.path}`), '.html')
   const allCatFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.components.base}/${options.components.path}`), '.cat')
-  let exports = ''
-  allCatFiles.forEach((cf) => {
+  let catFilesImports = ''
+  let pagesFilesImports = ''
+  let beforeExportCatFiles = `const arrayComponents = []
+`
+  let beforeExportPagesFiles = `const arrayPages = []
+`
+  let exports = `arrayCOmponents = []
+`
+allPagesFiles.forEach((pf, index) => {
+    pagesFilesImports += `import page${index} from "@pjts-game/${options.pages.path}/${pf.name}.html";
+`
+    beforeExportPagesFiles +=`arrayPages.push(page${index})
+`
+})
+allCatFiles.forEach((cf, index) => {
     console.log('CCCFFFF', cf)
-    exports = `
-      import component from "@pjts-game/${options.components.path}/${cf.name}.cat";
-      console.log('VIRTUAL COMPONENT CAT FILE', component)
-      // helloWorld()
-      export default component
-    `
+    catFilesImports += `import component${index} from "@pjts-game/${options.components.path}/${cf.name}.cat";
+`
+    beforeExportCatFiles +=`arrayComponents.push(component${index})
+`
   })
+  exports += `
+    console.log('VIRTUAL COMPONENT CAT FILE', arrayComponents)
+    // helloWorld()
+    export default {
+      components: arrayComponents,
+      pages: arrayPages,
+    }
+`
   return {
     name: 'vite-plugin-cat-transform', // required, will show up in warnings and errors
     resolveId: {
@@ -33,7 +54,7 @@ export default function transformIndextemplate(options) {
       handler(id) {
         if (id === resolvedVirtualComponentId) {
           console.log('RETURN EXPORTS OF VIRTUAL MODULE')
-          return exports;
+          return pagesFilesImports + catFilesImports + beforeExportPagesFiles + beforeExportCatFiles + exports;
         }
       }
     },
@@ -41,10 +62,16 @@ export default function transformIndextemplate(options) {
       handler(src, id) {
         let code = src
         console.log(id)
-        if (id.endsWith(fileEndsWith) === true) {
+        if (id.endsWith(fileCatEndsWith) === true) {
           console.log('TRANSFORM CAT FILE',id)
           const uuid = uuidv4()
-          const catConfigComponent = JSON.parse(catTransformHelper.getConfig(code))
+          let catConfigComponent = {}
+          try{
+            catConfigComponent = JSON.parse(catTransformHelper.getConfig(code))
+          }catch(e) {
+            // console.error(`%c${e}`, 'color: red;')
+            console.log(`\x1b[31m%s\x1b[0m`, e);
+          }
           const catTemplateComponent = catTransformHelper.getTemplate(code).replace('<template>', `<template cat-id="${uuid}">`)
           const tagName = catConfigComponent.tag
           const tags = Object.keys(templates)
@@ -59,6 +86,10 @@ export default function transformIndextemplate(options) {
                     template: returnTemplate
                   }
                 `
+        } else if (id.endsWith(fileHTMLEndsWith) === true) {
+          console.log('hola')
+          code = `const returnTemplate = \`<template>${src}</template>\`
+          export default returnTemplate`
         }
         return {
           code,
@@ -70,7 +101,7 @@ export default function transformIndextemplate(options) {
     transformIndexHtml: {
       handler: (html, ctx) => {
         if (transformIndexState === 'before') {
-          console.log('CALL TO TRANSFORM INDEX BEFORE')
+          console.log('CALL TO TRANSFORM INDEX BEFORE', allPagesFiles)
           transformIndexState = 'after'
         } else if (transformIndexState === 'after') {
           console.log('CALL TO TRANSFORM INDEX AFTER')
@@ -80,3 +111,4 @@ export default function transformIndextemplate(options) {
     }
   }
 }
+

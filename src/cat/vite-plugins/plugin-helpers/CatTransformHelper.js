@@ -29,6 +29,8 @@ class CatTransformHelper {
 
     if (config !== null) {
       returnValue = JSON.parse(JSON.stringify(config[0].replace('<config>', '').replace('</config>', '')));
+    } else {
+      throw new Error(`The config of the component can't be blank`)
     }
     return returnValue;
   }
