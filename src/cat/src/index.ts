@@ -1,7 +1,6 @@
 import server from '@cat-server/index'
 import client from '@cat-client/index'
 
-
 const load = async ()=>{
   try {
     const returnValues = await Promise.all([server, client])

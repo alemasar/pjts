@@ -81,14 +81,14 @@ allCatFiles.forEach((cf, index) => {
           code = `const returnTemplate = \`${templates[tagName].get(uuid)}\`
                   export default {
                     id: '${uuid}',
-                    template: returnTemplate
+                    template: returnTemplate,
                     tag: '${tagName}',
                   }
                 `
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4()
 
-          code = `const returnTemplate = \`<template>${src}</template>\`
+          code = `const returnTemplate = \`<template cat-id="${id}">${src}</template>\`
           export default {
                     id: '${uuid}',
                     template: \`${code}\`,
