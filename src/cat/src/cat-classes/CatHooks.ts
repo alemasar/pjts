@@ -20,24 +20,43 @@ class CatHooks {
       return CatHooks.#instance;
   }
   async addHook(hook: string, handler: Function){
-    let oldHook = Function
-    let returnHandler: Function = ()=>{
-      handler()
-    }
+    /* let hooksHandlers = handler
     if (this._hookNames.has(hook) === true) {
-      oldHook = this._hookNames.get(hook) as FunctionConstructor
-      returnHandler = () => {
-        oldHook()
+      const oldHandler = this._hookNames.get(hook) as Function
+      hooksHandlers = () => {
+        oldHandler()
         handler()
       }
-    }
+    } */
+    console.log(handler)
     this._hookNames.set(hook, handler)
-    this._unregisterHookName.set(hook, this._hooks.hook(hook, handler))
+    this._hooks.hook(hook, handler)
   }
-  async registerCallHook(hook: string) {
-    // console.log(this._hooks.callHook(hook))
+  callHookName(hook: string) {
+    console.log(hook)
+    if (this._hookNames.has(hook) === true) {
+      this._unregisterHookName.set(hook, () => {
+        this._hooks.callHook(hook)
+      })
+      const unregisterHookName = this._unregisterHookName.get(hook) as HookCallback
+      unregisterHookName()
+    }
+    console.log(this._unregisterHookName)
+  }
+
+//     this._hooks.callHook(hook)
+  /* async registerCallHook(hook: string) {
+    let allHooks = new Array<Function>()
+    
+    if (this._unregisterHookName.has(hook) === false) {
+      this._unregisterHookName.set(hook,new Array())
+    }
+    allHooks = this._unregisterHookName.get(hook) as Array<HookCallback>
     this._hooks.callHook(hook)
-  }
+    const hola = this._hooks.callHook(hook)
+    allHooks.push(hola as HookCallback)
+    
+  } */
   unregisterHook(hook: string) {
     console.log(hook)
     console.log(this._unregisterHookName)
@@ -45,9 +64,9 @@ class CatHooks {
     if (this._unregisterHookName.has(hook) === true) {
       const unregisterCallback = this._unregisterHookName.get(hook) as HookCallback
       unregisterCallback()
-      this._hookNames.delete(hook)
-      this._unregisterHookName.delete(hook)
     }
+    this._hookNames.delete(hook)
+    this._unregisterHookName.delete(hook)
   }
 }
 

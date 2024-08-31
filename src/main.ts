@@ -21,9 +21,11 @@ pjts().then(async ()=>{
     console.log('HELLO')
   })
 
-  instanceHooks.registerCallHook('hello')
+  instanceHooks.addHook('hello', () => {
+    console.log('WORLD')
+  })
   instanceHooks.unregisterHook('hello')
-  instanceHooks.registerCallHook('hello')
+  instanceHooks.callHookName('hello')
   // Create a hookable instance
   /* const hooks = createHooks()
   const unregister = new Map<string, HookCallback>()
