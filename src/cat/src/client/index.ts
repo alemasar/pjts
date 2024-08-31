@@ -1,4 +1,5 @@
 import CatContext from '@cat/cat-classes/CatContext'
+import CatHooks from '@cat/cat-classes/CatHooks'
 
 const clientPromise: Promise<Function> = new Promise((resolve, reject) => {
   // This Promise resolves to a string

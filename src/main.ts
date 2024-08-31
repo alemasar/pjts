@@ -17,15 +17,17 @@ elements.routes.forEach((p: any) => {
 pjts().then(async ()=>{
   const instanceHooks = CatHooks.instance
 
-  instanceHooks.addHook('hello', () => {
-    console.log('HELLO')
+  instanceHooks.addHook('hello', (args:any) => {
+    console.log('HELLO', args)
   })
 
-  instanceHooks.addHook('hello', () => {
-    console.log('WORLD')
+  instanceHooks.addHook('hello', (args:any) => {
+    console.log('WORLD', args)
   })
-  instanceHooks.unregisterHook('hello')
-  instanceHooks.callHookName('hello')
+  // instanceHooks.unregisterHook('hello')
+  instanceHooks.callHookName('hello', {
+    hello: 'HELLO WORLD'
+  })
   // Create a hookable instance
   /* const hooks = createHooks()
   const unregister = new Map<string, HookCallback>()

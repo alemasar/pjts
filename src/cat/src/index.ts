@@ -1,5 +1,6 @@
 import server from '@cat-server/index'
 import client from '@cat-client/index'
+import CatHooks from '@cat/cat-classes/CatHooks'
 
 const load = async ()=>{
   try {

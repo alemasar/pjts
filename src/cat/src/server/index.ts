@@ -1,3 +1,5 @@
+import CatHooks from '@cat/cat-classes/CatHooks'
+
 class Server {
   url: URL
   constructor() {
