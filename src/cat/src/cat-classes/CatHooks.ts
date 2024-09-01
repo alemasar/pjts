@@ -20,20 +20,10 @@ class CatHooks {
       return CatHooks.#instance;
   }
   async addHook(hook: string, handler: Function){
-    /* let hooksHandlers = handler
-    if (this._hookNames.has(hook) === true) {
-      const oldHandler = this._hookNames.get(hook) as Function
-      hooksHandlers = () => {
-        oldHandler()
-        handler()
-      }
-    } */
-    console.log(handler)
     this._hookNames.set(hook, handler)
     this._hooks.hook(hook, handler)
   }
   callHookName(hook: string, args: any) {
-    console.log(hook)
     if (this._hookNames.has(hook) === true) {
       this._unregisterHookName.set(hook, () => {
         this._hooks.callHook(hook, args)
@@ -41,7 +31,6 @@ class CatHooks {
       const unregisterHookName = this._unregisterHookName.get(hook) as HookCallback
       unregisterHookName()
     }
-    console.log(this._unregisterHookName)
   }
 
 //     this._hooks.callHook(hook)

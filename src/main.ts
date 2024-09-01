@@ -6,18 +6,35 @@ import CatContext from '@cat/cat-classes/CatContext'
 import CatHooks from '@cat/cat-classes/CatHooks'
 //import { createHooks, HookCallback } from 'hookable'
 
-const catContextInstance = CatContext.instance
-elements.components.forEach((c: any) => {
-  catContextInstance.component = c
-})
-elements.routes.forEach((p: any) => {
-  catContextInstance.route = p
-})
+class Game {
+  context: CatContext
+  hooks: CatHooks
+  constructor() {
+    this.context = CatContext.instance
+    this.hooks = CatHooks.instance
+    elements.components.forEach((c: any) => {
+      this.context.component = c
+    })
+    elements.routes.forEach((p: any) => {
+      this.context.route = p
+    })
+    console.log('CONSTRUCTOR GAME')
+  }
+  async init () {
+    await pjts();
+    // Do some more asynchronous operations if needed
+  }
+  static async build () {
+    const game = new Game();
+    await game.init();
+    return game
+  }
+}
+const api = await Game.build();
+// pjts().then(async ()=>{
 
-pjts().then(async ()=>{
-  const instanceHooks = CatHooks.instance
-
-  instanceHooks.addHook('hello', (args:any) => {
+  // console.log('HELLO')
+  /* instanceHooks.addHook('hello', (args:any) => {
     console.log('HELLO', args)
   })
 
@@ -27,16 +44,6 @@ pjts().then(async ()=>{
   // instanceHooks.unregisterHook('hello')
   instanceHooks.callHookName('hello', {
     hello: 'HELLO WORLD'
-  })
-  // Create a hookable instance
-  /* const hooks = createHooks()
-  const unregister = new Map<string, HookCallback>()
-  // Hook on 'hello'
-  unregister.set('hello', hooks.hook('hello', () => { console.log('Hello World' )}))
-  
-  const callback = unregister.get('hello') as HookCallback
-  callback()
-  // Call 'hello' hook
-  hooks.callHook('hello') */
-})
+  }) */
+// })
 

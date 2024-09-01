@@ -85,14 +85,18 @@ class CatContext {
       template: newValue.template,
     })
     this._getRouteTemplateById.set(newValue.route, this._internalId)
-    this._getRouteIdById.set(newValue.id, this._internalId)
+    this._getRouteIdById.set(this._internalId, newValue.id)
   }
-  get getRoutePageByRoute() {
+  get getRouteNameByRoute() {
     return (route: string) => {
-      return this._cat.routes.get(this._getRouteTemplateById.get(route) as string)
+      const pathname = route.replace('/', '')
+      console.log(this._cat.routes)
+      const idTemplate = this._getRouteTemplateById.get(pathname)
+      console.log(idTemplate)
+      return this._cat.routes.get(idTemplate as string)
     }
   }
-  get getRoutePageById() {
+  get getRouteTemplateById() {
     return (id: string) => {
       return this._cat.routes.get(this._getRouteIdById.get(id) as string)
     }

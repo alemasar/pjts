@@ -33,7 +33,7 @@ allCatFiles.forEach((cf, index) => {
 `
   })
   exports += `
-    console.log('VIRTUAL COMPONENT CAT FILE', arrayComponents)
+    console.log('VIRTUAL COMPONENT CAT FILE', arrayPages)
     // helloWorld()
     export default {
       routes: arrayPages,
@@ -92,7 +92,7 @@ allCatFiles.forEach((cf, index) => {
           export default {
                     id: '${uuid}',
                     template: \`${code}\`,
-                    route: \`${id.split(path.sep).pop().replace('.html', '')}\`
+                    route: \`${id.split('/').pop().replace('.html', '')}\`
                   }
                 `
         }
