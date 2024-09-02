@@ -6,6 +6,8 @@ const fileRegex = /main.ts$/
 const fileCatEndsWith = '.cat'
 const fileHTMLEndsWith = '.html'
 const templates = []
+const pages = []
+let urlPage = ''
 let transformIndexState = 'before'
 export default function transformIndextemplate(options) {
   const virtualComponentsId = 'virtual:components'
@@ -87,14 +89,20 @@ allCatFiles.forEach((cf, index) => {
                 `
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4()
-
-          code = `const returnTemplate = \`<template cat-id="${id}">${src}</template>\`
+          const route = id.split('/').pop().replace('.html', '')
+          const templateHTML = `${src}`
+          code = `const returnTemplate = \`${templateHTML}\`
           export default {
                     id: '${uuid}',
-                    template: \`${code}\`,
-                    route: \`${id.split('/').pop().replace('.html', '')}\`
+                    template: returnTemplate,
+                    route: \`${route}\`
                   }
                 `
+          pages[route] = {
+            id: uuid,
+            route,
+            template: templateHTML,
+          }
         }
         return {
           code,
@@ -105,13 +113,24 @@ allCatFiles.forEach((cf, index) => {
 
     transformIndexHtml: {
       handler: (html, ctx) => {
+        let returnHTML = html
         if (transformIndexState === 'before') {
-          console.log('CALL TO TRANSFORM INDEX BEFORE', allPagesFiles)
+          urlPage = ctx.originalUrl
+          console.log('CALL TO TRANSFORM INDEX BEFORE', ctx.originalUrl)
           transformIndexState = 'after'
         } else if (transformIndexState === 'after') {
-          console.log('CALL TO TRANSFORM INDEX AFTER')
+          let routeUrl = urlPage.replace('/', '', 'g')
+          let templateUrl = 'index'
+
+          if (routeUrl !== '') {
+            templateUrl = routeUrl
+          }
+          returnHTML = html.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`)
+          console.log('CALL TO TRANSFORM INDEX AFTER', pages[templateUrl])
+          // transformIndexState = 'before'
+          return returnHTML;
         }
-        return html;
+        console.log(returnHTML)
       }
     }
   }

@@ -5,7 +5,12 @@ import pjts from '@pjts-game/index'
 import CatContext from '@cat/cat-classes/CatContext'
 import CatHooks from '@cat/cat-classes/CatHooks'
 //import { createHooks, HookCallback } from 'hookable'
+import CatPage from '@cat/cat-web-components-classes/CatPage'
 
+document.addEventListener('DOMContentLoaded', () => {
+  customElements.define("cat-page", CatPage);
+  console.log('BODY INNERHTML', document.body.innerHTML)
+},false)
 class Game {
   context: CatContext
   hooks: CatHooks
@@ -18,7 +23,7 @@ class Game {
     elements.routes.forEach((p: any) => {
       this.context.route = p
     })
-    console.log('CONSTRUCTOR GAME')
+    console.log('CONSTRUCTOR GAME', this.context.components)
   }
   async init () {
     await pjts();
