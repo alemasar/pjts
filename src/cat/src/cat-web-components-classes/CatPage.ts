@@ -1,15 +1,27 @@
 import CatContext from '@cat/cat-classes/CatContext'
 
 class CatPage extends HTMLElement {
-  
+  context: CatContext
+  static get observedAttributes () {
+    return ['cat-route'];
+  }
   constructor() {
     super();
-    const context = CatContext.instance
-    console.log('INNER HTML::::::', context)
+    this.context = CatContext.instance
+    console.log('INNER HTML::::::', this.context)
   }
 
   connectedCallback() {
-    console.log('INNER HTML::::::', this.innerHTML)
+    document.addEventListener(`click`, e => {
+      const link = e.target as HTMLElement
+      const origin = link.closest(`a`)
+      const target = link.getAttribute('target')
+      
+      if (origin && target === null) {
+        e.preventDefault()
+        this.setAttribute('cat-route', 'index')
+      }
+    })
   }
 
   disconnectedCallback() {
@@ -20,9 +32,13 @@ class CatPage extends HTMLElement {
     // console.log("Custom element moved to new page.");
   }
 
-  /* attributeChangedCallback(name: string) {
-    // console.log(`Attribute ${name} has changed.`);
-  } */
+  attributeChangedCallback(name: string, oldValue: any, newValue: any) {
+    console.log(`Attribute ${name} with ${oldValue} has changed to ${newValue}.`)
+    console.log(`TEMPLATE ${this.context.getRouteNameByRoute(newValue)?.template}`)
+    if(oldValue !== null) {
+      this.innerHTML = this.context.getRouteNameByRoute(newValue)?.template as string
+    }
+  }
 }
 
 export default CatPage

@@ -7,8 +7,8 @@ import CatHooks from '@cat/cat-classes/CatHooks'
 //import { createHooks, HookCallback } from 'hookable'
 import CatPage from '@cat/cat-web-components-classes/CatPage'
 
+customElements.define("cat-page", CatPage);
 document.addEventListener('DOMContentLoaded', () => {
-  customElements.define("cat-page", CatPage);
   console.log('BODY INNERHTML', document.body.innerHTML)
 },false)
 class Game {
