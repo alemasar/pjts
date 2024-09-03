@@ -12,6 +12,7 @@ class CatPage extends HTMLElement {
   }
 
   connectedCallback() {
+    window.addEventListener('popstate', this.popstateHandler.bind(this), false)
     document.addEventListener(`click`, e => {
       const link = e.target as HTMLElement
       const origin = link.closest(`a`)
@@ -19,7 +20,7 @@ class CatPage extends HTMLElement {
       
       if (origin && target === null) {
         e.preventDefault()
-        this.setAttribute('cat-route', 'index')
+        this.setAttribute('cat-route', link.getAttribute('href') as string)
       }
     })
   }
@@ -34,10 +35,28 @@ class CatPage extends HTMLElement {
 
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
     console.log(`Attribute ${name} with ${oldValue} has changed to ${newValue}.`)
-    console.log(`TEMPLATE ${this.context.getRouteNameByRoute(newValue)?.template}`)
-    if(oldValue !== null) {
-      this.innerHTML = this.context.getRouteNameByRoute(newValue)?.template as string
+    // console.log(`TEMPLATE ${this.context.getRouteNameByRoute(newValue)?.template}`)
+    this.changePage(name, oldValue, newValue)
+  }
+
+
+  changePage(name: string, oldValue: any, newValue: any) {
+    if(name==='cat-route') {
+      const routeTemplate = newValue.replace('/', '').trim()
+      let route = 'index'
+      if (routeTemplate !== ''){
+        console.log('TEMPLATE::::::', routeTemplate)
+        route = routeTemplate
+      }
+      this.innerHTML = this.context.getRouteNameByRoute(route)?.template as string
+      history.pushState({}, '', newValue)
     }
+  }
+
+  popstateHandler(e: any) {
+    const url= new URL(e.currentTarget.location.href)
+    console.log('EVENT POP STATE',url)
+    this.changePage('cat-route', '', url.pathname)
   }
 }
 

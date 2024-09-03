@@ -7,10 +7,6 @@ import CatHooks from '@cat/cat-classes/CatHooks'
 //import { createHooks, HookCallback } from 'hookable'
 import CatPage from '@cat/cat-web-components-classes/CatPage'
 
-customElements.define("cat-page", CatPage);
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('BODY INNERHTML', document.body.innerHTML)
-},false)
 class Game {
   context: CatContext
   hooks: CatHooks
@@ -36,6 +32,12 @@ class Game {
   }
 }
 const api = await Game.build();
+
+customElements.define("cat-page", CatPage);
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('BODY INNERHTML', document.body.innerHTML)
+},false)
+
 // pjts().then(async ()=>{
 
   // console.log('HELLO')
