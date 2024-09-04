@@ -16,18 +16,21 @@ export default function transformIndextemplate(options) {
   const allCatFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.components.base}/${options.components.path}`), '.cat')
   let catFilesImports = ''
   let pagesFilesImports = ''
+  const onChange = () => {
+    console.log('onchange')
+  }
   let beforeExportCatFiles = `const arrayComponents = []
 `
   let beforeExportPagesFiles = `const arrayPages = []
 `
   let exports = ``
-allPagesFiles.forEach((pf, index) => {
+  allPagesFiles.forEach((pf, index) => {
     pagesFilesImports += `import page${index} from "@pjts-game/${options.pages.path}/${pf.name}.html";
 `
     beforeExportPagesFiles +=`arrayPages.push(page${index})
 `
-})
-allCatFiles.forEach((cf, index) => {
+  })
+  allCatFiles.forEach((cf, index) => {
     console.log('CCCFFFF', cf)
     catFilesImports += `import component${index} from "@pjts-game/${options.components.path}/${cf.name}.cat";
 `
@@ -54,7 +57,6 @@ allCatFiles.forEach((cf, index) => {
     load: {
       handler(id) {
         if (id === resolvedVirtualComponentId) {
-          console.log('RETURN EXPORTS OF VIRTUAL MODULE')
           return pagesFilesImports + catFilesImports + beforeExportPagesFiles + beforeExportCatFiles + exports;
         }
       }
@@ -64,7 +66,7 @@ allCatFiles.forEach((cf, index) => {
         let code = src
         console.log(id)
         if (id.endsWith(fileCatEndsWith) === true) {
-          console.log('TRANSFORM CAT FILE',id)
+          // console.log('TRANSFORM CAT FILE',id)
           const uuid = uuidv4()
           let catConfigComponent = {}
           try{
@@ -85,6 +87,11 @@ allCatFiles.forEach((cf, index) => {
                     id: '${uuid}',
                     template: returnTemplate,
                     tag: '${tagName}',
+                    tagClass: class Prova {
+                      constructor() {
+                        console.log('CONSTRUCTOR PROVA CLASS')
+                      }
+                    }
                   }
                 `
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
@@ -110,29 +117,48 @@ allCatFiles.forEach((cf, index) => {
         }
       }
     },
-
-    transformIndexHtml: {
-      handler: (html, ctx) => {
-        let returnHTML = html
-        if (transformIndexState === 'before') {
+    transformIndexHtml (html, ctx){
+      if (ctx.server) {
+        if (ctx.originalUrl && urlPage === '') {
           urlPage = ctx.originalUrl
-          console.log('CALL TO TRANSFORM INDEX BEFORE', ctx.originalUrl)
-          transformIndexState = 'after'
-        } else if (transformIndexState === 'after') {
+
+          return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/vite.svg" />`)
+        } else if (urlPage !== ''){
           let routeUrl = urlPage.replace('/', '', 'g')
           let templateUrl = 'index'
-
+          
           if (routeUrl !== '') {
             templateUrl = routeUrl
           }
-          returnHTML = html.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`)
-          console.log('CALL TO TRANSFORM INDEX AFTER', pages[templateUrl])
-          // transformIndexState = 'before'
-          return returnHTML;
+          console.log('RETURN HTML REPLACED', html.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`))
+          return html.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
         }
-        console.log(returnHTML)
       }
-    }
+          console.log('RETURN HTML')
+      return html
+    },
+/*
+    transformIndexHtml (html, ctx){
+      let returnHTML = html
+      if (ctx.bundle) {
+        urlPage = ctx.originalUrl
+        // console.log('CALL TO TRANSFORM INDEX BEFORE', ctx.originalUrl)
+        transformIndexState = 'after'
+      } 
+      if (ctx.chunk) {
+        let routeUrl = urlPage.replace('/', '', 'g')
+        let templateUrl = 'index'
+
+        if (routeUrl !== '') {
+          templateUrl = routeUrl
+        }
+        returnHTML = html.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`)
+        // console.log('CALL TO TRANSFORM INDEX AFTER', pages[templateUrl])
+        // transformIndexState = 'before'
+        return returnHTML;
+      }
+    } */
   }
 }
 

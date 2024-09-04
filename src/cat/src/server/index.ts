@@ -1,4 +1,4 @@
-import CatHooks from '@cat/cat-classes/CatHooks'
+// import CatHooks from '@cat/cat-classes/CatHooks'
 import CatContext from '@cat/cat-classes/CatContext'
 
 interface IPageRoute{

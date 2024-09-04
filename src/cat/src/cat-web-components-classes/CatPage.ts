@@ -36,11 +36,11 @@ class CatPage extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
     console.log(`Attribute ${name} with ${oldValue} has changed to ${newValue}.`)
     // console.log(`TEMPLATE ${this.context.getRouteNameByRoute(newValue)?.template}`)
-    this.changePage(name, oldValue, newValue)
+    this.changePage(name, newValue)
   }
 
 
-  changePage(name: string, oldValue: any, newValue: any) {
+  changePage(name: string, newValue: any) {
     if(name==='cat-route') {
       const routeTemplate = newValue.replace('/', '').trim()
       let route = 'index'
@@ -55,8 +55,7 @@ class CatPage extends HTMLElement {
 
   popstateHandler(e: any) {
     const url= new URL(e.currentTarget.location.href)
-    console.log('EVENT POP STATE',url)
-    this.changePage('cat-route', '', url.pathname)
+    this.changePage('cat-route', url.pathname)
   }
 }
 

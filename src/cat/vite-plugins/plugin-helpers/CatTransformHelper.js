@@ -37,10 +37,20 @@ class CatTransformHelper {
   getTemplate(code) {
     const template = code.match(this.templateRegExp)
     let returnValue = '';
-    console.log('GET TEMPLATE', template)
+    // console.log('GET TEMPLATE', template)
 
-    if (template !== '') {
+    if (template !== null) {
       returnValue = template[0];
+    }
+    return returnValue;
+  }
+  getScript(code) {
+    const script = code.match(this.scriptRegExp)
+    let returnValue = '';
+    // console.log('GET SCRIPT', script)
+
+    if (script !== null) {
+      returnValue = script[0];
     }
     return returnValue;
   }

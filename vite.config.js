@@ -4,6 +4,7 @@ import config from './src/pjts/pjts.config'
 import catTransformPlugin from './src/cat/vite-plugins/vite-plugin-cat-transform'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
+console.log(path.resolve(__dirname, "index.html"))
 export default defineConfig({
   server: {
     port: 8080,
@@ -17,13 +18,6 @@ export default defineConfig({
       enforce: 'post',
     },
   ],
-  /* build: {
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "index.html"),
-      },
-    },
-  }, */
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
