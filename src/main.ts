@@ -14,7 +14,7 @@ class Game {
     this.context = CatContext.instance
     this.hooks = CatHooks.instance
     elements.components.forEach((c: any) => {
-      console.log(c)
+      customElements.define(c.tag, c.tagClass);
       this.context.component = c
     })
     elements.routes.forEach((p: any) => {

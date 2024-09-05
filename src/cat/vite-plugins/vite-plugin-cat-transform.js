@@ -8,6 +8,7 @@ const fileHTMLEndsWith = '.html'
 const templates = []
 const pages = []
 let urlPage = ''
+let htmlIndex = ''
 let transformIndexState = 'before'
 export default function transformIndextemplate(options) {
   const virtualComponentsId = 'virtual:components'
@@ -16,9 +17,6 @@ export default function transformIndextemplate(options) {
   const allCatFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.components.base}/${options.components.path}`), '.cat')
   let catFilesImports = ''
   let pagesFilesImports = ''
-  const onChange = () => {
-    console.log('onchange')
-  }
   let beforeExportCatFiles = `const arrayComponents = []
 `
   let beforeExportPagesFiles = `const arrayPages = []
@@ -87,9 +85,14 @@ export default function transformIndextemplate(options) {
                     id: '${uuid}',
                     template: returnTemplate,
                     tag: '${tagName}',
-                    tagClass: class Prova {
+                    nameClass: 'Prova',
+                    tagClass: 
+                    class Prova extends HTMLElement {
                       constructor() {
-                        console.log('CONSTRUCTOR PROVA CLASS')
+                        super()
+                        const template = this.querySelector('#template');
+                        console.log('CONSTRUCTOR PROVA CLASS', template)
+                        this.innerHTML = \`${templates[tagName].get(uuid).replace(`<template cat-id="${uuid}">`, '').replace('</template>', '')}\`
                       }
                     }
                   }
@@ -121,9 +124,9 @@ export default function transformIndextemplate(options) {
       if (ctx.server) {
         if (ctx.originalUrl && urlPage === '') {
           urlPage = ctx.originalUrl
-
-          return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
+          htmlIndex = html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
       <link rel="icon" type="image/svg+xml" href="/vite.svg" />`)
+          return htmlIndex
         } else if (urlPage !== ''){
           let routeUrl = urlPage.replace('/', '', 'g')
           let templateUrl = 'index'
@@ -131,8 +134,8 @@ export default function transformIndextemplate(options) {
           if (routeUrl !== '') {
             templateUrl = routeUrl
           }
-          console.log('RETURN HTML REPLACED', html.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`))
-          return html.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
+          console.log('RETURN HTML REPLACED', htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`))
+          return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
         }
       }
           console.log('RETURN HTML')
