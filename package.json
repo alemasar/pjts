@@ -4,8 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "ts": "tsc",
     "dev": "tsc && vite",
     "build": "tsc && vite build",
+    "build:tsc": "tsc src/main.ts",
+    "build:vite": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .ts .scss",
     "lint-and-fix": "eslint . --ext .ts .scss --fix",
@@ -13,8 +16,8 @@
   },
   "devDependencies": {
     "@types/uuid": "^10.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
     "autoprefixer": "^10.4.19",
     "cssnano": "^7.0.4",
@@ -26,10 +29,12 @@
     "postcss-preset-env": "^9.5.14",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.3.2",
+    "rollup-plugin-typescript2": "^0.36.0",
     "sass": "^1.77.6",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.2",
-    "vite": "^5.3.1"
+    "typescript": "^5.6.2",
+    "vite": "^5.3.1",
+    "vite-plugin-html": "^3.2.2"
   },
   "dependencies": {
     "hookable": "^5.5.3",

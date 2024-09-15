@@ -1,4 +1,4 @@
-import './main.css'
+/* import './main.css'
 //import "@pjts-game/components/hello-world.cat";
 import elements from 'virtual:components'
 import pjts from '@pjts-game/index'
@@ -33,10 +33,11 @@ class Game {
   }
 }
 await Game.build();
-customElements.define("cat-page", CatPage);
+customElements.define("cat-page", CatPage); */
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('BODY INNERHTML', document.body.innerHTML)
+  document.body.innerHTML = "HOLA"
 },false)
 
 // pjts().then(async ()=>{
