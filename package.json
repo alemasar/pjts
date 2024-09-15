@@ -34,7 +34,8 @@
     "tailwindcss": "^3.4.4",
     "typescript": "^5.6.2",
     "vite": "^5.3.1",
-    "vite-plugin-html": "^3.2.2"
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-virtual": "^0.3.0"
   },
   "dependencies": {
     "hookable": "^5.5.3",

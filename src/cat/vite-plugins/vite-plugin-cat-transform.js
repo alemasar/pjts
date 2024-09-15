@@ -4,16 +4,16 @@ import catTransformHelper from './plugin-helpers/CatTransformHelper'
 
 const fileRegex = /main.ts$/
 const fileCatEndsWith = '.cat'
-const fileHTMLEndsWith = '.html'
+const fileHTMLEndsWith = '.html?special'
 const templates = []
 const pages = []
 let urlPage = ''
 let htmlIndex = ''
 let transformIndexState = 'before'
 export default function transformIndextemplate(options) {
-  const virtualComponentsId = 'virtual:components'
+ const virtualComponentsId = 'virtual:components'
   const resolvedVirtualComponentId = '\0' + virtualComponentsId
-  const allPagesFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.pages.base}/${options.pages.path}`), '.html')
+ const allPagesFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.pages.base}/${options.pages.path}`), '.html')
   const allCatFiles = catTransformHelper.readAllFiles(path.normalize(`src/${options.components.base}/${options.components.path}`), '.cat')
   let catFilesImports = ''
   let pagesFilesImports = ''
@@ -23,7 +23,7 @@ export default function transformIndextemplate(options) {
 `
   let exports = ``
   allPagesFiles.forEach((pf, index) => {
-    pagesFilesImports += `import page${index} from "@pjts-game/${options.pages.path}/${pf.name}.html";
+    pagesFilesImports += `import page${index} from "@pjts-game/${options.pages.path}/${pf.name}.html?special";
 `
     beforeExportPagesFiles +=`arrayPages.push(page${index})
 `
@@ -99,15 +99,17 @@ export default function transformIndextemplate(options) {
                 `
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4()
-          const route = id.split('/').pop().replace('.html', '')
+          const route = id.split('/').pop().replace('.html?special', '')
           const templateHTML = `${src}`
-          code = `const returnTemplate = \`${templateHTML}\`
-          export default {
+          console.log(templateHTML)
+          code = `const templateObj = {
                     id: '${uuid}',
-                    template: returnTemplate,
+                    template: \`${templateHTML}\`,
                     route: \`${route}\`
                   }
+                    export default templateObj
                 `
+             //  code = `export default 'HELLO WORLD'`
           pages[route] = {
             id: uuid,
             route,
@@ -115,33 +117,34 @@ export default function transformIndextemplate(options) {
           }
         }
         return {
-          code,
+          code: code,
           map: null, // provide source map if available
         }
       }
     },
     transformIndexHtml (html, ctx){
       htmlIndex = html
-      if (ctx.originalUrl && urlPage === '') {
-        urlPage = ctx.originalUrl
-        htmlIndex = html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />`)
-        return htmlIndex
-      } else if (urlPage !== ''){
-        let routeUrl = urlPage.replace('/', '', 'g')
-        let templateUrl = 'index'
-        
-        if (routeUrl !== '') {
-          templateUrl = routeUrl
+      console.log(ctx)
+      if (ctx.server) {
+        if (ctx.originalUrl && urlPage === '') {
+          urlPage = ctx.originalUrl
+          htmlIndex = html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/vite.svg" />`)
+          return htmlIndex
+        } else if (urlPage !== ''){
+          let routeUrl = urlPage.replace('/', '', 'g')
+          let templateUrl = 'index'
+          
+          if (routeUrl !== '') {
+            templateUrl = routeUrl
+          }
+          return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
         }
-        console.log('RETURN HTML REPLACED', htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`))
-        return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
-      } else if (!ctx.originalUrl) {
-        let templateUrl = 'index'
-        return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
+      } else if (ctx.path) {
+          let templateUrl = 'index'
+          return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
       }
-      console.log('RETURN HTML')
-      return html
+      return htmlIndex
     },
 /*
     transformIndexHtml (html, ctx){

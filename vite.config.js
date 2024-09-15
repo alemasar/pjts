@@ -3,6 +3,7 @@ import {resolve} from 'path';
 import config from './src/pjts/pjts.config'
 import typescript2 from "rollup-plugin-typescript2";
 import catTransformPlugin from './src/cat/vite-plugins/vite-plugin-cat-transform'
+import virtual from "vite-plugin-virtual";
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
@@ -20,10 +21,14 @@ export default defineConfig({
       ...typescript2(),
       apply: "build",
     },
+    {
+      ...catTransformPlugin(config),
+      enforce: 'post',
+    },
     // addComponentsPlugin(config),
   ],
-    build: {
-    target: "ES2022"
+  build: {
+    target: "ES2022",
   },
   resolve: {
     alias: {
