@@ -7,6 +7,9 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
   base: './',
+  output: {
+    dir: './dist'
+  },
   server: {
     port: 8080,
     https: true,
@@ -19,6 +22,9 @@ export default defineConfig({
     },
     // addComponentsPlugin(config),
   ],
+    build: {
+    target: "ES2022"
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

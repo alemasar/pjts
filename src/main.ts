@@ -1,17 +1,17 @@
-/* import './main.css'
+import './main.css'
 //import "@pjts-game/components/hello-world.cat";
-import elements from 'virtual:components'
+// import elements from 'virtual:components'
 import pjts from '@pjts-game/index'
-import CatContext from '@cat/cat-classes/CatContext'
-import CatHooks from '@cat/cat-classes/CatHooks'
+// import CatContext from '@cat/cat-classes/CatContext'
+// import CatHooks from '@cat/cat-classes/CatHooks'
 //import { createHooks, HookCallback } from 'hookable'
 import CatPage from '@cat/cat-web-components-classes/CatPage'
 
 class Game {
-  context: CatContext
-  hooks: CatHooks
+  // context: CatContext
+  // hooks: CatHooks
   constructor() {
-    this.context = CatContext.instance
+    /* this.context = CatContext.instance
     this.hooks = CatHooks.instance
     elements.components.forEach((c: any) => {
       customElements.define(c.tag, c.tagClass);
@@ -19,8 +19,8 @@ class Game {
     })
     elements.routes.forEach((p: any) => {
       this.context.route = p
-    })
-    console.log('CONSTRUCTOR GAME', this.context.components)
+    }) */
+    console.log('CONSTRUCTOR GAME')
   }
   async init () {
     await pjts();
@@ -33,7 +33,7 @@ class Game {
   }
 }
 await Game.build();
-customElements.define("cat-page", CatPage); */
+customElements.define("cat-page", CatPage);
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('BODY INNERHTML', document.body.innerHTML)

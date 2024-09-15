@@ -59,7 +59,7 @@ export default function transformIndextemplate(options) {
         }
       }
     },
-    /* transform: {
+    transform: {
       handler(src, id) {
         let code = src
         console.log(id)
@@ -119,26 +119,28 @@ export default function transformIndextemplate(options) {
           map: null, // provide source map if available
         }
       }
-    }, */
+    },
     transformIndexHtml (html, ctx){
-      /* if (ctx.server) {
-        if (ctx.originalUrl && urlPage === '') {
-          urlPage = ctx.originalUrl
-          htmlIndex = html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
-      <link rel="icon" type="image/svg+xml" href="/vite.svg" />`)
-          return htmlIndex
-        } else if (urlPage !== ''){
-          let routeUrl = urlPage.replace('/', '', 'g')
-          let templateUrl = 'index'
-          
-          if (routeUrl !== '') {
-            templateUrl = routeUrl
-          }
-          console.log('RETURN HTML REPLACED', htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`))
-          return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
+      htmlIndex = html
+      if (ctx.originalUrl && urlPage === '') {
+        urlPage = ctx.originalUrl
+        htmlIndex = html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />`)
+        return htmlIndex
+      } else if (urlPage !== ''){
+        let routeUrl = urlPage.replace('/', '', 'g')
+        let templateUrl = 'index'
+        
+        if (routeUrl !== '') {
+          templateUrl = routeUrl
         }
-      } */
-          console.log('RETURN HTML')
+        console.log('RETURN HTML REPLACED', htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`))
+        return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
+      } else if (!ctx.originalUrl) {
+        let templateUrl = 'index'
+        return htmlIndex.replace('<cat-page></cat-page>', `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`);
+      }
+      console.log('RETURN HTML')
       return html
     },
 /*

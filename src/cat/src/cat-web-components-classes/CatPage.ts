@@ -14,14 +14,17 @@ class CatPage extends HTMLElement {
   connectedCallback() {
     window.addEventListener('popstate', this.popstateHandler.bind(this), false)
     document.addEventListener(`click`, e => {
-      const link = e.target as HTMLElement
-      const origin = link.closest(`a`)
-      const target = link.getAttribute('target')
-      
-      if (origin && target === null) {
-        e.preventDefault()
-        this.setAttribute('cat-route', link.getAttribute('href') as string)
-      }
+      const link = <HTMLElement> e.target as HTMLAnchorElement
+      console.log(link)
+      /* if (link !== null) {
+        const origin = link.closest(`a`)
+        const target = link.getAttribute('target')
+        
+        if (origin && target === null) {
+          e.preventDefault()
+          this.setAttribute('cat-route', link.getAttribute('href') as string)
+        }
+      } */
     })
   }
 

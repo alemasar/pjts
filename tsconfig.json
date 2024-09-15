@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
-    "target": "ES2020",
+    "outDir": "./dist",
+    "target": "ES2022",
     "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "noImplicitAny": false,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -26,5 +27,5 @@
       "@pjts-game/*": ["src/pjts/*"]
     }
   },
-  "include": ["src", "module.d.ts"]
+  "include": ["src"]
 }
