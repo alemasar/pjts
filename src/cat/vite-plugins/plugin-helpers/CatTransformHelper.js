@@ -23,6 +23,9 @@ class CatTransformHelper {
     }
     return filesObj
   }
+  getFileContent(srcPath) {
+    return fs.readFileSync(path.join(`${srcPath}`),{ encoding: 'utf8', flag: 'r' })
+  }
   getConfig(code) {
     const config = code.match(this.configRegExp)
     let returnValue = '';

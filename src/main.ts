@@ -33,11 +33,10 @@ class Game {
   }
 }
 await Game.build();
-customElements.define("cat-page", CatPage);
+
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('BODY INNERHTML', document.body.innerHTML)
-  document.body.innerHTML = "HOLA"
+  customElements.define("cat-page", CatPage);
 },false)
 
 // pjts().then(async ()=>{
