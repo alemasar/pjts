@@ -7,5 +7,7 @@ export default async function() {
   console.log('INIT CAT FRAMEWORK')
   instanceHooks.callHookName('cat-before-load', {})
   await cat()
-  instanceHooks.callHookName('cat-after-load', {})
+  instanceHooks.callHookName('cat-after-load', () => {
+     console.log('HOOK CAT AFTER LOAD')
+  })
 }

@@ -2,7 +2,7 @@
 
 class CatHooks {
   static #instance: CatHooks;
-  private _hooks
+  private _hooks: any
   private _hookNames: Map<string, Function>
   private _unregisterHookName: Map<string, HookCallback>
   
@@ -19,7 +19,7 @@ class CatHooks {
 
       return CatHooks.#instance;
   }
-  async addHook(hook: string, handler: Function){
+  addHook(hook: string, handler: Function){
     this._hookNames.set(hook, handler)
     this._hooks.hook(hook, handler)
   }

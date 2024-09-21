@@ -1,22 +1,24 @@
 import CatContext from '@cat/cat-classes/CatContext'
+import CatData from '@cat/cat-classes/CatData'
 
 class CatPage extends HTMLElement {
   context: CatContext
+  data: CatData
   static get observedAttributes () {
     return ['cat-route'];
   }
   constructor() {
     super();
     this.context = CatContext.instance
+    this.data = CatData.instance
     console.log('INNER HTML::::::', this.context)
   }
 
   connectedCallback() {
-    window.addEventListener('popstate', this.popstateHandler.bind(this), false)
-    document.addEventListener(`click`, e => {
-      const link = <HTMLElement> e.target as HTMLAnchorElement
-      console.log(link)
-      /* if (link !== null) {
+    const linkHandler = (e: Event) => {
+      const { target } = e
+      if (target){
+        const link = (e.target as HTMLAnchorElement)
         const origin = link.closest(`a`)
         const target = link.getAttribute('target')
         
@@ -24,8 +26,11 @@ class CatPage extends HTMLElement {
           e.preventDefault()
           this.setAttribute('cat-route', link.getAttribute('href') as string)
         }
-      } */
-    })
+      }
+    }
+    window.addEventListener('popstate', this.popstateHandler.bind(this), false)
+
+    document.addEventListener(`click`, linkHandler)
   }
 
   disconnectedCallback() {

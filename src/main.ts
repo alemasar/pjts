@@ -13,6 +13,13 @@ class Game {
   constructor() {
     this.context = CatContext.instance
     this.hooks = CatHooks.instance
+    this.hooks.addHook('cat-before-load', () =>{
+      console.log('HOOK CAT BEFORE LOAD')
+    })
+    this.hooks.addHook('cat-after-load', () =>{
+      console.log('HOOK CAT AFTER LOAD')
+    })
+
     elements.components.forEach((c: any) => {
       customElements.define(c.tag, c.tagClass);
       this.context.component = c
@@ -33,11 +40,7 @@ class Game {
   }
 }
 await Game.build();
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  customElements.define("cat-page", CatPage);
-},false)
+customElements.define("cat-page", CatPage);
 
 // pjts().then(async ()=>{
 

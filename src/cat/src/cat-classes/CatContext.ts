@@ -44,9 +44,6 @@ class CatContext {
       return CatContext.#instance;
   }
   get components() {
-    /* return (id: string) => {
-      return this._cat.components.get(id)
-    } */
     return this._cat.components
   }
   set component(newValue: ICatComponent) {
@@ -71,9 +68,6 @@ class CatContext {
     }
   }
   get routes() {
-    /* return (id: string) => {
-      return this._cat.components.get(id)
-    } */
     return this._cat.routes
   }
   set route(newValue: IPageRoute) {
@@ -100,23 +94,6 @@ class CatContext {
     return (id: string) => {
       return this._cat.routes.get(this._getRouteIdById.get(id) as string)
     }
-  }
-  mergeObj(master: any, merge: any) {
-    const masterKeys = Object.keys(master)
-    const mergeKeys = Object.keys(merge)
-    const obj: Record<string, any> = {...master}
-    mergeKeys.forEach((mk) => {
-      if (masterKeys.includes(mk) === true) {
-        if (typeof master[mk] === 'object' && typeof merge[mk] === 'object') {
-          obj[mk] = this.mergeObj(master[mk], merge[mk])
-        } else {
-          obj[mk] = {...master[mk], ...merge[mk]}
-        }
-      } else {
-        obj[mk] = merge[mk]
-      }
-    })
-    return obj
   }
 }
 
