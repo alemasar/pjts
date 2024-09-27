@@ -19,10 +19,12 @@ class Game {
     this.hooks.addHook('cat-after-load', () =>{
       console.log('HOOK CAT AFTER LOAD')
     })
-
+    console.log(elements.components)
     elements.components.forEach((c: any) => {
-      customElements.define(c.tag, c.tagClass);
-      this.context.component = c
+      const component = c()
+      console.log('component', component.id)
+      this.context.components.set(component.id, component.tag)   
+      customElements.define(component.tag, component.classCode)
     })
     elements.routes.forEach((p: any) => {
       this.context.route = p

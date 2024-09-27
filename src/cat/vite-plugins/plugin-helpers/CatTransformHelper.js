@@ -1,9 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import CatJoinTemplates from './CatJoinTemplates';
 
 class CatTransformHelper {
   constructor() {
-    this.templateRegExp = /<template>(.|[\s\S])*?<\/template>/g
+    this.templateRegExp = /<template(.|[\s\S])*?<\/template>/g
     this.configRegExp = /<config>(.|[\s\S])*?<\/config>/g
     this.scriptRegExp = /<script>(.|[\s\S])*?<\/script>/g
   }
@@ -37,13 +38,12 @@ class CatTransformHelper {
     }
     return returnValue;
   }
-  getTemplate(code) {
-    const template = code.match(this.templateRegExp)
-    let returnValue = '';
-    // console.log('GET TEMPLATE', template)
-
-    if (template !== null) {
-      returnValue = template[0];
+  getTemplate(code, config) {
+    const templates = code.match(this.templateRegExp)
+    let returnValue = code;
+    const joinTemplate = new CatJoinTemplates(templates, config)
+    if (templates !== null) {
+      returnValue = joinTemplate.template;
     }
     return returnValue;
   }

@@ -2,7 +2,6 @@
  
  interface ICatComponent{
   id: string
-  template: string
   tag: string
 }
 
@@ -49,11 +48,11 @@ class CatContext {
   set component(newValue: ICatComponent) {
     this._internalId = uuidv4()
 
-    this._cat.components.set(this._internalId, {
+    /* this._cat.components.set(this._internalId, {
       id: newValue.id,
       tag: newValue.tag,
       template: newValue.template,
-    })
+    }) */
     this._getTagById.set(newValue.tag, this._internalId)
     this._getComponentIdById.set(newValue.id, this._internalId)
   }

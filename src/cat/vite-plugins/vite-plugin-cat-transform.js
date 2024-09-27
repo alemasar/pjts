@@ -99,7 +99,7 @@ export default function transformIndextemplate(options) {
         let code = src;
         console.log(id);
         if (id.endsWith(fileCatEndsWith) === true) {
-          // console.log('TRANSFORM CAT FILE',id)
+          console.log('TRANSFORM CAT FILE',id)
           const uuid = uuidv4();
           let catConfigComponent = {};
           try {
@@ -109,31 +109,17 @@ export default function transformIndextemplate(options) {
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
           const catTemplateComponent = catTransformHelper
-            .getTemplate(code)
-            .replace("<template>", `<template cat-id="${uuid}">`);
+            .getTemplate(code, catConfigComponent)
+            // .replace("<template>", `<template cat-id="${uuid}">`);
           const tagName = catConfigComponent.tag;
           const tags = Object.keys(templates);
           if (tags.includes(tagName) === false) {
             templates[tagName] = new Map();
           }
           templates[tagName].set(uuid, catTemplateComponent);
-          code = `const returnTemplate = \`${templates[tagName].get(uuid)}\`
-                  export default {
-                    id: '${uuid}',
-                    template: returnTemplate,
-                    tag: '${tagName}',
-                    nameClass: 'Prova',
-                    tagClass: 
-                    class Prova extends HTMLElement {
-                      constructor() {
-                        super()
-                        const template = this.querySelector('#template');
-                        console.log('CONSTRUCTOR PROVA CLASS', template)
-                        this.innerHTML = \`${templates[tagName].get(uuid).replace(`<template cat-id="${uuid}">`, "").replace("</template>", "")}\`
-                      }
-                    }
-                  }
-                `;
+          console.log(catTemplateComponent)
+          code = `${catTemplateComponent}`;
+                console.log(code)
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();
           const route = id.split("/").pop().replace(".html?special", "");

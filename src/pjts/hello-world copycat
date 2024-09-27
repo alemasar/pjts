@@ -1,0 +1,35 @@
+<config>
+  {
+    "name": "HelloWorld",
+    "tag": "demo-second-tag",
+    "className": "ComponentHelloWorld"
+  }
+</config>
+<template #import-id="id-if">
+  <h1 #cat-if="booleano o metodo que devuelve un booleano true se incluye en el codigo, false no se incluye en el codigo" class="hola">HELLO WORLD FROM DEMO SECOND TAG WEB COMPONENT</h1>
+</template>
+<template #import-id="id-show">
+  <h1 #cat-show="booleano o metodo que devuelve un booleano true se muestra por pantalla, false no se se muestra por pantalla" class="hola">BYE BYE FROM DEMO SECOND TAG WEB COMPONENT</h1>
+</template>
+<template #import-id="id-for">
+  <ul #cat-for-host="Array de items o Metodo que devuelve un array de items">
+    <li #cat-for-element="item(podemos poner lo que nos plazca)">Elemento que #item.string(Esto seria printar una variable de item que devuelve un string, puede ser un metodo) se repite</li>
+      <ul #cat-for-host="Array de items o Metodo que devuelve un array de items">
+        <li #cat-for-element="item(podemos poner los que nos plazca)">Elemento que #item.string(Esto seria printar una variable de item que devuelve un string, puede ser un metodo) se repite</li>
+      </ul>
+    <li #cat-for-element="item">Elemento que se repite en la misma vuelta del bucle</li>
+    <li>Queda fuera del bucle for</li>
+  </ul>
+</template>
+<template cat-gap -> visualizacion default>
+  #request "path de la request para la visualizacion default"
+  #import "id-for"
+  #import "id-if"
+  #import "id-show"
+</template>
+<template cat-gap="Array de routes donde se carga el componente">
+  #request "path de la request para esta route"
+  #import "id-show"
+  #import "id-for"
+  #import "id-if"
+</template>
