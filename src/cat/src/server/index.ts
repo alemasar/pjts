@@ -11,8 +11,16 @@ class Server {
   url: URL
   constructor() {
     console.log('CONSTRUCTOR SERVER')
+    const catPages = document.querySelectorAll('cat-page[cat-route]')
     const context = CatContext.instance
     this.url = new URL(document.location.href)
+    catPages.forEach(cp => {
+      let path = this.url.pathname.replace('/','')
+      if (path === '') {
+        path = 'default'
+      }
+      cp.setAttribute("cat-route", path)
+    })
     console.log(this.url.pathname.replace('/',''))
     console.log(context.getRouteNameByRoute(this.url.pathname) as IPageRoute)
   }

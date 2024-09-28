@@ -22,7 +22,7 @@ class Game {
     console.log(elements.components)
     elements.components.forEach((c: any) => {
       const component = c()
-      console.log('component', component.classCode)
+
       this.context.components.set(component.id, component.tag)   
       customElements.define(component.tag, component.classCode)
     })

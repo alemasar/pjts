@@ -167,10 +167,7 @@ export default function transformIndextemplate(options) {
         }
       }
       let templateUrl = "index";
-      return htmlIndex.replace(
-        "<cat-page></cat-page>",
-        `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`
-      );
+      return htmlIndex;
     },
   };
 }
