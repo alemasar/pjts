@@ -8,7 +8,7 @@ const getPages = (options) => {
     path.normalize(`src/${options.pages.base}/${options.pages.path}`),
     ".html"
   );
-  console.log(options.pages.path)
+
   allPagesFiles.forEach((id)=> {
     console.log(id)
     const data = catTransformHelper.getFileContent(`src/${options.pages.base}/${options.pages.path}/${id.name}.html`)
@@ -22,7 +22,6 @@ const getPages = (options) => {
       template: templateHTML,
     };
   })
-  console.log(pages)
   return pages
 }
 
@@ -58,15 +57,12 @@ export default function transformIndextemplate(options) {
 `;
   });
   allCatFiles.forEach((cf, index) => {
-    console.log("CCCFFFF", cf);
     catFilesImports += `import component${index} from "@pjts-game/${options.components.path}/${cf.name}.cat";
 `;
     beforeExportCatFiles += `arrayComponents.push(component${index})
 `;
   });
   exports += `
-    console.log('VIRTUAL COMPONENT CAT FILE', arrayPages)
-    // helloWorld()
     export default {
       routes: arrayPages,
       components: arrayComponents,
@@ -99,7 +95,6 @@ export default function transformIndextemplate(options) {
         let code = src;
         console.log(id);
         if (id.endsWith(fileCatEndsWith) === true) {
-          console.log('TRANSFORM CAT FILE',id)
           const uuid = uuidv4();
           let catConfigComponent = {};
           try {
@@ -117,14 +112,11 @@ export default function transformIndextemplate(options) {
             templates[tagName] = new Map();
           }
           templates[tagName].set(uuid, catTemplateComponent);
-          console.log(catTemplateComponent)
           code = `${catTemplateComponent}`;
-                console.log(code)
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();
           const route = id.split("/").pop().replace(".html?special", "");
           const templateHTML = `${src}`;
-          console.log(templateHTML);
           code = `const templateObj = {
                     id: '${uuid}',
                     template: \`${templateHTML}\`,
@@ -156,7 +148,6 @@ export default function transformIndextemplate(options) {
             <link rel="icon" type="image/svg+xml" href="/vite.svg" />`
           );
           pages = getPages(options)
-          console.log(pages)
           let templateUrl = "index";
           return htmlIndex.replace(
             "<cat-page></cat-page>",
