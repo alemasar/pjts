@@ -166,7 +166,6 @@ export default function transformIndextemplate(options) {
           );
         }
       }
-      let templateUrl = "index";
       return htmlIndex;
     },
   };
