@@ -28,13 +28,20 @@ class CatJoinTemplates {
             })
           }
           if (routeGaps !== null) {
+            let routeName = 'default'
             defaultGaps.forEach((dg) => {
               const parsedGaps = dg.split(breaklinesRegExp)
-              let routeName = 'default'
               if (dg.includes('cat-gap=') === true) {
-                routeName = parsedGaps[0].replace(`<template cat-gap="`, '').replace('"', '').replace('>', '')
+                const arrayRoutes = parsedGaps[0].
+                  replace(`<template cat-gap="`, '').
+                  replace('"', '').
+                  replace('>', '').
+                  replace(/'/g,'"')
+                routeName = JSON.parse(`{"routes": ${arrayRoutes}}`)
               }
-              catGaps.set(routeName, parsedGaps)
+            })
+            routeName.routes.forEach((rn) => {
+              catGaps.set(rn, parsedGaps)
             })
           } else if (defaultGaps !== null && defaultGaps.length > 0) {
             const parsedGaps = template.split(breaklinesRegExp)
@@ -66,7 +73,6 @@ class CatJoinTemplates {
     const resultMap = new Map()
     let resultArray = []
     for (let [key, gapLines] of gapLinesMap.entries()) {
-      console.log('GAP LINE', gapLines)
       gapLines.forEach((l) => {
         const gapLinePos = l.indexOf('#import')
         if (gapLinePos !== -1) {
@@ -74,6 +80,7 @@ class CatJoinTemplates {
           resultArray = resultArray.concat(catTemplatesMap.get(importId))
         }
       })
+      console.log('RESULT ARRAY::::::', resultArray)
       resultMap.set(key, resultArray.join(''))
     }
     return resultMap

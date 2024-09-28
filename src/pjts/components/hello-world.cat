@@ -29,7 +29,7 @@
   #import "id-if"
   #import "id-show"
 </template>
-<template cat-gap="routes">
+<template cat-gap="['foo']">
   #request "path de la request para esta route"
   #import "id-show"
   #import "id-for"

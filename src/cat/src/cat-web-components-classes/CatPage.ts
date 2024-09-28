@@ -1,5 +1,8 @@
-import CatContext from '@cat/cat-classes/CatContext'
-import CatData from '@cat/cat-classes/CatData'
+import CatContext from "@cat/cat-classes/CatContext"
+import CatData from "@cat/cat-classes/CatData"
+import CatHooks from "@cat/cat-classes/CatHooks"
+  
+const instanceHooks = CatHooks.instance
 
 class CatPage extends HTMLElement {
   context: CatContext
@@ -24,7 +27,10 @@ class CatPage extends HTMLElement {
         
         if (origin && target === null) {
           e.preventDefault()
-          this.setAttribute('cat-route', link.getAttribute('href') as string)
+          const route = link.getAttribute('href') as string
+
+          this.setAttribute('cat-route', route)
+          instanceHooks.callHookName('cat-change-route', route)
         }
       }
     }
