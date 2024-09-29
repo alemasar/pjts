@@ -2,20 +2,19 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import catTransformHelper from "./plugin-helpers/CatTransformHelper";
 
-let pages = [];
-const getPages = (options) => {
+/* let pages = [];
+const getLayouts = (options) => {
   const allPagesFiles = catTransformHelper.readAllFiles(
     path.normalize(`src/${options.pages.base}/${options.pages.path}`),
     ".html"
   );
 
   allPagesFiles.forEach((id)=> {
-    console.log(id)
     const data = catTransformHelper.getFileContent(`src/${options.pages.base}/${options.pages.path}/${id.name}.html`)
     const uuid = uuidv4();
     const route = id.name;
     const templateHTML = `${data}`;
-    //  code = `export default 'HELLO WORLD'`
+
     pages[route] = {
       id: uuid,
       route,
@@ -23,7 +22,7 @@ const getPages = (options) => {
     };
   })
   return pages
-}
+} */
 
 const fileRegex = /main.ts$/;
 const fileCatEndsWith = ".cat";
@@ -35,7 +34,7 @@ let transformIndexState = "before";
 export default function transformIndextemplate(options) {
   const virtualComponentsId = "virtual:components";
   const resolvedVirtualComponentId = "\0" + virtualComponentsId;
-  const allPagesFiles = catTransformHelper.readAllFiles(
+  const allLayoutsFiles = catTransformHelper.readAllFiles(
     path.normalize(`src/${options.pages.base}/${options.pages.path}`),
     ".html"
   );
@@ -44,16 +43,16 @@ export default function transformIndextemplate(options) {
     ".cat"
   );
   let catFilesImports = "";
-  let pagesFilesImports = "";
+  let layoutsFilesImports = "";
   let beforeExportCatFiles = `const arrayComponents = []
 `;
-  let beforeExportPagesFiles = `const arrayPages = []
+  let beforeExportLayoutsFiles = `const arrayLayouts = []
 `;
   let exports = ``;
-  allPagesFiles.forEach((pf, index) => {
-    pagesFilesImports += `import page${index} from "@pjts-game/${options.pages.path}/${pf.name}.html?special";
+  allLayoutsFiles.forEach((l, index) => {
+    layoutsFilesImports += `import layout${index} from "@pjts-game/${options.pages.path}/${l.name}.html?special";
 `;
-    beforeExportPagesFiles += `arrayPages.push(page${index})
+    beforeExportLayoutsFiles += `arrayLayouts.push(layout${index})
 `;
   });
   allCatFiles.forEach((cf, index) => {
@@ -62,9 +61,10 @@ export default function transformIndextemplate(options) {
     beforeExportCatFiles += `arrayComponents.push(component${index})
 `;
   });
+
   exports += `
     export default {
-      routes: arrayPages,
+      routes: arrayLayouts,
       components: arrayComponents,
     }
 `;
@@ -81,9 +81,9 @@ export default function transformIndextemplate(options) {
       handler(id) {
         if (id === resolvedVirtualComponentId) {
           return (
-            pagesFilesImports +
+            layoutsFilesImports +
             catFilesImports +
-            beforeExportPagesFiles +
+            beforeExportLayoutsFiles +
             beforeExportCatFiles +
             exports
           );
@@ -125,11 +125,11 @@ export default function transformIndextemplate(options) {
                     export default templateObj
                 `;
           //  code = `export default 'HELLO WORLD'`
-          pages[route] = {
+          /* pages[route] = {
             id: uuid,
             route,
             template: templateHTML,
-          };
+          }; */
         }
         return {
           code: code,
@@ -137,11 +137,12 @@ export default function transformIndextemplate(options) {
         };
       },
     },
-    transformIndexHtml(html, ctx) {
-      htmlIndex = html;
+    /* transformIndexHtml(html, ctx) {
+      let htmlIndex = html;
       if (ctx.server) {
+        console.log('ORIGINAL URL',ctx.originalUrl)
         if (ctx.originalUrl && urlPage === "") {
-          urlPage = ctx.originalUrl;
+          urlPage = ctx.originalUrl.replace("/", "", "g");
           htmlIndex = html.replace(
             '<meta charset="UTF-8" />',
             `<meta charset="UTF-8" />
@@ -149,14 +150,18 @@ export default function transformIndextemplate(options) {
           );
           pages = getPages(options)
           let templateUrl = "index";
+          if (urlPage !=='') {
+            templateUrl = urlPage
+          }
+          // return htmlIndex
+          urlPage = templateUrl
           return htmlIndex.replace(
             "<cat-page></cat-page>",
             `<cat-page cat-route="${templateUrl}" cat-route-id="${pages[templateUrl].id}">${pages[templateUrl].template}</cat-page>`
           );
         } else if (urlPage !== "") {
-          let routeUrl = urlPage.replace("/", "", "g");
+          let routeUrl = urlPage;
           let templateUrl = "index";
-
           if (routeUrl !== "") {
             templateUrl = routeUrl;
           }
@@ -166,7 +171,10 @@ export default function transformIndextemplate(options) {
           );
         }
       }
-      return htmlIndex;
-    },
-  };
+      return htmlIndex.replace(
+            "<cat-page></cat-page>",
+            `<cat-page cat-route="foo" cat-route-id="3">HOLA</cat-page>`
+          );
+    },*/
+  }; 
 }

@@ -20,10 +20,12 @@ class CatData {
   static #instance: CatData;
   private _data:  Map<string, any>;
   private _commits: Map<string, any>;
+  private _observers: Map<string, Function[]>;
 
   private constructor() {
     this._data = new Map<string, any>()
     this._commits = new Map<string, any[]>()
+    this._observers = new Map<string, Function[]>()
   }
 
   public static get instance(): CatData {
@@ -56,6 +58,21 @@ class CatData {
         this._data.set(id, c)
       }
     })
+    for (let callbacks of this._observers.values()) {
+      callbacks.forEach((c) => {
+        c()
+      })
+    }
+  }
+  observer(id: string, callback: Function) {
+    let callbacks = new Array<Function>()
+    if (this._observers.get(id) !== null) {
+      callbacks = this._observers.get(id) as Function[]
+      callbacks.push(callback)
+    } else {
+      callbacks.push(callback)
+    }
+    this._observers.set(id, callbacks)
   }
 }
 

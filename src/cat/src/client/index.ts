@@ -1,22 +1,34 @@
-import CatContext from '@cat/cat-classes/CatContext'
-// import CatHooks from '@cat/cat-classes/CatHooks'
+import type CatContext from '@cat/cat-classes/CatContext'
+import type CatHooks from '@cat/cat-classes/CatHooks'
+import elements from 'virtual:components'
 
-const clientPromise: Promise<Function> = new Promise((resolve, reject) => {
-  // This Promise resolves to a string
-  try{
-    setTimeout(async () => {
-      resolve(function() {
-        const tagName=CatContext.instance.getComponentByTag('another-component-tag')
 
-        console.log('INDEX FROM CAT CLIENT ID INTERN FROM TAG', tagName)
-                // console.log('INDEX FROM CAT CLIENT ID INTERN FROM ID COMPONENT', CatContext.instance.getComponentById(tagName))
-      })
-    }, 1000)
-  } catch(e) {
-    reject('ERROR FROM CAT CLIENT')
+const defineComponents = () => {
+  elements.components.forEach((c: any) => {
+    const component = c()
+    console.log('COMPONENT BEFORE', customElements.get(component.tag))
+    customElements.define(component.tag, component.classCode)
+    console.log('COMPONENT AFTER', component.classCode)
+  })
+}
+
+
+class Client {
+  context: CatContext
+  catHooks: CatHooks
+  constructor(context: CatContext, catHooks: CatHooks) {
+    this.context = context
+    this.catHooks = catHooks
+
+    console.log(elements.components)
+    elements.components.forEach((c: any) => {
+      const component = c()
+      this.context.components.set(component.id, component.tag)
+    })
+    elements.routes.forEach((p: any) => {
+      this.context.route = p
+    })
   }
-});
-
-
-
-export default clientPromise
+}
+defineComponents()
+export default Client

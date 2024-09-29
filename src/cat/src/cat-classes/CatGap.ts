@@ -7,18 +7,25 @@ class Gap extends HTMLElement {
   constructor() {
     super();
     this.gaps = new Map<string, string>();
-    instanceHooks.addHook('cat-change-route', (route: string) => {
-      this.changeGapRoute(route.replace('\/', ''))
+  }
+  connectedCallback() {
+    instanceHooks.addHook('cat-change-gap', (route: string) => {
+      console.log('cat-change-gap', route)
+      this.changeGapRoute(route)
     })
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
+    const gapRoute = route.replace('\/', '')
     this.innerHTML = ''
+
     if (route === '') {
-      temporalTemplate.innerHTML = this.gaps.get('default') as string  
+      console.log('ROUTE IGUAL A NADA ', route)
+      temporalTemplate.innerHTML = this.gaps.get('index') as string  
     } else {
-      temporalTemplate.innerHTML = this.gaps.get(route) as string
+      temporalTemplate.innerHTML = this.gaps.get(gapRoute) as string
     }
+    
     temporalTemplate.content.querySelectorAll('template').forEach((t) => {
       this.appendChild(t.content.cloneNode(true))
     })

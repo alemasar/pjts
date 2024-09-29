@@ -35,3 +35,8 @@
   #import "id-for"
   #import "id-if"
 </template>
+<script>
+  {
+    "item": "HELLO WORLD"
+  }
+</script>

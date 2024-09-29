@@ -1,5 +1,5 @@
  import { createHooks, HookCallback } from 'hookable'
-
+ 
 class CatHooks {
   static #instance: CatHooks;
   private _hooks: any
@@ -23,9 +23,12 @@ class CatHooks {
     this._hookNames.set(hook, handler)
     this._hooks.hook(hook, handler)
   }
-  callHookName(hook: string, args: any) {
+  callHookName(hook: string, args?: any) {
     if (this._hookNames.has(hook) === true) {
       this._unregisterHookName.set(hook, () => {
+        console.log('HOOK NAME', hook)
+        console.log('HOOK ARGS', args)
+        
         this._hooks.callHook(hook, args)
       })
       const unregisterHookName = this._unregisterHookName.get(hook) as HookCallback

@@ -28,7 +28,7 @@ class CatJoinTemplates {
             })
           }
           if (routeGaps !== null) {
-            let routeName = 'default'
+            let routeName = 'index'
             defaultGaps.forEach((dg) => {
               const parsedGaps = dg.split(breaklinesRegExp)
               if (dg.includes('cat-gap=') === true) {
@@ -45,7 +45,7 @@ class CatJoinTemplates {
             })
           } else if (defaultGaps !== null && defaultGaps.length > 0) {
             const parsedGaps = template.split(breaklinesRegExp)
-            catGaps.set('default', parsedGaps)
+            catGaps.set('index', parsedGaps)
           }
         }
       })
@@ -57,7 +57,7 @@ class CatJoinTemplates {
         parsedGaps, 
       })
     } else {
-      catGaps.set('default', templates[0])
+      catGaps.set('index', templates[0])
       this.template = generateGap({
         className: config.name + 'Gap',
         tagName: config.tag,
@@ -80,7 +80,6 @@ class CatJoinTemplates {
           resultArray = resultArray.concat(catTemplatesMap.get(importId))
         }
       })
-      console.log('RESULT ARRAY::::::', resultArray)
       resultMap.set(key, resultArray.join(''))
     }
     return resultMap

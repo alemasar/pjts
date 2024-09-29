@@ -1,23 +1,22 @@
 import CatContext from "@cat/cat-classes/CatContext"
 import CatData from "@cat/cat-classes/CatData"
-import CatHooks from "@cat/cat-classes/CatHooks"
-  
-const instanceHooks = CatHooks.instance
+import elements from 'virtual:components'
+import CatApp from "@cat/index"
+
+const templates = new Map<string, any>()
 
 class CatPage extends HTMLElement {
   context: CatContext
   data: CatData
-  static get observedAttributes () {
+  /* static get observedAttributes () {
     return ['cat-route'];
-  }
+  } */
   constructor() {
     super();
     this.context = CatContext.instance
     this.data = CatData.instance
-    console.log('INNER HTML::::::', this.context)
-  }
-
-  connectedCallback() {
+    // instanceHooks.callHookName('cat-change-route', this.context.cat.route)
+    /* this.changePage('cat-route', this.context.cat.route)
     const linkHandler = (e: Event) => {
       const { target } = e
       if (target){
@@ -30,13 +29,24 @@ class CatPage extends HTMLElement {
           const route = link.getAttribute('href') as string
 
           this.setAttribute('cat-route', route)
-          instanceHooks.callHookName('cat-change-route', route)
+          console.log('CATAPP IN CAT PAGE',catApp)
+          // catApp.client.cat.callHookName('cat-change-gap', route)
+          this.changePage('cat-route', route)
         }
-      }
+      } 
     }
     window.addEventListener('popstate', this.popstateHandler.bind(this), false)
 
-    document.addEventListener(`click`, linkHandler)
+    document.addEventListener(`click`, linkHandler) */
+  }
+
+  connectedCallback() {
+    const path = CatApp.instance.context.cat.route;
+    elements.routes.forEach((er: any) => {
+      console.log(er)
+      templates.set(er.route, er.template)
+    })
+    this.changePage(path)
   }
 
   disconnectedCallback() {
@@ -47,29 +57,30 @@ class CatPage extends HTMLElement {
     // console.log("Custom element moved to new page.");
   }
 
-  attributeChangedCallback(name: string, oldValue: any, newValue: any) {
+  /* attributeChangedCallback(name: string, oldValue: any, newValue: any) {
     console.log(`Attribute ${name} with ${oldValue} has changed to ${newValue}.`)
     // console.log(`TEMPLATE ${this.context.getRouteNameByRoute(newValue)?.template}`)
     this.changePage(name, newValue)
-  }
+  } */
 
 
-  changePage(name: string, newValue: any) {
-    if(name==='cat-route') {
-      const routeTemplate = newValue.replace('/', '').trim()
+  changePage(newValue: any) {
+      const routeTemplate = newValue.replace('/', '')
+      const temporalTemplate = document.createElement("template")
       let route = 'index'
+      
       if (routeTemplate !== ''){
-        console.log('TEMPLATE::::::', routeTemplate)
         route = routeTemplate
       }
-      this.innerHTML = this.context.getRouteNameByRoute(route)?.template as string
+      console.log('CHANGE PAGE', templates.get(route))
+      temporalTemplate.innerHTML = templates.get(route)
+      this.appendChild(temporalTemplate.content.cloneNode(true))
       history.pushState({}, '', newValue)
-    }
   }
 
   popstateHandler(e: any) {
     const url= new URL(e.currentTarget.location.href)
-    this.changePage('cat-route', url.pathname)
+    this.changePage(url.pathname)
   }
 }
 

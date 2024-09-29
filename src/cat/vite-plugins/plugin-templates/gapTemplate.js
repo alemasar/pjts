@@ -8,14 +8,13 @@ const generateGap = (config) => {
     constructor() {
       super();
       `
-      console.log('GAP IN TEMPLATE',config.parsedGaps)
+      // console.log('GAP IN TEMPLATE',config.parsedGaps)
       for (var [key, gap] of config.parsedGaps) {
         returnTemplate += `
         this.gaps.set('${key}', '${gap}')
         `
       }
       returnTemplate += `
-      this.changeGapRoute('default')
     }
   }
   // customElements.define('${config.tagName}', ${config.className})

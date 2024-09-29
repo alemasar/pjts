@@ -1,20 +1,26 @@
-import server from '@cat-server/index'
-import client from '@cat-client/index'
+import Server from '@cat-server/index'
+import Client from '@cat-client/index'
+import CatContext from '@cat/cat-classes/CatContext'
+import CatHooks from '@cat/cat-classes/CatHooks'
 
-const load = async ()=>{
-  console.log('ENTOR EN LOAD')
-  try {
-    const returnValues = await Promise.all([server, client])
-    console.log(returnValues)
-    for (const loadFunction of returnValues) {
-      loadFunction()
+class CatApp {
+  static #instance: CatApp;
+  context: CatContext
+  catHooks: CatHooks
+  client: Client
+  server: Server
+  constructor() {
+    this.context = CatContext.instance
+    this.catHooks = CatHooks.instance
+    this.client = new Client(this.context, this.catHooks)
+    this.server = new Server(this.context/*, this.catHooks*/)
+  }
+  public static get instance(): CatApp {
+    if (!CatApp.#instance) {
+        CatApp.#instance = new CatApp();
     }
-  } catch(e) {
-    console.log('ERROR FROM CAT')
+
+    return CatApp.#instance;
   }
 }
-
-export default async function() {
-  console.log('INDEX FROM CAT')
-  await load()
-}
+export default CatApp
