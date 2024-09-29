@@ -1,22 +1,21 @@
-import CatContext from "@cat/cat-classes/CatContext"
-import CatData from "@cat/cat-classes/CatData"
-import elements from 'virtual:components'
 import CatApp from "@cat/index"
+import elements from 'virtual:components'
 
 const templates = new Map<string, any>()
 
 class CatPage extends HTMLElement {
-  context: CatContext
-  data: CatData
-  /* static get observedAttributes () {
-    return ['cat-route'];
-  } */
+  cat: CatApp
   constructor() {
     super();
-    this.context = CatContext.instance
-    this.data = CatData.instance
-    // instanceHooks.callHookName('cat-change-route', this.context.cat.route)
-    /* this.changePage('cat-route', this.context.cat.route)
+    this.cat = CatApp.instance
+    const definitionComponents = elements.components
+
+    definitionComponents.forEach((de: any) => {
+      const definitionComponent = de()
+      console.log(definitionComponent.tag)
+      console.log(definitionComponent.classCode)
+      customElements.define(definitionComponent.tag, definitionComponent.classCode)
+    })
     const linkHandler = (e: Event) => {
       const { target } = e
       if (target){
@@ -26,22 +25,29 @@ class CatPage extends HTMLElement {
         
         if (origin && target === null) {
           e.preventDefault()
-          const route = link.getAttribute('href') as string
-
-          this.setAttribute('cat-route', route)
-          console.log('CATAPP IN CAT PAGE',catApp)
+          const path = link.getAttribute('href') as string
+          const routeTemplate = path.replace('/', '')
+          let route = 'index'
+          
+          if (routeTemplate !== ''){
+            route = routeTemplate
+          }
+          // this.setAttribute('cat-route', route)
+          // console.log('CATAPP IN CAT PAGE',catApp)
           // catApp.client.cat.callHookName('cat-change-gap', route)
-          this.changePage('cat-route', route)
+          this.cat.context.cat.route = route
+          this.changePage(route)
+          this.cat.client.catHooks.callHookName('cat-change-gap', route)
         }
       } 
     }
     window.addEventListener('popstate', this.popstateHandler.bind(this), false)
 
-    document.addEventListener(`click`, linkHandler) */
+    document.addEventListener(`click`, linkHandler)
   }
 
   connectedCallback() {
-    const path = CatApp.instance.context.cat.route;
+    const path = this.cat.context.cat.route;
     elements.routes.forEach((er: any) => {
       console.log(er)
       templates.set(er.route, er.template)
@@ -64,18 +70,13 @@ class CatPage extends HTMLElement {
   } */
 
 
-  changePage(newValue: any) {
-      const routeTemplate = newValue.replace('/', '')
+  changePage(route: any) {
       const temporalTemplate = document.createElement("template")
-      let route = 'index'
-      
-      if (routeTemplate !== ''){
-        route = routeTemplate
-      }
       console.log('CHANGE PAGE', templates.get(route))
+      this.innerHTML = '';
       temporalTemplate.innerHTML = templates.get(route)
       this.appendChild(temporalTemplate.content.cloneNode(true))
-      history.pushState({}, '', newValue)
+      history.pushState({}, '', route)
   }
 
   popstateHandler(e: any) {

@@ -7,17 +7,17 @@ const generateGap = (config) => {
   class ${config.className} extends Gap {
     constructor() {
       super();
+      console.log('GAP IN TEMPLATE')
       `
-      // console.log('GAP IN TEMPLATE',config.parsedGaps)
       for (var [key, gap] of config.parsedGaps) {
         returnTemplate += `
         this.gaps.set('${key}', '${gap}')
         `
       }
       returnTemplate += `
+      console.log(this.gaps)
     }
   }
-  // customElements.define('${config.tagName}', ${config.className})
   export default ()=> {
     return {
       classCode: ${config.className},

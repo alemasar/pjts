@@ -60,6 +60,7 @@ class CatContext {
       tag: newValue.tag,
       template: newValue.template,
     }) */
+   console.log(newValue)
     this._getTagById.set(newValue.tag, this._internalId)
     this._getComponentIdById.set(newValue.id, this._internalId)
   }

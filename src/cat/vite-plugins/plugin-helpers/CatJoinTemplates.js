@@ -28,11 +28,13 @@ class CatJoinTemplates {
             })
           }
           if (routeGaps !== null) {
-            let routeName = 'index'
+            let routeName = {}
+            let splittedGaps = []
+            const routeMap = new Map()
             defaultGaps.forEach((dg) => {
-              const parsedGaps = dg.split(breaklinesRegExp)
+              splittedGaps = dg.split(breaklinesRegExp)
               if (dg.includes('cat-gap=') === true) {
-                const arrayRoutes = parsedGaps[0].
+                const arrayRoutes = splittedGaps[0].
                   replace(`<template cat-gap="`, '').
                   replace('"', '').
                   replace('>', '').
@@ -41,11 +43,12 @@ class CatJoinTemplates {
               }
             })
             routeName.routes.forEach((rn) => {
-              catGaps.set(rn, parsedGaps)
+              console.log(splittedGaps)
+              catGaps.set(rn, splittedGaps)
             })
           } else if (defaultGaps !== null && defaultGaps.length > 0) {
-            const parsedGaps = template.split(breaklinesRegExp)
-            catGaps.set('index', parsedGaps)
+            const splittedGaps = template.split(breaklinesRegExp)
+            catGaps.set('index', splittedGaps)
           }
         }
       })
@@ -56,7 +59,7 @@ class CatJoinTemplates {
         gaps: catGaps,
         parsedGaps, 
       })
-    } else {
+    } /* else {
       catGaps.set('index', templates[0])
       this.template = generateGap({
         className: config.name + 'Gap',
@@ -64,7 +67,7 @@ class CatJoinTemplates {
         gaps: template[0],
         parsedGaps: template[0],
       })
-    }
+    } */
   } 
   parseImportTemplates(lines) {
 
@@ -81,6 +84,7 @@ class CatJoinTemplates {
         }
       })
       resultMap.set(key, resultArray.join(''))
+      resultArray.splice(0)
     }
     return resultMap
   }

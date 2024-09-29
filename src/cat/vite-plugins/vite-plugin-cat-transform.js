@@ -95,7 +95,7 @@ export default function transformIndextemplate(options) {
         let code = src;
         console.log(id);
         if (id.endsWith(fileCatEndsWith) === true) {
-          const uuid = uuidv4();
+          // const uuid = uuidv4();
           let catConfigComponent = {};
           try {
             catConfigComponent = JSON.parse(catTransformHelper.getConfig(code));
@@ -104,14 +104,14 @@ export default function transformIndextemplate(options) {
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
           const catTemplateComponent = catTransformHelper
-            .getTemplate(code, catConfigComponent)
+            .getGap(code, catConfigComponent)
             // .replace("<template>", `<template cat-id="${uuid}">`);
-          const tagName = catConfigComponent.tag;
+          /* const tagName = catConfigComponent.tag;
           const tags = Object.keys(templates);
           if (tags.includes(tagName) === false) {
             templates[tagName] = new Map();
           }
-          templates[tagName].set(uuid, catTemplateComponent);
+          templates[tagName].set(uuid, catTemplateComponent); */
           code = `${catTemplateComponent}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();
