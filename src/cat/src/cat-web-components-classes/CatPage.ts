@@ -80,8 +80,13 @@ class CatPage extends HTMLElement {
   }
 
   popstateHandler(e: any) {
-    const url= new URL(e.currentTarget.location.href)
-    this.changePage(url.pathname)
+    console.log(e)
+    const routeTemplate = new URL(e.currentTarget.location.href).pathname.replace('/', '')
+    let route = 'index'
+    if (routeTemplate !== ''){
+      route = routeTemplate
+    }
+    this.changePage(route)
   }
 }
 
