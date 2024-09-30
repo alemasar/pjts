@@ -16,15 +16,23 @@ class Gap extends HTMLElement {
       this.changeGapRoute(route)
     })
   }
-  changeGapRoute(route: string) {
-    const temporalTemplate = document.createElement("template")
-    temporalTemplate.innerHTML = this.gaps.get(route) as string
+  addGapCodeToComponent(temporalTemplate: HTMLTemplateElement) {
     const gapsTetmplates = temporalTemplate.content.querySelectorAll('template')
-    console.log(this.gaps.get(route))
+    
     this.innerHTML = ''
     gapsTetmplates.forEach((tt) => {
       this.appendChild(tt.content.cloneNode(true))
     })
+  }
+  changeGapRoute(route: string) {
+    const temporalTemplate = document.createElement("template")
+
+    if (this.gaps.has(route) === true) {
+      temporalTemplate.innerHTML = this.gaps.get(route) as string
+    } else {
+      temporalTemplate.innerHTML = this.gaps.get('default') as string
+    }
+    this.addGapCodeToComponent(temporalTemplate)
   }
 }
 export default Gap;

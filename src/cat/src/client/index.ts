@@ -11,6 +11,7 @@ class Client {
 
     elements.components.forEach((c: any) => {
       const component = c()
+      console.log(component.id)
       this.context.components.set(component.id, component.tag)
     })
     elements.routes.forEach((p: any) => {

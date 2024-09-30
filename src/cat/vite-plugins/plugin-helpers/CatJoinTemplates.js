@@ -14,7 +14,8 @@ class CatJoinTemplates {
     const catGaps = new Map()
     let parsedGaps = new Map()
     this.template = ''
-    if (templates !== null && templates.length > 0) {
+    console.log(templates.length)
+    if (templates !== null && templates.length > 1) {
       templates.forEach((template) => {
         if (template !== null && template.length > 0) {
           const importTemplate = template.match(templateImportRegExp)
@@ -59,15 +60,16 @@ class CatJoinTemplates {
         gaps: catGaps,
         parsedGaps, 
       })
-    } /* else {
-      catGaps.set('index', templates[0])
+    } else if (templates !== null) {
+      const splittedGaps = templates[0].split(breaklinesRegExp)
+      catGaps.set('default', splittedGaps)
       this.template = generateGap({
         className: config.name + 'Gap',
         tagName: config.tag,
-        gaps: template[0],
-        parsedGaps: template[0],
+        gaps: catGaps,
+        parsedGaps: catGaps,
       })
-    } */
+    }
   } 
   parseImportTemplates(line, resultArray, catTemplatesMap) {
     const gapLinePos = line.indexOf('#import')
@@ -82,7 +84,7 @@ class CatJoinTemplates {
     let resultArray = []
     for (let [key, gapLines] of gapLinesMap.entries()) {
       gapLines.forEach((line) => {
-        this.parseImportTemplates(line, resultArray, catTemplatesMap)
+        resultArray = this.parseImportTemplates(line, resultArray, catTemplatesMap)
       })
       resultMap.set(key, resultArray.join(''))
       resultArray.splice(0)

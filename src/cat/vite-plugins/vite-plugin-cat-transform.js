@@ -105,13 +105,7 @@ export default function transformIndextemplate(options) {
           }
           const catTemplateComponent = catTransformHelper
             .getGap(code, catConfigComponent)
-            // .replace("<template>", `<template cat-id="${uuid}">`);
-          /* const tagName = catConfigComponent.tag;
-          const tags = Object.keys(templates);
-          if (tags.includes(tagName) === false) {
-            templates[tagName] = new Map();
-          }
-          templates[tagName].set(uuid, catTemplateComponent); */
+          console.log(catTemplateComponent)
           code = `${catTemplateComponent}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();
@@ -122,14 +116,8 @@ export default function transformIndextemplate(options) {
                     template: \`${templateHTML}\`,
                     route: \`${route}\`
                   }
-                    export default templateObj
+                  export default templateObj
                 `;
-          //  code = `export default 'HELLO WORLD'`
-          /* pages[route] = {
-            id: uuid,
-            route,
-            template: templateHTML,
-          }; */
         }
         return {
           code: code,

@@ -11,11 +11,10 @@ const generateGap = (config) => {
       `
       for (var [key, gap] of config.parsedGaps) {
         returnTemplate += `
-        this.gaps.set('${key}', '${gap}')
+          this.gaps.set('${key}', '${gap}')
         `
       }
       returnTemplate += `
-      console.log(this.gaps)
     }
   }
   export default ()=> {
