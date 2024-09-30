@@ -26,15 +26,7 @@ class CatPage extends HTMLElement {
         if (origin && target === null) {
           e.preventDefault()
           const path = link.getAttribute('href') as string
-          const routeTemplate = path.replace('/', '')
-          let route = 'index'
-          
-          if (routeTemplate !== ''){
-            route = routeTemplate
-          }
-          // this.setAttribute('cat-route', route)
-          // console.log('CATAPP IN CAT PAGE',catApp)
-          // catApp.client.cat.callHookName('cat-change-gap', route)
+          const route = this.getRouteTemplate(path)
           this.cat.context.cat.route = route
           this.changePage(route)
           this.cat.client.catHooks.callHookName('cat-change-gap', route)
@@ -72,20 +64,26 @@ class CatPage extends HTMLElement {
 
   changePage(route: any) {
       const temporalTemplate = document.createElement("template")
-      console.log('CHANGE PAGE', templates.get(route))
       this.innerHTML = '';
       temporalTemplate.innerHTML = templates.get(route)
       this.appendChild(temporalTemplate.content.cloneNode(true))
       history.pushState({}, '', route)
   }
-
-  popstateHandler(e: any) {
-    console.log(e)
-    const routeTemplate = new URL(e.currentTarget.location.href).pathname.replace('/', '')
+  
+  getRouteTemplate(path: string) {
+    const routeTemplate = path.replace('/', '')
     let route = 'index'
+    
     if (routeTemplate !== ''){
       route = routeTemplate
     }
+    return route
+  }
+
+  popstateHandler(e: any) {
+    const pathName = new URL(e.currentTarget.location.href).pathname
+    const route = this.getRouteTemplate(pathName)
+    console.log(route)
     this.changePage(route)
   }
 }

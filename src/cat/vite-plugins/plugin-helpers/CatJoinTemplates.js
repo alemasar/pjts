@@ -69,19 +69,20 @@ class CatJoinTemplates {
       })
     } */
   } 
-  parseImportTemplates(lines) {
-
+  parseImportTemplates(line, resultArray, catTemplatesMap) {
+    const gapLinePos = line.indexOf('#import')
+    if (gapLinePos !== -1) {
+      const importId = line.trim().split(' ')[1].replace(/"/g, '')
+      resultArray = resultArray.concat(catTemplatesMap.get(importId))
+    }
+    return resultArray
   }
   parseGaps(gapLinesMap, catTemplatesMap) {
     const resultMap = new Map()
     let resultArray = []
     for (let [key, gapLines] of gapLinesMap.entries()) {
-      gapLines.forEach((l) => {
-        const gapLinePos = l.indexOf('#import')
-        if (gapLinePos !== -1) {
-          const importId = l.trim().split(' ')[1].replace(/"/g, '')
-          resultArray = resultArray.concat(catTemplatesMap.get(importId))
-        }
+      gapLines.forEach((line) => {
+        this.parseImportTemplates(line, resultArray, catTemplatesMap)
       })
       resultMap.set(key, resultArray.join(''))
       resultArray.splice(0)
