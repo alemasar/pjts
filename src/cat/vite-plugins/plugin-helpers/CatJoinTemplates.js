@@ -19,13 +19,13 @@ class CatJoinTemplates {
       this.parseMultipleTemplates(templates)
     } else if (templates !== null) {
       const splittedGaps = templates[0].split(breaklinesRegExp)
-      this.catGaps.set('default', splittedGaps)
+      this.catGaps.set('default', splittedGaps.join(''))
       this.parsedGaps = this.catGaps
     }
+    console.log(this.parsedGaps)
     this.template = generateGap({
       className: config.name + 'Gap',
       tagName: config.tag,
-      gaps: this.catGaps,
       parsedGaps: this.parsedGaps,
     })
   }
@@ -52,7 +52,6 @@ class CatJoinTemplates {
     importTemplates.forEach((it) => {
       const parsedImportTemplates = it.split(breaklinesRegExp)
       const importId = it.match(getImportGapRegExp)[0].trim().split(/=/g)[1].replace(/"/g, '')
-      console.log('PARSED IMPORT TEMPLATES', parsedImportTemplates)
       this.catTemplates.set(importId, parsedImportTemplates)
     })
   }
@@ -79,7 +78,6 @@ class CatJoinTemplates {
       }
     })
     routeName.routes.forEach((rn) => {
-      console.log(splittedGaps)
       this.catGaps.set(rn, splittedGaps)
     })  
   }
