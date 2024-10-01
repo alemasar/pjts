@@ -103,8 +103,9 @@ export default function transformIndextemplate(options) {
             // console.error(`%c${e}`, 'color: red;')
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
-          const catTemplateComponent = catTransformHelper
-            .getGap(code, catConfigComponent)
+          const catScriptComponent = catTransformHelper.getScript(code)
+          console.log('CAT SCRIPT COMPONENT:::::::', catScriptComponent)
+          const catTemplateComponent = catTransformHelper.getGap(code, catConfigComponent)
           console.log(catTemplateComponent)
           code = `${catTemplateComponent}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {

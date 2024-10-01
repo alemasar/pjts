@@ -6,8 +6,8 @@
   }
 </config>
 <template #import-id="id-if">
-  <h1 #cat-if="dataBooleano" class="hola">HELLO WORLD FROM DEMO SECOND TAG WEB COMPONENT</h1>
-  <h1 #cat-if="dataBooleanoMetodo" class="hola">HELLO WORLD FROM DEMO SECOND TAG WEB COMPONENT</h1>
+  <h1 #cat-if="dataBooleano" class="hola">#test FROM DEMO SECOND TAG WEB COMPONENT</h1>
+  <h1 #cat-if="dataBooleanoMetodo" class="hola">#test FROM DEMO SECOND TAG WEB COMPONENT</h1>
 </template>
 <template #import-id="id-show">
   <h1 #cat-show="dataBooleano" class="hola">BYE BYE FROM DEMO SECOND TAG WEB COMPONENT</h1>
@@ -37,6 +37,6 @@
 </template>
 <script>
   {
-    "item": "HELLO WORLD"
+    "test": "HELLO WORLD"
   }
 </script>

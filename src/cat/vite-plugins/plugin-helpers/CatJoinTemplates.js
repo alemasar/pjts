@@ -9,82 +9,86 @@ const getRequestGapRegExp = /#request "(.|[\s\S])*?"/g
 const getImportTemplateRegExp = /#import "(.|[\s\S])*?"/g
 
 class CatJoinTemplates {
-  constructor(templates, config) {
-    const catTemplates = new Map()
-    const catGaps = new Map()
-    let parsedGaps = new Map()
+  constructor(templates, config, scripts) {
+    this.parsedGaps = new Map()
+    this.catGaps = new Map()
     this.template = ''
-    console.log(templates.length)
+    this.catTemplates = new Map()
+
     if (templates !== null && templates.length > 1) {
-      templates.forEach((template) => {
-        if (template !== null && template.length > 0) {
-          const importTemplate = template.match(templateImportRegExp)
-          const routeGaps = template.match(getRoutesGapRegExp)
-          const defaultGaps = template.match(templateGapRegExp)
-          if (importTemplate !== null) {
-            importTemplate.forEach((it) => {
-              const parsedImportTemplates = it.split(breaklinesRegExp)
-              const importId = it.match(getImportGapRegExp)[0].trim().split(/=/g)[1].replace(/"/g, '')
-              catTemplates.set(importId, parsedImportTemplates)
-            })
-          }
-          if (routeGaps !== null) {
-            let routeName = {}
-            let splittedGaps = []
-            const routeMap = new Map()
-            defaultGaps.forEach((dg) => {
-              splittedGaps = dg.split(breaklinesRegExp)
-              if (dg.includes('cat-gap=') === true) {
-                const arrayRoutes = splittedGaps[0].
-                  replace(`<template cat-gap="`, '').
-                  replace('"', '').
-                  replace('>', '').
-                  replace(/'/g,'"')
-                routeName = JSON.parse(`{"routes": ${arrayRoutes}}`)
-              }
-            })
-            routeName.routes.forEach((rn) => {
-              console.log(splittedGaps)
-              catGaps.set(rn, splittedGaps)
-            })
-          } else if (defaultGaps !== null && defaultGaps.length > 0) {
-            const splittedGaps = template.split(breaklinesRegExp)
-            catGaps.set('index', splittedGaps)
-          }
-        }
-      })
-      parsedGaps = this.parseGaps(catGaps, catTemplates)
-      this.template = generateGap({
-        className: config.name + 'Gap',
-        tagName: config.tag,
-        gaps: catGaps,
-        parsedGaps, 
-      })
+      this.parseMultipleTemplates(templates)
     } else if (templates !== null) {
       const splittedGaps = templates[0].split(breaklinesRegExp)
-      catGaps.set('default', splittedGaps)
-      this.template = generateGap({
-        className: config.name + 'Gap',
-        tagName: config.tag,
-        gaps: catGaps,
-        parsedGaps: catGaps,
-      })
+      this.catGaps.set('default', splittedGaps)
+      this.parsedGaps = this.catGaps
     }
-  } 
-  parseImportTemplates(line, resultArray, catTemplatesMap) {
+    this.template = generateGap({
+      className: config.name + 'Gap',
+      tagName: config.tag,
+      gaps: this.catGaps,
+      parsedGaps: this.parsedGaps,
+    })
+  }
+  parseMultipleTemplates(templates) {
+    templates.forEach((template) => {
+      if (template !== null && template.length > 0) {
+        const importTemplates = template.match(templateImportRegExp)
+        const routeGaps = template.match(getRoutesGapRegExp)
+        const defaultGaps = template.match(templateGapRegExp)
+        if (importTemplates !== null) {
+          this.parseTemplates(importTemplates)
+        }
+        if (routeGaps !== null) {
+          this.parseRouteGaps(defaultGaps)
+        } else if (defaultGaps !== null && defaultGaps.length > 0) {
+          const splittedGaps = template.split(breaklinesRegExp)
+          this.catGaps.set('index', splittedGaps)
+        }
+      }
+    })
+    this.parsedGaps = this.parseGaps(this.catGaps)
+  }
+  parseTemplates(importTemplates) {
+    importTemplates.forEach((it) => {
+      const parsedImportTemplates = it.split(breaklinesRegExp)
+      const importId = it.match(getImportGapRegExp)[0].trim().split(/=/g)[1].replace(/"/g, '')
+      console.log('PARSED IMPORT TEMPLATES', parsedImportTemplates)
+      this.catTemplates.set(importId, parsedImportTemplates)
+    })
+  }
+  parseImportTemplates(line, resultArray) {
     const gapLinePos = line.indexOf('#import')
     if (gapLinePos !== -1) {
       const importId = line.trim().split(' ')[1].replace(/"/g, '')
-      resultArray = resultArray.concat(catTemplatesMap.get(importId))
+      resultArray = resultArray.concat(this.catTemplates.get(importId))
     }
     return resultArray
   }
-  parseGaps(gapLinesMap, catTemplatesMap) {
+  parseRouteGaps(defaultGaps) {
+    let routeName = {}
+    let splittedGaps = []
+    defaultGaps.forEach((dg) => {
+      splittedGaps = dg.split(breaklinesRegExp)
+      if (dg.includes('cat-gap=') === true) {
+        const arrayRoutes = splittedGaps[0].
+          replace(`<template cat-gap="`, '').
+          replace('"', '').
+          replace('>', '').
+          replace(/'/g,'"')
+        routeName = JSON.parse(`{"routes": ${arrayRoutes}}`)
+      }
+    })
+    routeName.routes.forEach((rn) => {
+      console.log(splittedGaps)
+      this.catGaps.set(rn, splittedGaps)
+    })  
+  }
+  parseGaps(gapLinesMap) {
     const resultMap = new Map()
     let resultArray = []
     for (let [key, gapLines] of gapLinesMap.entries()) {
       gapLines.forEach((line) => {
-        resultArray = this.parseImportTemplates(line, resultArray, catTemplatesMap)
+        resultArray = this.parseImportTemplates(line, resultArray, this.catTemplates)
       })
       resultMap.set(key, resultArray.join(''))
       resultArray.splice(0)

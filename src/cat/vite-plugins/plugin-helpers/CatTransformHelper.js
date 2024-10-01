@@ -38,22 +38,22 @@ class CatTransformHelper {
     }
     return returnValue;
   }
-  getGap(code, config) {
+  getGap(code, config, scripts) {
     const templates = code.match(this.templateRegExp)
     let returnValue = code;
-    const joinTemplate = new CatJoinTemplates(templates, config)
+    const joinTemplate = new CatJoinTemplates(templates, config, scripts)
     if (templates !== null) {
       returnValue = joinTemplate.template;
     }
     return returnValue;
   }
   getScript(code) {
-    const script = code.match(this.scriptRegExp)
+    const scripts = code.match(this.scriptRegExp)
     let returnValue = '';
     // console.log('GET SCRIPT', script)
 
-    if (script !== null) {
-      returnValue = script[0];
+    if (scripts !== null) {
+      returnValue = scripts;
     }
     return returnValue;
   }
