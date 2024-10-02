@@ -104,8 +104,16 @@ export default function transformIndextemplate(options) {
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
           const catScriptComponent = catTransformHelper.getScript(code)
-          const catScriptCode = catTransformHelper.parseScript(catScriptComponent)
-          const catTemplateComponent = catTransformHelper.getGap(code, catConfigComponent)
+          let scriptCodeString = ''
+          if (catScriptComponent !== null) {
+            catScriptComponent.forEach((csc) => {
+              // scriptCodeString += csc.replace(/<script()>/ig, '').replace('</script>', '')
+              scriptCodeString += csc
+            })
+            console.log('SCRIPT CODE STRING:::::',scriptCodeString)
+          }
+
+          const catTemplateComponent = catTransformHelper.getGap(code, catConfigComponent, scriptCodeString)
           // console.log(catTemplateComponent)
           code = `${catTemplateComponent}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {

@@ -38,6 +38,11 @@ class CatTransformHelper {
     }
     return returnValue;
   }
+  getScript(code) {
+    let returnValue = code.match(this.scriptRegExp);
+    console.log('SCRIPT CODE', returnValue)
+    return returnValue;
+  }
   getGap(code, config, scripts) {
     const templates = code.match(this.templateRegExp)
     let returnValue = code;
@@ -46,16 +51,6 @@ class CatTransformHelper {
       returnValue = joinTemplate.template;
     }
     return returnValue;
-  }
-  getScript(code) {
-    let returnValue = code.match(this.scriptRegExp);
-    console.log('SCRIPT CODE', returnValue)
-    return returnValue;
-  }
-  parseScript(code) {
-    /* if (code !== '') {
-      console.log('CAT SCRIPT COMPONENT:::::::', new Function(catScriptComponent[0].replace('<script>', '').replace('</script>', '')))
-    } */
   }
 }
 

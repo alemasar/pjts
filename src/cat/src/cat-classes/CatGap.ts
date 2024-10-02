@@ -3,10 +3,12 @@ import CatApp from "@cat/index"
 class Gap extends HTMLElement {
   cat: CatApp
   gaps: Map<string, string>
+  scripts: Map<string, string>
   constructor() {
     super();
     this.cat = CatApp.instance;
     this.gaps = new Map<string, string>();
+    this.scripts = new Map<string, string>();
   }
   connectedCallback() {
     console.log('CAT',this.cat.context.cat.route)
@@ -21,13 +23,15 @@ class Gap extends HTMLElement {
     
     this.innerHTML = ''
     gapsTetmplates.forEach((tt) => {
-      document.createElement("script")
+      const script = document.createElement("script")
+      script.append("console.log('HELLO WORLD IN SCRIPT')")
+      tt.content.appendChild(script)
       this.appendChild(tt.content.cloneNode(true))
     })
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
-
+console.log(this.gaps)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {
