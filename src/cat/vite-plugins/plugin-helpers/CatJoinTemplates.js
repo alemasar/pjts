@@ -22,7 +22,6 @@ class CatJoinTemplates {
       this.catGaps.set('default', splittedGaps.join(''))
       this.parsedGaps = this.catGaps
     }
-    console.log(this.parsedGaps)
     this.template = generateGap({
       className: config.name + 'Gap',
       tagName: config.tag,

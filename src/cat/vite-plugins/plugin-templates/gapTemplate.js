@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 const generateGap = (config) => {
   let returnTemplate = `
   import Gap from "@cat/cat-classes/CatGap"
+  import { v4 as uuidv4 } from "uuid"
 
   class ${config.className} extends Gap {
     constructor() {

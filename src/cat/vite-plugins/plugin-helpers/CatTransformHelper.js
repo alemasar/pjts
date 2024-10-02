@@ -6,7 +6,7 @@ class CatTransformHelper {
   constructor() {
     this.templateRegExp = /<template(.|[\s\S])*?<\/template>/g
     this.configRegExp = /<config>(.|[\s\S])*?<\/config>/g
-    this.scriptRegExp = /<script>(.|[\s\S])*?<\/script>/g
+    this.scriptRegExp = /<script(.|[\s\S])*?<\/script>/g
   }
 
   readAllFiles(dir, extension) {
@@ -48,14 +48,14 @@ class CatTransformHelper {
     return returnValue;
   }
   getScript(code) {
-    const scripts = code.match(this.scriptRegExp)
-    let returnValue = '';
-    // console.log('GET SCRIPT', script)
-
-    if (scripts !== null) {
-      returnValue = scripts;
-    }
+    let returnValue = code.match(this.scriptRegExp);
+    console.log('SCRIPT CODE', returnValue)
     return returnValue;
+  }
+  parseScript(code) {
+    /* if (code !== '') {
+      console.log('CAT SCRIPT COMPONENT:::::::', new Function(catScriptComponent[0].replace('<script>', '').replace('</script>', '')))
+    } */
   }
 }
 

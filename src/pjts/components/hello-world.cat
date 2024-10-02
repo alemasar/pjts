@@ -35,8 +35,16 @@
   #import "id-for"
   #import "id-if"
 </template>
-<script>
+  <script>
+    const data = {
+      test: "Hello World"
+    }
+    export default data
+  </script>
+<script cat-script=['foo']>
   {
-    "test": "HELLO WORLD"
+    data: {
+      "test": "HELLO WORLD FOOO"
+    }
   }
 </script>

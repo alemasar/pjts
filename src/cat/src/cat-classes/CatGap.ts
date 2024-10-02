@@ -21,6 +21,7 @@ class Gap extends HTMLElement {
     
     this.innerHTML = ''
     gapsTetmplates.forEach((tt) => {
+      document.createElement("script")
       this.appendChild(tt.content.cloneNode(true))
     })
   }
@@ -30,6 +31,7 @@ class Gap extends HTMLElement {
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {
+      console.log(this.gaps.get('default'))
       temporalTemplate.innerHTML = this.gaps.get('default') as string
     }
     this.addGapCodeToComponent(temporalTemplate)
