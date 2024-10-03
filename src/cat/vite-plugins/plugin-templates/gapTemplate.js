@@ -15,10 +15,14 @@ const generateGap = (config) => {
           this.gaps.set('${key}', '${gap}')
         `
       }
-      /* for (var [key, script] of config.parsedScripts) {
-        returnTemplate += `
-          this.scripts.set('${key}', '${script}')
-        `
+      console.log(config)
+      /* if (config.scripts !== undefined) {
+        for (var [key, script] of config.scripts) {
+          console.log('SCRIPT:::::::',config.scripts)
+          returnTemplate += `
+            this.scripts.set('${key}', '${script}')
+          `
+        }
       } */
       returnTemplate += `
     }

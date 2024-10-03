@@ -14,7 +14,7 @@ class CatParseTemplates {
   }
   parseMultipleTemplates(templates) {
     templates.forEach((template) => {
-      if (template !== null && template.length > 0) {
+      if (template.length > 0) {
         const importTemplates = template.match(templateImportRegExp)
         const routeGaps = template.match(getRoutesGapRegExp)
         const defaultGaps = template.match(templateGapRegExp)

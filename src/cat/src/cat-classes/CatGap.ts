@@ -31,7 +31,6 @@ class Gap extends HTMLElement {
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
-console.log(this.gaps)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {

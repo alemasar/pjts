@@ -24,27 +24,33 @@
   </ul>
 </template>
 <template cat-gap>
-  #request "path de la request para la visualizacion default"
   #import "id-for"
   #import "id-if"
   #import "id-show"
 </template>
 <template cat-gap="['foo']">
-  #request "path de la request para esta route"
   #import "id-show"
   #import "id-for"
   #import "id-if"
 </template>
-  <script>
-    const data = {
-      test: "Hello World"
-    }
-    export default data
-  </script>
-<script cat-script=['foo']>
-  {
-    data: {
-      "test": "HELLO WORLD FOOO"
-    }
+<script>
+  #request "example.json"
+  const data = {
+    test: "Hello World DEFAULT"
   }
+  export default data
+</script>
+<script #import-id="id-if">
+  #request "example.json"
+  const data = {
+    test: "Hello World ID IF"
+  }
+  export default data
+</script>
+<script #import-id="id-for>
+  #request "https://official-joke-api.appspot.com/random_joke"
+  const data = {
+    test: "Hello World ID FOR"
+  }
+  export default data
 </script>
