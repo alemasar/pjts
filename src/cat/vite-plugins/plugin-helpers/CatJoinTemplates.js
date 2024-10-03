@@ -4,27 +4,24 @@ const breaklinesRegExp = /\r?\n|\r|\n/g
 
 class CatJoinTemplates {
   constructor(templates, config, scripts) {
-    this.parsedGaps = new Map()
-    this.catGaps = new Map()
-    this.catParseTemplates = new CatParseTemplates()
-
-    this.getTemplates(templates)
     this.template = generateGap({
       className: config.name + 'Gap',
       tagName: config.tag,
-      parsedGaps: this.parsedGaps,
+      parsedGaps: this.getTemplates(templates),
       scripts,
     })
   }
   getTemplates(templates) {
+    let parsedGaps = new Map()
     if (templates.length > 1) {
-      this.parsedGaps = this.catParseTemplates.parseMultipleTemplates(templates)
+      const catParseTemplates = new CatParseTemplates()
+      parsedGaps = catParseTemplates.parseMultipleTemplates(templates)
     } else {
       const splittedGaps = templates[0].split(breaklinesRegExp)
-      this.catGaps.set('default', splittedGaps.join(''))
-      this.parsedGaps = this.catGaps
+      const catGaps = new Map()
+      parsedGaps.set('default', splittedGaps.join(''))
     }
-    return this.parsedGaps
+    return parsedGaps
   }
 }
 
