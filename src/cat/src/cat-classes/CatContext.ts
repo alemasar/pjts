@@ -1,6 +1,6 @@
  import { v4 as uuidv4 } from 'uuid';
  
- interface ICatComponent{
+ interface ICatGap{
   id: string
   tag: string
 }
@@ -15,11 +15,11 @@ class CatContext {
   static #instance: CatContext;
   private _internalId: string
   private _getTagById: Map<string, string>
-  private _getComponentIdById: Map<string, string>
+  private _getGapIdById: Map<string, string>
   private _getRouteTemplateById: Map<string, string>
   private _getRouteIdById: Map<string, string>
   private _cat: {
-    components: Map<string, ICatComponent>
+    gaps: Map<string, ICatGap>
     routes: Map<string, IPageRoute>
     route: string
     routeId: string
@@ -27,14 +27,14 @@ class CatContext {
 
   private constructor() {
     this._cat = {
-      components: new Map<string, ICatComponent>(),
+      gaps: new Map<string, ICatGap>(),
       routes: new Map<string, IPageRoute>(),
       route: 'index',
       routeId: '',
     }
     this._internalId = ''
     this._getTagById=new Map<string, string>()
-    this._getComponentIdById=new Map<string, string>()
+    this._getGapIdById=new Map<string, string>()
     this._getRouteTemplateById=new Map<string, string>()
     this._getRouteIdById=new Map<string, string>()
   }
@@ -49,10 +49,10 @@ class CatContext {
   get cat() {
     return this._cat
   }
-  get components() {
-    return this._cat.components
+  get gaps() {
+    return this._cat.gaps
   }
-  set component(newValue: ICatComponent) {
+  set gap(newValue: ICatGap) {
     this._internalId = uuidv4()
 
     /* this._cat.components.set(this._internalId, {
@@ -62,21 +62,21 @@ class CatContext {
     }) */
    console.log(newValue)
     this._getTagById.set(newValue.tag, this._internalId)
-    this._getComponentIdById.set(newValue.id, this._internalId)
+    this._getGapIdById.set(newValue.id, this._internalId)
   }
   get getComponentByTag() {
     return (tag: string) => {
-      return this._cat.components.get(this._getTagById.get(tag) as string)
+      return this._cat.gaps.get(this._getTagById.get(tag) as string)
     }
   }
-  get getComponentById() {
+  get getGapById() {
     return (id: string) => {
-      return this._cat.components.get(this._getComponentIdById.get(id) as string)
+      return this._cat.gaps.get(this._getGapIdById.get(id) as string)
     }
   }
   getRouteIdById(id: string) {
-    console.log(this._cat.components.get(this._getRouteIdById.get(id) as string))
-    return this._cat.components.get(this._getRouteIdById.get(id) as string)
+    console.log(this._cat.gaps.get(this._getRouteIdById.get(id) as string))
+    return this._cat.gaps.get(this._getRouteIdById.get(id) as string)
   }
   get routes() {
     return this._cat.routes

@@ -1,5 +1,5 @@
 import CatApp from "@cat/index"
-import elements from 'virtual:components'
+import elements from 'virtual:gaps'
 
 const templates = new Map<string, any>()
 
@@ -8,7 +8,7 @@ class CatPage extends HTMLElement {
   constructor() {
     super();
     this.cat = CatApp.instance
-    const definitionComponents = elements.components
+    const definitionComponents = elements.gaps
 
     definitionComponents.forEach((de: any) => {
       const definitionComponent = de()

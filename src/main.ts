@@ -2,7 +2,7 @@ import './main.css'
 //import "@pjts-game/components/hello-world.cat";
 import CatHooks from "@cat/cat-classes/CatHooks";
 import PJTS from "@cat/index";
-import CatPage from "@cat/cat-web-components-classes/CatPage";
+import CatPage from "@cat/cat-web-gaps-classes/CatPage";
 
 class Game {
   hooks: CatHooks

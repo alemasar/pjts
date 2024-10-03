@@ -27,7 +27,7 @@
   #import "id-if"
   #import "id-show"
 </template>
-<template cat-gap="Array de routes donde se carga el componente">
+<template cat-gap="Array de routes donde se carga el gap">
   #request "path de la request para esta route"
   #import "id-show"
   #import "id-for"

@@ -1,7 +1,7 @@
 export default {
-  components: {
+  gaps: {
     base: 'pjts',
-    path: 'components'
+    path: 'gaps'
   },
   pages: {
     base: 'pjts',

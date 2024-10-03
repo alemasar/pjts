@@ -3,8 +3,6 @@ const templateImportRegExp = /<template #import-id(.|[\s\S])*?<\/template>/g
 const getRoutesGapRegExp = /cat-gap="(.|[\s\S])*?"/g
 const getImportGapRegExp = /#import-id="(.|[\s\S])*?"/g
 const breaklinesRegExp = /\r?\n|\r|\n/g
-const getRequestGapRegExp = /#request "(.|[\s\S])*?"/g
-const getImportTemplateRegExp = /#import "(.|[\s\S])*?"/g
 
 const parseTemplates = (importTemplates, catTemplates) => {
   importTemplates.forEach((it) => {
@@ -56,7 +54,6 @@ const parseGaps = (gapLinesMap, catTemplates) => {
   }
   return resultMap
 }
-
 
 class CatParseTemplates {
   constructor() {}

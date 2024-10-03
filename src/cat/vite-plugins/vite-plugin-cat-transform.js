@@ -32,19 +32,19 @@ let urlPage = "";
 let htmlIndex = "";
 let transformIndexState = "before";
 export default function transformIndextemplate(options) {
-  const virtualComponentsId = "virtual:components";
-  const resolvedVirtualComponentId = "\0" + virtualComponentsId;
+  const virtualGapsId = "virtual:gaps";
+  const resolvedVirtualGapId = "\0" + virtualGapsId;
   const allLayoutsFiles = catTransformHelper.readAllFiles(
     path.normalize(`src/${options.pages.base}/${options.pages.path}`),
     ".html"
   );
   const allCatFiles = catTransformHelper.readAllFiles(
-    path.normalize(`src/${options.components.base}/${options.components.path}`),
+    path.normalize(`src/${options.gaps.base}/${options.gaps.path}`),
     ".cat"
   );
   let catFilesImports = "";
   let layoutsFilesImports = "";
-  let beforeExportCatFiles = `const arrayComponents = []
+  let beforeExportCatFiles = `const arrayGaps = []
 `;
   let beforeExportLayoutsFiles = `const arrayLayouts = []
 `;
@@ -56,30 +56,30 @@ export default function transformIndextemplate(options) {
 `;
   });
   allCatFiles.forEach((cf, index) => {
-    catFilesImports += `import component${index} from "@pjts-game/${options.components.path}/${cf.name}.cat";
+    catFilesImports += `import gap${index} from "@pjts-game/${options.gaps.path}/${cf.name}.cat";
 `;
-    beforeExportCatFiles += `arrayComponents.push(component${index})
+    beforeExportCatFiles += `arrayGaps.push(gap${index})
 `;
   });
 
   exports += `
     export default {
       routes: arrayLayouts,
-      components: arrayComponents,
+      gaps: arrayGaps,
     }
 `;
   return {
     name: "vite-plugin-cat-transform", // required, will show up in warnings and errors
     resolveId: {
       handler(id) {
-        if (id === virtualComponentsId) {
-          return resolvedVirtualComponentId;
+        if (id === virtualGapsId) {
+          return resolvedVirtualGapId;
         }
       },
     },
     load: {
       handler(id) {
-        if (id === resolvedVirtualComponentId) {
+        if (id === resolvedVirtualGapId) {
           return (
             layoutsFilesImports +
             catFilesImports +
@@ -96,14 +96,14 @@ export default function transformIndextemplate(options) {
         console.log(id);
         if (id.endsWith(fileCatEndsWith) === true) {
           // const uuid = uuidv4();
-          let catConfigComponent = {};
+          let catConfigGap = {};
           try {
-            catConfigComponent = JSON.parse(catTransformHelper.getConfig(code));
+            catConfigGap = JSON.parse(catTransformHelper.getConfig(code));
           } catch (e) {
             // console.error(`%c${e}`, 'color: red;')
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
-          const catScriptComponent = catTransformHelper.getScript(code, catConfigComponent)
+          const catScriptGap = catTransformHelper.getScript(code, catConfigGap)
           let scriptCodeString = ''
           // console.log('SCRIPT CODE STRING:::::',scriptCodeString)
           /* if (catScriptComponent !== null) {
@@ -112,9 +112,9 @@ export default function transformIndextemplate(options) {
             })
           } */
 
-          const catTemplateComponent = catTransformHelper.getGap(code, catConfigComponent, scriptCodeString)
-          console.log(catTemplateComponent)
-          code = `${catTemplateComponent}`;
+          const catTemplateGap = catTransformHelper.getGap(code, catConfigGap, scriptCodeString)
+          console.log(catTemplateGap)
+          code = `${catTemplateGap}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();
           const route = id.split("/").pop().replace(".html?special", "");

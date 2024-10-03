@@ -1,6 +1,6 @@
 import type CatContext from '@cat/cat-classes/CatContext'
 import type CatHooks from '@cat/cat-classes/CatHooks'
-import elements from 'virtual:components'
+import elements from 'virtual:gaps'
 
 class Client {
   context: CatContext
@@ -9,10 +9,10 @@ class Client {
     this.context = context
     this.catHooks = catHooks
 
-    elements.components.forEach((c: any) => {
-      const component = c()
-      console.log(component.id)
-      this.context.components.set(component.id, component.tag)
+    elements.gaps.forEach((c: any) => {
+      const gap = c()
+      console.log(gap.id)
+      this.context.gaps.set(gap.id, gap.tag)
     })
     elements.routes.forEach((p: any) => {
       this.context.route = p
