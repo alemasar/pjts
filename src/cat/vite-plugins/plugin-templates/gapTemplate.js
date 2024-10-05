@@ -15,7 +15,6 @@ const generateGap = (config) => {
           this.gaps.set('${key}', '${gap}')
         `
       }
-      console.log(config)
       /* if (config.scripts !== undefined) {
         for (var [key, script] of config.scripts) {
           console.log('SCRIPT:::::::',config.scripts)

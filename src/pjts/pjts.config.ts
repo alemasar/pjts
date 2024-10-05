@@ -1,10 +1,14 @@
 export default {
+  pages: {
+    base: 'pjts',
+    path: 'pages'
+  },
   gaps: {
     base: 'pjts',
     path: 'gaps'
   },
-  pages: {
+  data: {
     base: 'pjts',
-    path: 'pages'
+    path: 'data'
   }
 }

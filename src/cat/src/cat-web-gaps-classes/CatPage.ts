@@ -8,13 +8,11 @@ class CatPage extends HTMLElement {
   constructor() {
     super();
     this.cat = CatApp.instance
-    const definitionComponents = elements.gaps
+    const definitionGaps = elements.gaps
 
-    definitionComponents.forEach((de: any) => {
-      const definitionComponent = de()
-      console.log(definitionComponent.tag)
-      console.log(definitionComponent.classCode)
-      customElements.define(definitionComponent.tag, definitionComponent.classCode)
+    definitionGaps.forEach((de: any) => {
+      const definitionGap = de()
+      customElements.define(definitionGap.tag, definitionGap.classCode)
     })
     const linkHandler = (e: Event) => {
       const { target } = e
@@ -41,7 +39,6 @@ class CatPage extends HTMLElement {
   connectedCallback() {
     const path = this.cat.context.cat.route;
     elements.routes.forEach((er: any) => {
-      console.log(er)
       templates.set(er.route, er.template)
     })
     this.changePage(path)
@@ -83,7 +80,7 @@ class CatPage extends HTMLElement {
   popstateHandler(e: any) {
     const pathName = new URL(e.currentTarget.location.href).pathname
     const route = this.getRouteTemplate(pathName)
-    console.log(route)
+
     this.changePage(route)
   }
 }

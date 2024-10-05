@@ -48,7 +48,7 @@ class CatTransformHelper {
   getGap(code, config, scripts) {
     const templates = code.match(this.templateRegExp)
     let returnValue = code;
-    console.log('TEMPLATE CODE', templates)
+    // console.log('TEMPLATE CODE', templates)
     const joinTemplate = new CatJoinTemplates(templates, config, scripts)
     if (templates !== null) {
       returnValue = joinTemplate.template;

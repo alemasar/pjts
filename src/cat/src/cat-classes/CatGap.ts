@@ -31,10 +31,10 @@ class Gap extends HTMLElement {
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
+
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {
-      console.log(this.gaps.get('default'))
       temporalTemplate.innerHTML = this.gaps.get('default') as string
     }
     this.addGapCodeToComponent(temporalTemplate)

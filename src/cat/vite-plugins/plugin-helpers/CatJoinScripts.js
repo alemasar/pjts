@@ -1,7 +1,7 @@
-class CatJoinTemplates {
+class CatJoinScripts {
   constructor(config, scripts) {
     
   }
 }
 
-export default CatJoinTemplates
+export default CatJoinScripts

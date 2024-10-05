@@ -62,19 +62,17 @@ class CatParseTemplates {
     let parsedGaps = new Map()
     let catTemplates = new Map()
     templates.forEach((template) => {
-      if (template.length > 0) {
-        const importTemplates = template.match(templateImportRegExp)
-        const routeGaps = template.match(getRoutesGapRegExp)
-        const defaultGaps = template.match(templateGapRegExp)
-        if (importTemplates !== null) {
-          catTemplates = parseTemplates(importTemplates, catTemplates)
-        }
-        if (routeGaps !== null) {
-          catGaps = parseRouteGaps(defaultGaps, catGaps)
-        } else if (defaultGaps !== null && defaultGaps.length > 0) {
-          const splittedGaps = template.split(breaklinesRegExp)
-          catGaps.set('index', splittedGaps)
-        }
+      const importTemplates = template.match(templateImportRegExp)
+      const routeGaps = template.match(getRoutesGapRegExp)
+      const defaultGaps = template.match(templateGapRegExp)
+      if (importTemplates !== null) {
+        catTemplates = parseTemplates(importTemplates, catTemplates)
+      }
+      if (routeGaps !== null) {
+        catGaps = parseRouteGaps(defaultGaps, catGaps)
+      } else if (defaultGaps !== null && defaultGaps.length > 0) {
+        const splittedGaps = template.split(breaklinesRegExp)
+        catGaps.set('index', splittedGaps)
       }
     })
     parsedGaps = parseGaps(catGaps, catTemplates)

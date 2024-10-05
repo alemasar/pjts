@@ -33,3 +33,24 @@
   #import "id-for"
   #import "id-if"
 </template>
+<script>
+  #request "path de la request para esta route"
+  const data = {
+    test: "Hello World DEFAULT"
+  }
+  export default data
+</script>
+<script #import-id="id-if">
+  #import "path de la request para fichero estatico json"
+  const data = {
+    test: "Hello World ID IF"
+  }
+  export default data
+</script>
+<script #import-id="id-for>
+  #import "path de la request para fichero estatico js que devuelve un objeto estatico"
+  const data = {
+    test: "Hello World ID FOR"
+  }
+  export default data
+</script>
