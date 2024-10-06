@@ -29,7 +29,17 @@ class Gap extends HTMLElement {
   }
   addGapCodeToWebComponent(temporalTemplate: HTMLTemplateElement, script: Map<string, string>|undefined) {
     const gapsTemplates = temporalTemplate.content.querySelectorAll('template')
+    
     this.innerHTML = ''
+    if (script?.has('default') === true) {
+      const scriptTag = document.createElement("script")
+      scriptTag.type = "module"
+      const code = script.get('default')?.replace('<script>', '').replace('</script>', '')
+      scriptTag.append(code as string)
+      temporalTemplate.content.appendChild(scriptTag)
+      this.appendChild(temporalTemplate.content.cloneNode(true))
+    }
+    
     gapsTemplates.forEach((tt) => {
       const scriptTag = document.createElement("script")
       scriptTag.type = "module"
@@ -46,14 +56,6 @@ class Gap extends HTMLElement {
       }
       this.appendChild(tt.content.cloneNode(true))
     })
-    if (script?.has('default') === true) {
-      const scriptTag = document.createElement("script")
-      scriptTag.type = "module"
-      const code = script.get('default')?.replace('<script>', '').replace('</script>', '')
-      scriptTag.append(code as string)
-      temporalTemplate.content.appendChild(scriptTag)
-      this.appendChild(temporalTemplate.content.cloneNode(true))
-    }
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
