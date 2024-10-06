@@ -23,12 +23,12 @@
     <li>Queda fuera del bucle for</li>
   </ul>
 </template>
-<template cat-gap>
+<template #cat-gap>
   #import "id-for"
   #import "id-if"
   #import "id-show"
 </template>
-<template cat-gap="['foo']">
+<template #cat-gap="['foo']">
   #import "id-show"
   #import "id-for"
   #import "id-if"
@@ -47,10 +47,17 @@
   }
   export default data
 </script>
-<script #import-id="id-for>
+<script #import-id="id-for">
   #request "https://official-joke-api.appspot.com/random_joke"
   const data = {
     test: "Hello World ID FOR"
+  }
+  export default data
+</script>
+<script #cat-gap="['foo']" #import-id="id-for">
+  #request "https://official-joke-api.appspot.com/random_joke"
+  const data = {
+    test: "Hello World ID FOR FOOOOOO"
   }
   export default data
 </script>

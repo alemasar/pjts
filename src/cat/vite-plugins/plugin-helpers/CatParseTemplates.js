@@ -1,6 +1,6 @@
-const templateGapRegExp = /<template cat-gap(.|[\s\S])*?<\/template>/g
+const templateGapRegExp = /<template #cat-gap(.|[\s\S])*?<\/template>/g
 const templateImportRegExp = /<template #import-id(.|[\s\S])*?<\/template>/g
-const getRoutesGapRegExp = /cat-gap="(.|[\s\S])*?"/g
+const getRoutesGapRegExp = /#cat-gap="(.|[\s\S])*?"/g
 const getImportGapRegExp = /#import-id="(.|[\s\S])*?"/g
 const breaklinesRegExp = /\r?\n|\r|\n/g
 
@@ -18,9 +18,9 @@ const parseRouteGaps = (defaultGaps, catGaps) => {
   let splittedGaps = []
   defaultGaps.forEach((dg) => {
     splittedGaps = dg.split(breaklinesRegExp)
-    if (dg.includes('cat-gap=') === true) {
+    if (dg.includes('#cat-gap=') === true) {
       const arrayRoutes = splittedGaps[0].
-        replace(`<template cat-gap="`, '').
+        replace(`<template #cat-gap="`, '').
         replace('"', '').
         replace('>', '').
         replace(/'/g,'"')

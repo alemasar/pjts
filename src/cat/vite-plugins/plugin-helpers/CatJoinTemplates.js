@@ -18,7 +18,6 @@ class CatJoinTemplates {
       parsedGaps = catParseTemplates.parseMultipleTemplates(templates)
     } else {
       const splittedGaps = templates[0].split(breaklinesRegExp)
-      const catGaps = new Map()
       parsedGaps.set('default', splittedGaps.join(''))
     }
     return parsedGaps

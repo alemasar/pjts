@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import CatJoinTemplates from './CatJoinTemplates';
-import CatParseScripts from './CatParseScripts';
+import CatJoinScripts from './CatJoinScripts';
 
 class CatTransformHelper {
   constructor() {
@@ -41,14 +41,18 @@ class CatTransformHelper {
   }
   getScript(code, config) {
     const scripts = code.match(this.scriptRegExp);
-    // console.log('SCRIPTS IN GET SCRIPT', scripts)
-    const parsedScript = new CatParseScripts(config, scripts)
+    let returnValue = code;
+
+    if (scripts !== null) {
+      const joinScript = new CatJoinScripts(scripts)
+      returnValue = joinScript.getScripts(scripts);
+    }
     return scripts;
   }
   getGap(code, config, scripts) {
     const templates = code.match(this.templateRegExp)
     let returnValue = code;
-    // console.log('TEMPLATE CODE', templates)
+
     const joinTemplate = new CatJoinTemplates(templates, config, scripts)
     if (templates !== null) {
       returnValue = joinTemplate.template;
