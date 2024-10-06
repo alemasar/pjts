@@ -18,27 +18,35 @@ class Gap extends HTMLElement {
       this.changeGapRoute(route)
     })
   }
-  addGapCodeToComponent(temporalTemplate: HTMLTemplateElement) {
+  addGapCodeToWebComponent(temporalTemplate: HTMLTemplateElement, script: Map<string, string>|undefined) {
     const gapsTetmplates = temporalTemplate.content.querySelectorAll('template')
-    
     this.innerHTML = ''
     gapsTetmplates.forEach((tt) => {
-      const script = document.createElement("script")
-      script.append("console.log('HELLO WORLD IN SCRIPT')")
-      console.log('TEMPLATE:::::', tt.getAttribute('id'))
-      tt.content.appendChild(script)
+      const scriptTag = document.createElement("script")
+      const idTemplate = tt.getAttribute('id') as string
+      if (script !== undefined) { 
+        const temporalScript = script as Map<string, string>
+        console.log(temporalScript.has(idTemplate))
+        if (temporalScript.has(idTemplate) === true) {
+          const code = temporalScript.get(idTemplate)?.replace('<script>', '').replace('</script>', '')
+          scriptTag.append(code as string)
+          tt.content.appendChild(scriptTag)
+        }
+      }
       this.appendChild(tt.content.cloneNode(true))
     })
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
-    console.log('GAPS IN CHANGE GAP ROUTE', this.scripts)
+    const script = this.scripts.get(route) as Map<string, string>|undefined
+
+    console.log('GAPS IN CHANGE GAP ROUTE', script)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {
       temporalTemplate.innerHTML = this.gaps.get('default') as string
     }
-    this.addGapCodeToComponent(temporalTemplate)
+    this.addGapCodeToWebComponent(temporalTemplate, script)
   }
 }
 export default Gap;
