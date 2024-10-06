@@ -18,10 +18,11 @@ const getScriptRouteImport = (idandroute, parsedScripts, scriptCode) => {
     }
   })
   catRouteObject = JSON.parse(`{"routes": ${catGapRoutes}}`)
-  console.log(typeof catRouteObject)
   if (catRouteObject.routes.length > 0) {
     catRouteObject.routes.forEach((cro) => {
-      parsedScripts.set(cro, new Map())
+      if (parsedScripts.has(cro) === false) {
+        parsedScripts.set(cro, new Map())
+      }
       if (importIdTemplate !== '') {
         parsedScripts.get(cro).set(importIdTemplate, scriptCode)
       } else {
@@ -34,35 +35,41 @@ const getScriptRouteImport = (idandroute, parsedScripts, scriptCode) => {
 
 const getScriptImport = (idandroute, parsedScripts, scriptCode) => {
   const importIdTemplate = idandroute[0].replace(importInstructionName, '').replace(`"`, '')
-  parsedScripts.set('index', new Map())
+  if (parsedScripts.has('index') === false) {
+    parsedScripts.set('index', new Map())
+  }
   parsedScripts.get('index').set(importIdTemplate, scriptCode)
   return parsedScripts
 }
 
-const getScriptIndexDefault = (scriptCode, parsedScripts) => {
-  parsedScripts.set('index', new Map())
+const getScriptIndexDefault = (parsedScripts, scriptCode) => {
+  if (parsedScripts.has('index') === false) {
+    parsedScripts.set('index', new Map())
+  }
   parsedScripts.get('index').set('default', scriptCode)
   return parsedScripts
 }
 
 class CatParseScripts {
   constructor() {}
-  parseMultipleScripts(scripts) {
-    let parsedScripts = new Map()
+  parseMultipleScripts(parsedScripts, scripts) {
     if (scripts.length > 0) {
       scripts.forEach((s) => {
         const splittedScript = s.split(breaklinesRegExp)
-        const scriptCode = splittedScript.join('\n')
         const idandroute = splittedScript[0].replace(`<script`, '').replace(`>`, '').trim().split(' ')
+
         if (splittedScript[0].match(getCatGapRouteScriptRegExp) !== null && splittedScript[0].match(getImportScriptRegExp) !== null) {
-          parsedScripts = getScriptRouteImport(idandroute, parsedScripts, scriptCode)
+          splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
+          parsedScripts = getScriptRouteImport(idandroute, parsedScripts, splittedScript.join('\n'))
+          console.log('parseMultipleScripts after', parsedScripts)
         } else if (splittedScript[0].match(getImportScriptRegExp) !== null) {
-          parsedScripts = getScriptImport(idandroute, parsedScripts, scriptCode)
+          splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
+          parsedScripts = getScriptImport(idandroute, parsedScripts, splittedScript.join('\n'))
         } else {
-          parsedScripts = getScriptIndexDefault(scriptCode, parsedScripts)
+          splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
+          parsedScripts = getScriptIndexDefault(parsedScripts, splittedScript.join('\n'))
         }
       })
-      console.log('CATPARSESCRIPTS::::', parsedScripts)
     }
     return parsedScripts
   }

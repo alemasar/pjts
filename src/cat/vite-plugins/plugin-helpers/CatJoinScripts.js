@@ -9,7 +9,7 @@ class CatJoinScripts {
 
     if (scripts.length > 1) {
       const catParseScripts = new CatParseScripts()
-      catParseScripts.parseMultipleScripts(scripts)
+      parsedScripts = catParseScripts.parseMultipleScripts(parsedScripts, scripts)
     } else {
       const splittedScripts = scripts[0].split(breaklinesRegExp)
       parsedScripts.set('default', splittedScripts.join(''))

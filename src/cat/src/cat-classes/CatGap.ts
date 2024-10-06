@@ -25,13 +25,14 @@ class Gap extends HTMLElement {
     gapsTetmplates.forEach((tt) => {
       const script = document.createElement("script")
       script.append("console.log('HELLO WORLD IN SCRIPT')")
+      console.log('TEMPLATE:::::', tt.getAttribute('id'))
       tt.content.appendChild(script)
       this.appendChild(tt.content.cloneNode(true))
     })
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
-
+    console.log('GAPS IN CHANGE GAP ROUTE', this.scripts)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {

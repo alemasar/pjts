@@ -104,7 +104,6 @@ export default function transformIndextemplate(options) {
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
           const catScriptGap = catTransformHelper.getScript(code, catConfigGap)
-          let scriptCodeString = ''
           // console.log('SCRIPT CODE STRING:::::',scriptCodeString)
           /* if (catScriptComponent !== null) {
             catScriptComponent.forEach((csc) => {
@@ -112,7 +111,7 @@ export default function transformIndextemplate(options) {
             })
           } */
 
-          const catTemplateGap = catTransformHelper.getGap(code, catConfigGap, scriptCodeString)
+          const catTemplateGap = catTransformHelper.getGap(code, catConfigGap, catScriptGap)
           code = `${catTemplateGap}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();

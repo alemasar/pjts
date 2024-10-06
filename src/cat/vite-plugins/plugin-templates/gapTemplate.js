@@ -15,15 +15,23 @@ const generateGap = (config) => {
           this.gaps.set('${key}', '${gap}')
         `
       }
-      /* if (config.scripts !== undefined) {
-        for (var [key, script] of config.scripts) {
-          console.log('SCRIPT:::::::',config.scripts)
-          returnTemplate += `
-            this.scripts.set('${key}', '${script}')
-          `
+      if (config.scripts !== '') {
+        returnTemplate += `
+          this.scripts = new Map()
+        `
+        for (var [route, scriptsMap] of config.scripts) {
+          for (var [template, script] of scriptsMap) {
+            returnTemplate += `
+            if (this.scripts.has('${route}') === false) {
+              this.scripts.set('${route}', new Map())
+            }
+            this.scripts.get('${route}').set('${template}', \`${script}\`)
+            `
+          }
         }
-      } */
+      }
       returnTemplate += `
+      console.log(this.scripts)
     }
   }
   export default ()=> {

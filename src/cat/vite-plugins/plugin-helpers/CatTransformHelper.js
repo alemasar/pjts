@@ -41,13 +41,14 @@ class CatTransformHelper {
   }
   getScript(code, config) {
     const scripts = code.match(this.scriptRegExp);
-    let returnValue = code;
+    let returnValue = '';
 
     if (scripts !== null) {
       const joinScript = new CatJoinScripts(scripts)
       returnValue = joinScript.getScripts(scripts);
+      console.log(returnValue)
     }
-    return scripts;
+    return returnValue;
   }
   getGap(code, config, scripts) {
     const templates = code.match(this.templateRegExp)

@@ -6,8 +6,10 @@ const breaklinesRegExp = /\r?\n|\r|\n/g
 
 const parseTemplates = (importTemplates, catTemplates) => {
   importTemplates.forEach((it) => {
-    const parsedImportTemplates = it.split(breaklinesRegExp)
+    const parsedImportTemplates = it.split(breaklinesRegExp)  
     const importId = it.match(getImportGapRegExp)[0].trim().split(/=/g)[1].replace(/"/g, '')
+
+    parsedImportTemplates[0] = parsedImportTemplates[0].replace('#import-', '')
     catTemplates.set(importId, parsedImportTemplates)
   })
   return catTemplates
@@ -16,6 +18,7 @@ const parseTemplates = (importTemplates, catTemplates) => {
 const parseRouteGaps = (defaultGaps, catGaps) => {
   let routeName = {}
   let splittedGaps = []
+
   defaultGaps.forEach((dg) => {
     splittedGaps = dg.split(breaklinesRegExp)
     if (dg.includes('#cat-gap=') === true) {
@@ -35,6 +38,7 @@ const parseRouteGaps = (defaultGaps, catGaps) => {
 
 const parseImportTemplates = (line, resultArray, catTemplates) => {
   const gapLinePos = line.indexOf('#import')
+
   if (gapLinePos !== -1) {
     const importId = line.trim().split(' ')[1].replace(/"/g, '')
     resultArray = resultArray.concat(catTemplates.get(importId))
@@ -45,6 +49,7 @@ const parseImportTemplates = (line, resultArray, catTemplates) => {
 const parseGaps = (gapLinesMap, catTemplates) => {
   const resultMap = new Map()
   let resultArray = []
+
   for (let [key, gapLines] of gapLinesMap.entries()) {
     gapLines.forEach((line) => {
       resultArray = parseImportTemplates(line, resultArray, catTemplates)
@@ -61,6 +66,7 @@ class CatParseTemplates {
     let catGaps = new Map()
     let parsedGaps = new Map()
     let catTemplates = new Map()
+
     templates.forEach((template) => {
       const importTemplates = template.match(templateImportRegExp)
       const routeGaps = template.match(getRoutesGapRegExp)
