@@ -39,7 +39,7 @@
     test: "Hello World DEFAULT"
   }
   console.log(data.test)
-  export default data
+  // export default data
 </script>
 <script #import-id="id-if">
   // #request "example.json"
@@ -47,7 +47,7 @@
     test: "Hello World ID IF"
   }
   console.log(data.test)
-  export default data
+  // export default data
 </script>
 <script #import-id="id-for">
   // #request "https://official-joke-api.appspot.com/random_joke"

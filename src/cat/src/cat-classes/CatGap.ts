@@ -18,11 +18,18 @@ class Gap extends HTMLElement {
       this.changeGapRoute(route)
     })
   }
+  disconnectedCallback() {
+    console.log("Custom element removed from page.");
+  }
+  adoptedCallback() {
+    console.log("Custom element moved to new page.");
+  }
   addGapCodeToWebComponent(temporalTemplate: HTMLTemplateElement, script: Map<string, string>|undefined) {
-    const gapsTetmplates = temporalTemplate.content.querySelectorAll('template')
+    const gapsTemplates = temporalTemplate.content.querySelectorAll('template')
     this.innerHTML = ''
-    gapsTetmplates.forEach((tt) => {
+    gapsTemplates.forEach((tt) => {
       const scriptTag = document.createElement("script")
+      scriptTag.type = "module"
       const idTemplate = tt.getAttribute('id') as string
       if (script !== undefined) { 
         const temporalScript = script as Map<string, string>
