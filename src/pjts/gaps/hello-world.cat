@@ -44,7 +44,7 @@
 <script #import-id="id-if">
   // #request "example.json"
   const data = {
-    test: "Hello World ID IF"
+    test: "Hello World ID IF INDEX"
   }
   console.log(data.test)
   // export default data
@@ -52,7 +52,7 @@
 <script #import-id="id-for">
   // #request "https://official-joke-api.appspot.com/random_joke"
   const data = {
-    test: "Hello World ID FOR"
+    test: "Hello World ID FOR INDEX"
   }
   console.log(data.test)
   // export default data

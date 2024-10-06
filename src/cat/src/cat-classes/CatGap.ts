@@ -11,15 +11,18 @@ class Gap extends HTMLElement {
     this.scripts = new Map<string, string>();
   }
   connectedCallback() {
-    console.log('CAT',this.cat.context.cat.route)
     this.changeGapRoute(this.cat.context.cat.route)
     this.cat.client.catHooks.addHook('cat-change-gap', (route: string) => {
       console.log('cat-change-gap', route)
-      this.changeGapRoute(route)
+      // this.changeGapRoute(route)
     })
   }
   disconnectedCallback() {
-    console.log("Custom element removed from page.");
+    const scriptTag = this.querySelectorAll('script')
+    scriptTag.forEach((st) => {
+      st.parentElement?.removeChild(st)
+    })
+    console.log("Custom element removed from page.", scriptTag);
   }
   adoptedCallback() {
     console.log("Custom element moved to new page.");
@@ -35,6 +38,7 @@ class Gap extends HTMLElement {
         const temporalScript = script as Map<string, string>
         console.log(temporalScript.has(idTemplate))
         if (temporalScript.has(idTemplate) === true) {
+          console.log(temporalScript.get(idTemplate))
           const code = temporalScript.get(idTemplate)?.replace('<script>', '').replace('</script>', '')
           scriptTag.append(code as string)
           tt.content.appendChild(scriptTag)
@@ -42,12 +46,20 @@ class Gap extends HTMLElement {
       }
       this.appendChild(tt.content.cloneNode(true))
     })
+    if (script?.has('default') === true) {
+      const scriptTag = document.createElement("script")
+      scriptTag.type = "module"
+      const code = script.get('default')?.replace('<script>', '').replace('</script>', '')
+      scriptTag.append(code as string)
+      temporalTemplate.content.appendChild(scriptTag)
+      this.appendChild(temporalTemplate.content.cloneNode(true))
+    }
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
     const script = this.scripts.get(route) as Map<string, string>|undefined
 
-    console.log('GAPS IN CHANGE GAP ROUTE', script)
+    console.log('GAPS IN CHANGE GAP ROUTE', route)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {
