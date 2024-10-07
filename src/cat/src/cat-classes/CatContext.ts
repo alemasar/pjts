@@ -54,13 +54,6 @@ class CatContext {
   }
   set gap(newValue: ICatGap) {
     this._internalId = uuidv4()
-
-    /* this._cat.components.set(this._internalId, {
-      id: newValue.id,
-      tag: newValue.tag,
-      template: newValue.template,
-    }) */
-   console.log(newValue)
     this._getTagById.set(newValue.tag, this._internalId)
     this._getGapIdById.set(newValue.id, this._internalId)
   }
@@ -75,7 +68,7 @@ class CatContext {
     }
   }
   getRouteIdById(id: string) {
-    console.log(this._cat.gaps.get(this._getRouteIdById.get(id) as string))
+    // console.log(this._cat.gaps.get(this._getRouteIdById.get(id) as string))
     return this._cat.gaps.get(this._getRouteIdById.get(id) as string)
   }
   get routes() {
@@ -83,7 +76,7 @@ class CatContext {
   }
   set route(newValue: IPageRoute) {
     this._internalId = uuidv4()
-    console.log('NEW VALUE IN CATCONTEXT', newValue)
+    // console.log('NEW VALUE IN CATCONTEXT', newValue)
     this._cat.routes.set(this._internalId, {
       id: newValue.id,
       route: newValue.route,
@@ -94,11 +87,12 @@ class CatContext {
   }
   get getRouteNameByRoute() {
     return (route: string) => {
-      console.log('getRouteNameByRoute in getRouteNameByRoute', route)
+      // console.log('getRouteNameByRoute in getRouteNameByRoute', route)
       const pathname = route.replace('/', '')
-      console.log(this._cat.routes)
+      // console.log(this._cat.routes)
       const idTemplate = this._getRouteTemplateById.get(pathname)
-      console.log('ID TEMPLATE IN GET ROUTEBYROUTE',this._cat.routes.get(idTemplate as string))
+      // console.log('ID TEMPLATE IN GET ROUTEBYROUTE',this._cat.routes.get(idTemplate as string))
+
       return this._cat.routes.get(idTemplate as string)
     }
   }

@@ -8,7 +8,7 @@ const generateGap = (config) => {
   class ${config.className} extends Gap {
     constructor() {
       super();
-      console.log('GAP IN TEMPLATE')
+      // console.log('GAP IN TEMPLATE')
       `
       for (var [key, gap] of config.parsedGaps) {
         returnTemplate += `
@@ -31,7 +31,7 @@ const generateGap = (config) => {
         }
       }
       returnTemplate += `
-      console.log(this.scripts)
+      // console.log(this.scripts)
     }
   }
   export default ()=> {

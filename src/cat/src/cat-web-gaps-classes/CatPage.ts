@@ -27,7 +27,7 @@ class CatPage extends HTMLElement {
           const route = this.getRouteTemplate(path)
           this.cat.context.cat.route = route
           this.changePage(route)
-          this.cat.client.catHooks.callHookName('cat-change-gap', route)
+          this.cat.client.catHooks.callHookName('cat-change-page', route)
         }
       } 
     }

@@ -61,7 +61,7 @@ class CatParseScripts {
         if (splittedScript[0].match(getCatGapRouteScriptRegExp) !== null && splittedScript[0].match(getImportScriptRegExp) !== null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
           parsedScripts = getScriptRouteImport(idandroute, parsedScripts, splittedScript.join('\n'))
-          console.log('parseMultipleScripts after', parsedScripts)
+          // console.log('parseMultipleScripts after', parsedScripts)
         } else if (splittedScript[0].match(getImportScriptRegExp) !== null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
           parsedScripts = getScriptImport(idandroute, parsedScripts, splittedScript.join('\n'))

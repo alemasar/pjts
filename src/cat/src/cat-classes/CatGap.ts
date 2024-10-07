@@ -12,16 +12,18 @@ class Gap extends HTMLElement {
   }
   connectedCallback() {
     this.changeGapRoute(this.cat.context.cat.route)
-    this.cat.client.catHooks.addHook('cat-change-gap', (route: string) => {
+    /* this.cat.client.catHooks.addHook('cat-change-gap', (route: string) => {
       console.log('cat-change-gap', route)
       // this.changeGapRoute(route)
-    })
+    }) */
   }
   disconnectedCallback() {
     const scriptTag = this.querySelectorAll('script')
+
     scriptTag.forEach((st) => {
       st.parentElement?.removeChild(st)
     })
+    this.innerHTML = ''
     console.log("Custom element removed from page.", scriptTag);
   }
   adoptedCallback() {
@@ -29,8 +31,7 @@ class Gap extends HTMLElement {
   }
   addGapCodeToWebComponent(temporalTemplate: HTMLTemplateElement, script: Map<string, string>|undefined) {
     const gapsTemplates = temporalTemplate.content.querySelectorAll('template')
-    
-    this.innerHTML = ''
+ 
     if (script?.has('default') === true) {
       const scriptTag = document.createElement("script")
       scriptTag.type = "module"
@@ -46,9 +47,7 @@ class Gap extends HTMLElement {
       const idTemplate = tt.getAttribute('id') as string
       if (script !== undefined) { 
         const temporalScript = script as Map<string, string>
-        console.log(temporalScript.has(idTemplate))
         if (temporalScript.has(idTemplate) === true) {
-          console.log(temporalScript.get(idTemplate))
           const code = temporalScript.get(idTemplate)?.replace('<script>', '').replace('</script>', '')
           scriptTag.append(code as string)
           tt.content.appendChild(scriptTag)
@@ -61,7 +60,6 @@ class Gap extends HTMLElement {
     const temporalTemplate = document.createElement("template")
     const script = this.scripts.get(route) as Map<string, string>|undefined
 
-    console.log('GAPS IN CHANGE GAP ROUTE', route)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {

@@ -5,7 +5,7 @@ class PJTS {
   constructor() {
     this.cat = CatApp.instance
     this.cat.client.catHooks.addHook('cat-after-load', (pages: any) => {
-      console.log(pages)
+      // console.log(pages)
     })
   }
 }

@@ -10,7 +10,7 @@ import type CatContext from '@cat/cat-classes/CatContext'
 class Server {
   url: URL
   constructor(context: CatContext/*, catHooks: CatHooks*/) {
-    console.log('CONSTRUCTOR SERVER')
+    // console.log('CONSTRUCTOR SERVER')
     // const catPages = document.querySelectorAll('cat-page[cat-route]')
     
     this.url = new URL(document.location.href)
@@ -19,7 +19,7 @@ class Server {
       path = 'index'
     }
     context.cat.route = path
-    console.log('CONTEXT', context.cat.route)
+    // console.log('CONTEXT', context.cat.route)
     /* catPages.forEach(cp => {
       cp.setAttribute("cat-route", path)
     }) */

@@ -46,7 +46,7 @@ class CatTransformHelper {
     if (scripts !== null) {
       const joinScript = new CatJoinScripts(scripts)
       returnValue = joinScript.getScripts(scripts);
-      console.log(returnValue)
+      // console.log(returnValue)
     }
     return returnValue;
   }

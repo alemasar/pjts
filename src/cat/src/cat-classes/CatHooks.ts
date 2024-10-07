@@ -26,8 +26,8 @@ class CatHooks {
   callHookName(hook: string, args?: any) {
     if (this._hookNames.has(hook) === true) {
       this._unregisterHookName.set(hook, () => {
-        console.log('HOOK NAME', hook)
-        console.log('HOOK ARGS', args)
+        // console.log('HOOK NAME', hook)
+        // console.log('HOOK ARGS', args)
         
         this._hooks.callHook(hook, args)
       })
@@ -50,8 +50,8 @@ class CatHooks {
     
   } */
   unregisterHook(hook: string) {
-    console.log(hook)
-    console.log(this._unregisterHookName)
+    // console.log(hook)
+    // console.log(this._unregisterHookName)
     
     if (this._unregisterHookName.has(hook) === true) {
       const unregisterCallback = this._unregisterHookName.get(hook) as HookCallback

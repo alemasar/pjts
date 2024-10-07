@@ -10,12 +10,12 @@ class Game {
   constructor() {
     this.hooks = CatHooks.instance
     this.hooks.addHook('cat-before-load', () =>{
-      console.log('HOOK CAT BEFORE LOAD')
+      // console.log('HOOK CAT BEFORE LOAD')
     })
     this.hooks.addHook('cat-after-load', () =>{
-      console.log('HOOK CAT AFTER LOAD')
+      // console.log('HOOK CAT AFTER LOAD')
     })
-    console.log('CONSTRUCTOR GAME')
+    // console.log('CONSTRUCTOR GAME')
     this.pjts = new PJTS()
     customElements.define("cat-page", CatPage);
   }
