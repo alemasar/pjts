@@ -12,14 +12,15 @@ class Gap extends HTMLElement {
   }
   connectedCallback() {
     this.changeGapRoute(this.cat.context.cat.route)
-    /* this.cat.client.catHooks.addHook('cat-change-gap', (route: string) => {
-      console.log('cat-change-gap', route)
+    console.log('Custom gap added to page.')
+    this.cat.client.catHooks.addHook('cat-change-page', (route: string) => {
+      console.log('cat-change-page', route)
       // this.changeGapRoute(route)
-    }) */
+    })
   }
   disconnectedCallback() {
     const scriptTag = this.querySelectorAll('script')
-
+    this.cat.client.catHooks.unregisterHook('cat-change-page')
     scriptTag.forEach((st) => {
       st.parentElement?.removeChild(st)
     })
@@ -29,13 +30,13 @@ class Gap extends HTMLElement {
   adoptedCallback() {
     console.log("Custom element moved to new page.");
   }
-  addGapCodeToWebComponent(temporalTemplate: HTMLTemplateElement, script: Map<string, string>|undefined) {
+  addGapCodeToWebComponent(temporalTemplate: HTMLTemplateElement, gapScripts: Map<string, string>|undefined) {
     const gapsTemplates = temporalTemplate.content.querySelectorAll('template')
- 
-    if (script?.has('default') === true) {
+    console.log('GAP SCRIPTS::::',gapScripts)
+    if (gapScripts?.has('default') === true) {
       const scriptTag = document.createElement("script")
       scriptTag.type = "module"
-      const code = script.get('default')?.replace('<script>', '').replace('</script>', '')
+      const code = gapScripts.get('default')?.replace('<script>', '').replace('</script>', '')
       scriptTag.append(code as string)
       temporalTemplate.content.appendChild(scriptTag)
       this.appendChild(temporalTemplate.content.cloneNode(true))
@@ -45,8 +46,8 @@ class Gap extends HTMLElement {
       const scriptTag = document.createElement("script")
       scriptTag.type = "module"
       const idTemplate = tt.getAttribute('id') as string
-      if (script !== undefined) { 
-        const temporalScript = script as Map<string, string>
+      if (gapScripts !== undefined) { 
+        const temporalScript = gapScripts as Map<string, string>
         if (temporalScript.has(idTemplate) === true) {
           const code = temporalScript.get(idTemplate)?.replace('<script>', '').replace('</script>', '')
           scriptTag.append(code as string)
