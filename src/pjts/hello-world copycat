@@ -42,7 +42,9 @@ Si no hay route la route es el 'index' y el gap es el 'default'
   export default data
 </script>
 <script #import-id="id-if">
-  #import "path de la request para fichero estatico json"
+  #import variable = "path de un fichero de un json estatico que se inyecta en el javascript"
+  #import variableJSDefault = "path de un fichero de un js estatico con un export default de un objeto que se inyecta en el javascript"
+  #import variableJSVarible = "path de un fichero de un js estatico con el export de una variable de un objeto que se inyecta en el javascript, con el nombre de la variable que hay en #import no en el fichero"
   const data = {
     test: "Hello World ID IF"
   }

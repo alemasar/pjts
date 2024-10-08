@@ -8,6 +8,7 @@ const catGapInstructionName = `#cat-gap="`
 const importIdInstructionName = `#import-id="`
 const importInstructionName = `#import `
 const requestInstructionName = `#request="`
+const importJsObj = /{(.|[\s\S])*?}/g
 
 const getScriptRouteImport = (idandroute, parsedScripts, scriptCode, defaultScriptCode) => {
   let catGapRoutes = ''
@@ -53,12 +54,15 @@ const getScriptIndexDefault = (parsedScripts, scriptCode) => {
 }
 
 const parseScriptDataImport = (config, jsLine) => {
-  let parsedJsLine = ''
   const splittedJsLine = jsLine.split('=')
   const variableName = splittedJsLine[0].replace(importInstructionName, '').trim()
   const fileName = splittedJsLine[1].trim().replace(/"/g, '')
-  const obj = readFileSync(join(`src/${config.data.base}/${config.data.path}/${fileName}`),{ encoding: 'utf8', flag: 'r' })
-  parsedJsLine = `const ${variableName} = JSON.parse(JSON.stringify(${obj}))`
+  let parsedJsLine = ''
+  let fileContents = readFileSync(join(`src/${config.data.base}/${config.data.path}/${fileName}`),{ encoding: 'utf8', flag: 'r' })
+  if (fileName.endsWith('.js') === true) {
+    fileContents = fileContents.match(importJsObj)
+  }
+  parsedJsLine = `const ${variableName} = JSON.parse(JSON.stringify(${fileContents}))`
   return parsedJsLine
 }
 

@@ -34,7 +34,8 @@
   #import "id-if"
 </template>
 <script>
-  #import example = "example.json"
+  #import example = "example.js"
+  #import exampleVariable = "example-variable.js"
   const data = {
     test: "Hello World DEFAULT"
   }
