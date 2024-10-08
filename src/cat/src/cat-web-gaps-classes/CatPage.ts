@@ -10,8 +10,8 @@ class CatPage extends HTMLElement {
     this.cat = CatApp.instance
     const definitionGaps = elements.gaps
 
-    definitionGaps.forEach((de: any) => {
-      const definitionGap = de()
+    definitionGaps.forEach((dg: any) => {
+      const definitionGap = dg()
       customElements.define(definitionGap.tag, definitionGap.classCode)
     })
     const linkHandler = (e: Event) => {
@@ -27,12 +27,11 @@ class CatPage extends HTMLElement {
           const route = this.getRouteTemplate(path)
           this.cat.context.cat.route = route
           this.changePage(route)
-          this.cat.client.catHooks.callHookName('cat-change-page', route)
+          // this.cat.client.catHooks.callHookName('cat-change-page', route)
         }
-      } 
+      }
     }
     window.addEventListener('popstate', this.popstateHandler.bind(this), false)
-
     document.addEventListener(`click`, linkHandler)
   }
 
@@ -57,7 +56,6 @@ class CatPage extends HTMLElement {
     // console.log(`TEMPLATE ${this.context.getRouteNameByRoute(newValue)?.template}`)
     this.changePage(name, newValue)
   } */
-
 
   changePage(route: any) {
       const temporalTemplate = document.createElement("template")

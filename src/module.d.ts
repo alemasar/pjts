@@ -4,3 +4,8 @@ declare module 'virtual:*' {
   const gap: any;
   export default gap;
 }
+
+declare module "*.json" {
+  const value: any;
+  export default value;
+}

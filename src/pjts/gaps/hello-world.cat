@@ -34,23 +34,23 @@
   #import "id-if"
 </template>
 <script>
-  // #request "example.json"
+  #import example = "example.json"
   const data = {
     test: "Hello World DEFAULT"
   }
-  console.log(data.test)
+  console.log(example)
   // export default data
 </script>
 <script #import-id="id-if">
-  // #request "example.json"
+  #import example = "example.json"
   const data = {
     test: "Hello World ID IF INDEX"
   }
-  console.log(data.test)
+  console.log(example)
   // export default data
 </script>
 <script #import-id="id-for">
-  // #request "https://official-joke-api.appspot.com/random_joke"
+  // #request random_joke="https://official-joke-api.appspot.com/random_joke"
   const data = {
     test: "Hello World ID FOR INDEX"
   }
@@ -58,7 +58,7 @@
   // export default data
 </script>
 <script #cat-gap="['foo']" #import-id="id-for">
-  // #request "https://official-joke-api.appspot.com/random_joke"
+  // #request random_joke="https://official-joke-api.appspot.com/random_joke"
   const data = {
     test: "Hello World ID FOR FOOOOOO"
   }

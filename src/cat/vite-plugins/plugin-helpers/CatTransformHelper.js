@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import {readdirSync, readFileSync} from 'fs';
+import {join} from 'path';
 import CatJoinTemplates from './CatJoinTemplates';
 import CatJoinScripts from './CatJoinScripts';
 
@@ -11,11 +11,11 @@ class CatTransformHelper {
   }
 
   readAllFiles(dir, extension) {
-    const files = fs.readdirSync(dir, { withFileTypes: true });
+    const files = readdirSync(dir, { withFileTypes: true });
     const filesObj = []
     for (const file of files) {
       if (file.isDirectory()) {
-        this.readAllFiles(path.join(dir, file.name));
+        this.readAllFiles(join(dir, file.name));
       } else if (file.name.includes(extension) === true) {
         filesObj.push({
           path: dir.replace('src/', ''),
@@ -26,7 +26,7 @@ class CatTransformHelper {
     return filesObj
   }
   getFileContent(srcPath) {
-    return fs.readFileSync(path.join(`${srcPath}`),{ encoding: 'utf8', flag: 'r' })
+    return readFileSync(join(`${srcPath}`),{ encoding: 'utf8', flag: 'r' })
   }
   getConfig(code) {
     const config = code.match(this.configRegExp)
@@ -39,13 +39,13 @@ class CatTransformHelper {
     }
     return returnValue;
   }
-  getScript(code, config) {
+  getScript(options, code, config) {
     const scripts = code.match(this.scriptRegExp);
     let returnValue = '';
 
     if (scripts !== null) {
       const joinScript = new CatJoinScripts(scripts)
-      returnValue = joinScript.getScripts(scripts);
+      returnValue = joinScript.getScripts(options, scripts);
       // console.log(returnValue)
     }
     return returnValue;

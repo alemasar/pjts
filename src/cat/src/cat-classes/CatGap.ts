@@ -36,7 +36,7 @@ class Gap extends HTMLElement {
     if (gapScripts?.has('default') === true) {
       const scriptTag = document.createElement("script")
       scriptTag.type = "module"
-      const code = gapScripts.get('default')?.replace('<script>', '').replace('</script>', '')
+      const code = gapScripts.get('default')
       scriptTag.append(code as string)
       temporalTemplate.content.appendChild(scriptTag)
       this.appendChild(temporalTemplate.content.cloneNode(true))
@@ -49,7 +49,7 @@ class Gap extends HTMLElement {
       if (gapScripts !== undefined) { 
         const temporalScript = gapScripts as Map<string, string>
         if (temporalScript.has(idTemplate) === true) {
-          const code = temporalScript.get(idTemplate)?.replace('<script>', '').replace('</script>', '')
+          const code = temporalScript.get(idTemplate)
           scriptTag.append(code as string)
           tt.content.appendChild(scriptTag)
         }

@@ -1,4 +1,4 @@
-import path from "path";
+import {normalize} from "path";
 import { v4 as uuidv4 } from "uuid";
 import catTransformHelper from "./plugin-helpers/CatTransformHelper";
 
@@ -35,11 +35,11 @@ export default function transformIndextemplate(options) {
   const virtualGapsId = "virtual:gaps";
   const resolvedVirtualGapId = "\0" + virtualGapsId;
   const allLayoutsFiles = catTransformHelper.readAllFiles(
-    path.normalize(`src/${options.pages.base}/${options.pages.path}`),
+    normalize(`src/${options.pages.base}/${options.pages.path}`),
     ".html"
   );
   const allCatFiles = catTransformHelper.readAllFiles(
-    path.normalize(`src/${options.gaps.base}/${options.gaps.path}`),
+    normalize(`src/${options.gaps.base}/${options.gaps.path}`),
     ".cat"
   );
   let catFilesImports = "";
@@ -103,7 +103,7 @@ export default function transformIndextemplate(options) {
             // console.error(`%c${e}`, 'color: red;')
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
-          const catScriptGap = catTransformHelper.getScript(code, catConfigGap)
+          const catScriptGap = catTransformHelper.getScript(options, code, catConfigGap)
           // console.log('SCRIPT CODE STRING:::::',scriptCodeString)
           /* if (catScriptComponent !== null) {
             catScriptComponent.forEach((csc) => {
