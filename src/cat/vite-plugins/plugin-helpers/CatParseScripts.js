@@ -39,6 +39,7 @@ const getScriptRouteImport = (idandroute, parsedScripts, scriptCode, defaultScri
 
 const getScriptImport = (idandroute, parsedScripts, scriptCode) => {
   const importIdTemplate = idandroute[0].replace(importIdInstructionName, '').replace(`"`, '')
+
   if (parsedScripts.has('index') === false) {
     parsedScripts.set('index', new Map())
   }
@@ -60,6 +61,7 @@ const parseScriptDataImport = (config, jsLine) => {
   const fileName = splittedJsLine[1].trim().replace(/"/g, '')
   let parsedJsLine = ''
   let fileContents = readFileSync(join(`src/${config.data.base}/${config.data.path}/${fileName}`),{ encoding: 'utf8', flag: 'r' })
+
   if (fileName.endsWith('.js') === true) {
     fileContents = fileContents.match(importJsObj)
   }
@@ -80,14 +82,24 @@ const parseScriptDataRequest = (jsLine) => {
     ],
     request: '',
   }
+
   returnObjRequest.request = `  const ${variableName} = await makeRequest(${url})`
   return returnObjRequest
 }
 
+const addRequestToJs = (returnJs, requestJs) => {
+  returnJs.forEach((rjs, index) =>{
+    if (rjs.includes(`${requestInstructionName}${requestJs.variableName}=`) === true || rjs.includes(`${requestInstructionName}${requestJs.variableName} =`) === true) {
+      returnJs[index] = requestJs.request
+    }
+  })
+  return returnJs
+}
+
 const parseScriptDataImportRequest = (config, jsSplitted) => {
   let createRequestFunction = false
-  let cont = 1
-  const returnJs = jsSplitted
+  let returnJs = jsSplitted
+
   jsSplitted.forEach((jsLine, index) => {
     if(jsLine.match(importInstructionName) !== null) {
       const parsedScript = parseScriptDataImport(config, jsLine)
@@ -95,34 +107,23 @@ const parseScriptDataImportRequest = (config, jsSplitted) => {
     } 
     if (jsLine.match(requestInstructionName) !== null) {
       const requestJs = parseScriptDataRequest(jsLine)
-      cont++
       if (createRequestFunction === false) {
         returnJs.splice(1, 0, requestJs.importOFetch)
         returnJs.splice(2, 0, ...requestJs.makeRequestFunction)
-
-        returnJs.forEach((rjs, index) =>{
-          if (rjs.includes(`${requestInstructionName}${requestJs.variableName}=`) === true || rjs.includes(`${requestInstructionName}${requestJs.variableName} =`) === true) {
-            returnJs[index] = requestJs.request
-          }
-        })
+        returnJs = addRequestToJs(returnJs, requestJs)
         createRequestFunction = true
       } else {
-        returnJs.forEach((rjs, index) =>{
-          if (rjs.includes(`${requestInstructionName}${requestJs.variableName}=`) === true || rjs.includes(`${requestInstructionName}${requestJs.variableName} =`) === true) {
-            returnJs[index] = requestJs.request
-          }
-        })
+        returnJs = addRequestToJs(returnJs, requestJs)
       }
-      // jsSplitted[index] = requestJs.request
     }
   })
-  console.log('JS SPLITTED::::::', returnJs)
   return returnJs
 }
 
 const deleteComments = (splittedScriptCode) => {
   const cleanCode = []
   let startMultilineComment = false
+
   splittedScriptCode.forEach((jsLine) => {
     if (jsLine.trim().startsWith('/*') === true) {
       startMultilineComment = true
@@ -141,6 +142,7 @@ class CatParseScripts {
     if (scripts.length > 0) {
       let defaultScriptCode = ''
       let scriptCode = ''
+
       scripts.forEach((s) => {
         const scriptWithOutComments = deleteComments(s.split(breaklinesRegExp))
         const splittedScript = parseScriptDataImportRequest(config, scriptWithOutComments)
