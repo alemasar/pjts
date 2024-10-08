@@ -7,7 +7,7 @@ const getImportScriptRegExp = /#import-id="(.|[\s\S])*?"/g
 const catGapInstructionName = `#cat-gap="`
 const importIdInstructionName = `#import-id="`
 const importInstructionName = `#import `
-const requestInstructionName = `#request="`
+const requestInstructionName = `#request `
 const importJsObj = /{(.|[\s\S])*?}/g
 
 const getScriptRouteImport = (idandroute, parsedScripts, scriptCode, defaultScriptCode) => {
@@ -66,6 +66,11 @@ const parseScriptDataImport = (config, jsLine) => {
   return parsedJsLine
 }
 
+const parseScriptDataRequest = (jsLine) => {
+
+  return jsLine
+}
+
 const parseScriptDataImportRequest = (config, jsSplitted) => {
   console.log('IMPORT OBJECT', jsSplitted)
   jsSplitted.forEach((jsLine, index) => {
@@ -73,8 +78,29 @@ const parseScriptDataImportRequest = (config, jsSplitted) => {
       const parsedScript = parseScriptDataImport(config, jsLine)
       jsSplitted[index] = parsedScript
     }
+    if (jsLine.match(requestInstructionName) !== null) {
+      const parsedScript = parseScriptDataRequest(config, jsLine)
+      jsSplitted[index] = parsedScript
+    }
   })
   return jsSplitted
+}
+
+const deleteComments = (splittedScriptCode) => {
+  const cleanCode = []
+  let startMultilineComment = false
+  splittedScriptCode.forEach((jsLine) => {
+    if (jsLine.includes('/*') === true) {
+      startMultilineComment = true
+    }
+    if (jsLine.includes('//') === false && startMultilineComment === false) {
+      cleanCode.push(jsLine)
+    }
+    if (jsLine.includes('*/') === true) {
+      startMultilineComment = false
+    }
+  })
+  return cleanCode
 }
 
 class CatParseScripts {
@@ -84,7 +110,8 @@ class CatParseScripts {
       let defaultScriptCode = ''
       let scriptCode = ''
       scripts.forEach((s) => {
-        const splittedScript = parseScriptDataImportRequest(config, s.split(breaklinesRegExp))
+        const scriptWithOutComments = deleteComments(s.split(breaklinesRegExp))
+        const splittedScript = parseScriptDataImportRequest(config, scriptWithOutComments)
         const idandroute = splittedScript[0].replace(`<script`, '').replace(`>`, '').trim().split(' ')
         if (splittedScript[0].match(getCatGapRouteScriptRegExp) === null && splittedScript[0].match(getImportScriptRegExp) === null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')

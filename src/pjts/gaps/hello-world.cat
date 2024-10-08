@@ -39,7 +39,11 @@
   const data = {
     test: "Hello World DEFAULT"
   }
+  console.log(data.test)
+  /*
   console.log(example)
+  */
+  console.log(exampleVariable)
   // export default data
 </script>
 <script #import-id="id-if">
