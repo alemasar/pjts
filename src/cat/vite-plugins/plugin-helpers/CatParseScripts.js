@@ -9,6 +9,7 @@ const importIdInstructionName = `#import-id="`
 const importInstructionName = `#import `
 const requestInstructionName = `#request `
 const importJsObj = /{(.|[\s\S])*?}/g
+const nodeModulesPath = '/node_modules'
 
 const getScriptRouteImport = (idandroute, parsedScripts, scriptCode, defaultScriptCode) => {
   let catGapRoutes = ''
@@ -67,36 +68,67 @@ const parseScriptDataImport = (config, jsLine) => {
 }
 
 const parseScriptDataRequest = (jsLine) => {
-
-  return jsLine
+  const splittedJsLine = jsLine.split('=')
+  const variableName = splittedJsLine[0].replace(requestInstructionName, '').trim()
+  const url = splittedJsLine[1].trim()
+  const returnObjRequest = {
+    variableName,
+    importOFetch: `  import { ofetch } from "${nodeModulesPath}/ofetch"`,
+    makeRequestFunction: [`  const makeRequest = async (url) => {`,
+      `    return ofetch(url)`,
+      `  }`,
+    ],
+    request: '',
+  }
+  returnObjRequest.request = `  const ${variableName} = await makeRequest(${url})`
+  return returnObjRequest
 }
 
 const parseScriptDataImportRequest = (config, jsSplitted) => {
-  console.log('IMPORT OBJECT', jsSplitted)
+  let createRequestFunction = false
+  let cont = 1
+  const returnJs = jsSplitted
   jsSplitted.forEach((jsLine, index) => {
     if(jsLine.match(importInstructionName) !== null) {
       const parsedScript = parseScriptDataImport(config, jsLine)
-      jsSplitted[index] = parsedScript
-    }
+      returnJs[index] = parsedScript
+    } 
     if (jsLine.match(requestInstructionName) !== null) {
-      const parsedScript = parseScriptDataRequest(config, jsLine)
-      jsSplitted[index] = parsedScript
+      const requestJs = parseScriptDataRequest(jsLine)
+      cont++
+      if (createRequestFunction === false) {
+        returnJs.splice(1, 0, requestJs.importOFetch)
+        returnJs.splice(2, 0, ...requestJs.makeRequestFunction)
+
+        returnJs.forEach((rjs, index) =>{
+          if (rjs.includes(`${requestInstructionName}${requestJs.variableName}=`) === true || rjs.includes(`${requestInstructionName}${requestJs.variableName} =`) === true) {
+            returnJs[index] = requestJs.request
+          }
+        })
+        createRequestFunction = true
+      } else {
+        returnJs.forEach((rjs, index) =>{
+          if (rjs.includes(`${requestInstructionName}${requestJs.variableName}=`) === true || rjs.includes(`${requestInstructionName}${requestJs.variableName} =`) === true) {
+            returnJs[index] = requestJs.request
+          }
+        })
+      }
+      // jsSplitted[index] = requestJs.request
     }
   })
-  return jsSplitted
+  console.log('JS SPLITTED::::::', returnJs)
+  return returnJs
 }
 
 const deleteComments = (splittedScriptCode) => {
   const cleanCode = []
   let startMultilineComment = false
   splittedScriptCode.forEach((jsLine) => {
-    if (jsLine.includes('/*') === true) {
+    if (jsLine.trim().startsWith('/*') === true) {
       startMultilineComment = true
-    }
-    if (jsLine.includes('//') === false && startMultilineComment === false) {
+    } else if (jsLine.trim().startsWith('//') === false && startMultilineComment === false) {
       cleanCode.push(jsLine)
-    }
-    if (jsLine.includes('*/') === true) {
+    } else if (jsLine.trim().startsWith('*/') === true) {
       startMultilineComment = false
     }
   })
@@ -113,6 +145,7 @@ class CatParseScripts {
         const scriptWithOutComments = deleteComments(s.split(breaklinesRegExp))
         const splittedScript = parseScriptDataImportRequest(config, scriptWithOutComments)
         const idandroute = splittedScript[0].replace(`<script`, '').replace(`>`, '').trim().split(' ')
+
         if (splittedScript[0].match(getCatGapRouteScriptRegExp) === null && splittedScript[0].match(getImportScriptRegExp) === null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
           defaultScriptCode = splittedScript.join('\n').replace('<script>', '').replace('</script>', '')
