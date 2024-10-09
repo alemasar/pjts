@@ -13,10 +13,13 @@ class Gap extends HTMLElement {
   connectedCallback() {
     this.changeGapRoute(this.cat.context.cat.route)
     console.log('Custom gap added to page.')
-    this.cat.client.catHooks.addHook('cat-change-page', (route: string) => {
+    document.addEventListener('cat-gap-loaded', (event) => {
+      console.log('GAP LOADED', event)
+    }, false)
+    /* this.cat.client.catHooks.addHook('cat-change-page', (route: string) => {
       console.log('cat-change-page', route)
       // this.changeGapRoute(route)
-    })
+    }) */
   }
   disconnectedCallback() {
     const scriptTag = this.querySelectorAll('script')
