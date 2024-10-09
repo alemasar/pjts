@@ -1,7 +1,8 @@
 <config>
   {
     "name": "AnotherComponent",
-    "tag": "another-gap-tag"
+    "tag": "another-gap-tag",
+    "className": "AnotherComponent"
   }
 </config>
 <template>

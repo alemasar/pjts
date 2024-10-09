@@ -1,31 +1,32 @@
 import CatApp from "@cat/index"
+// import { v4 as uuidv4 } from 'uuid';
 
 class Gap extends HTMLElement {
   cat: CatApp
   gaps: Map<string, string>
   scripts: Map<string, string>
+  handlerGapLoadedEvent: EventListener
   constructor() {
     super();
     this.cat = CatApp.instance;
     this.gaps = new Map<string, string>();
     this.scripts = new Map<string, string>();
+    this.handlerGapLoadedEvent = ((event: CustomEvent) => {
+      console.log('GAP LOADED', event.detail)
+      console.log('CAT', this.cat)
+    }) as EventListener
   }
   connectedCallback() {
-    this.changeGapRoute(this.cat.context.cat.route)
+    this.changeGapRoute(this.cat.server.route)
     console.log('Custom gap added to page.')
-    document.addEventListener('cat-gap-loaded', (event) => {
-      console.log('GAP LOADED', event)
-    }, false)
-    /* this.cat.client.catHooks.addHook('cat-change-page', (route: string) => {
-      console.log('cat-change-page', route)
-      // this.changeGapRoute(route)
-    }) */
+    document.addEventListener('cat-gap-loaded', this.handlerGapLoadedEvent , false)
   }
   disconnectedCallback() {
     const scriptTag = this.querySelectorAll('script')
-    this.cat.client.catHooks.unregisterHook('cat-change-page')
+    // this.cat.client.catHooks.unregisterHook('cat-change-page')
     scriptTag.forEach((st) => {
       st.parentElement?.removeChild(st)
+      document.removeEventListener('cat-gap-loaded', this.handlerGapLoadedEvent)
     })
     this.innerHTML = ''
     console.log("Custom element removed from page.", scriptTag);
@@ -46,13 +47,14 @@ class Gap extends HTMLElement {
     }
     
     gapsTemplates.forEach((tt) => {
-      const scriptTag = document.createElement("script")
-      scriptTag.type = "module"
-      const idTemplate = tt.getAttribute('id') as string
       if (gapScripts !== undefined) { 
+        const scriptTag = document.createElement("script")
+        scriptTag.type = "module"
+        const idTemplate = tt.getAttribute('id') as string
         const temporalScript = gapScripts as Map<string, string>
         if (temporalScript.has(idTemplate) === true) {
           const code = temporalScript.get(idTemplate)
+          console.log('CODE', code)
           scriptTag.append(code as string)
           tt.content.appendChild(scriptTag)
         }

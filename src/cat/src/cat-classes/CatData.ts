@@ -29,16 +29,17 @@ class CatData {
   }
 
   public static get instance(): CatData {
-      if (!CatData.#instance) {
-          CatData.#instance = new CatData();
-      }
+    if (!CatData.#instance) {
+        CatData.#instance = new CatData();
+    }
 
-      return CatData.#instance;
+    return CatData.#instance;
   }
 
   pull(id: string) {
     return this._data.get(id)
   }
+
   commit(id:string, commit: any) {
     const commitsById = this._commits.get(id)
     let arrayCommits: any[] = []
@@ -48,6 +49,7 @@ class CatData {
     arrayCommits.push(commit)
     this._commits.set(id, arrayCommits)
   }
+
   push(id: string) {
     const commits = this._commits.get(id)
     commits.forEach((c: any) => {
@@ -64,6 +66,7 @@ class CatData {
       })
     }
   }
+
   observer(id: string, callback: Function) {
     let callbacks = new Array<Function>()
     if (this._observers.get(id) !== null) {

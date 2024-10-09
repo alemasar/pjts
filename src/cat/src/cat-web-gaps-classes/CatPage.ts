@@ -25,7 +25,7 @@ class CatPage extends HTMLElement {
           e.preventDefault()
           const path = link.getAttribute('href') as string
           const route = this.getRouteTemplate(path)
-          this.cat.context.cat.route = route
+          this.cat.server.route = route
           this.changePage(route)
           // this.cat.client.catHooks.callHookName('cat-change-page', route)
         }
@@ -36,7 +36,7 @@ class CatPage extends HTMLElement {
   }
 
   connectedCallback() {
-    const path = this.cat.context.cat.route;
+    const path = this.cat.server.route;
     elements.routes.forEach((er: any) => {
       templates.set(er.route, er.template)
     })

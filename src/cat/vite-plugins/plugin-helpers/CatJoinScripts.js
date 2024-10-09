@@ -4,16 +4,14 @@ const breaklinesRegExp = /\r?\n|\r|\n/g
 
 class CatJoinScripts {
   constructor() {}
-  getScripts(config, scripts) {
+  getScripts(options, config, scripts) {
     let parsedScripts = new Map()
 
     if (scripts.length > 1) {
       const catParseScripts = new CatParseScripts()
-
-      parsedScripts = catParseScripts.parseMultipleScripts(config, parsedScripts, scripts)
+      parsedScripts = catParseScripts.parseMultipleScripts(options, config, parsedScripts, scripts)
     } else {
       const splittedScripts = scripts[0].split(breaklinesRegExp)
-      
       parsedScripts.set('default', splittedScripts.join(''))
     }
     return parsedScripts

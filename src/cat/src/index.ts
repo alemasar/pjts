@@ -5,15 +5,13 @@ import CatHooks from '@cat/cat-classes/CatHooks'
 
 class CatApp {
   static #instance: CatApp;
-  context: CatContext
-  catHooks: CatHooks
   client: Client
   server: Server
   constructor() {
-    this.context = CatContext.instance
-    this.catHooks = CatHooks.instance
-    this.client = new Client(this.context, this.catHooks)
-    this.server = new Server(this.context/*, this.catHooks*/)
+    const context = CatContext.instance
+    const catHooks = CatHooks.instance
+    this.client = new Client(context, catHooks)
+    this.server = new Server()
   }
   public static get instance(): CatApp {
     if (!CatApp.#instance) {

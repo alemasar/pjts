@@ -11,7 +11,6 @@ class Client {
 
     elements.gaps.forEach((c: any) => {
       const gap = c()
-      // console.log(gap.id)
       this.context.gaps.set(gap.id, gap.tag)
     })
     elements.routes.forEach((p: any) => {

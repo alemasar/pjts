@@ -104,7 +104,7 @@ export default function transformIndextemplate(options) {
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
           const catScriptGap = catTransformHelper.getScript(options, code, catConfigGap)
-          // console.log('SCRIPT CODE STRING:::::',scriptCodeString)
+          console.log('SCRIPT CODE STRING:::::',catScriptGap)
           /* if (catScriptComponent !== null) {
             catScriptComponent.forEach((csc) => {
               scriptCodeString += csc

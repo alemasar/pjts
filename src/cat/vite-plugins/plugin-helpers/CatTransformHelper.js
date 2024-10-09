@@ -41,12 +41,17 @@ class CatTransformHelper {
   }
   getScript(options, code, config) {
     const scripts = code.match(this.scriptRegExp);
-    let returnValue = '';
+    let returnValue = new Map();
 
     if (scripts !== null) {
       const joinScript = new CatJoinScripts(scripts)
-      returnValue = joinScript.getScripts(options, scripts);
-      // console.log(returnValue)
+      returnValue = joinScript.getScripts(config, options, scripts);
+    } else {
+      returnValue.set('default', new Map())
+      returnValue.get('default').set('default', `const event = new CustomEvent("cat-gap-loaded", { detail: { tag: '${config.tag}', route: 'default', id: 'default' } })
+        document.dispatchEvent(event)
+        `)
+      console.log(returnValue)
     }
     return returnValue;
   }

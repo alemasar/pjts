@@ -11,7 +11,7 @@ const requestInstructionName = `#request `
 const importJsObj = /{(.|[\s\S])*?}/g
 const nodeModulesPath = '/node_modules'
 
-const getIdandRoute = (idandroute) => {
+const getIdandRoute = (config, idandroute) => {
   let importIdTemplate = 'default'
   let catGapRoutes = {
     routes: []
@@ -32,10 +32,10 @@ const getIdandRoute = (idandroute) => {
   if (catGapRoutes.routes.length > 0) {
     catRouteObject = JSON.parse(`{"routes": ${catGapRoutes.routes}}`)
   } else {
-    console.log('LENGTH 0', catRouteObject)
     catRouteObject.routes.push('index')
   }
   return {
+    tag: config.tag,
     route: catRouteObject.routes,
     id: importIdTemplate,
   }
@@ -46,9 +46,9 @@ const getScriptRouteImport = (catRouteObject, parsedScripts, scriptCode, default
     catRouteObject.route.forEach((cro) => {
       if (parsedScripts.has(cro) === false) {
         parsedScripts.set(cro, new Map())
-        parsedScripts.get(cro).set(catRouteObject.idTemplate, defaultScriptCode)
+        parsedScripts.get(cro).set(catRouteObject.id, defaultScriptCode)
       }
-      parsedScripts.get(cro).set(catRouteObject.idTemplate, scriptCode)
+      parsedScripts.get(cro).set(catRouteObject.id, scriptCode)
     })
   }
   return parsedScripts
@@ -72,12 +72,12 @@ const getScriptIndexDefault = (parsedScripts, scriptCode) => {
   return parsedScripts
 }
 
-const parseScriptDataImport = (config, jsLine) => {
+const parseScriptDataImport = (options, jsLine) => {
   const splittedJsLine = jsLine.split('=')
   const variableName = splittedJsLine[0].replace(importTemplateInstructionName, '').trim()
   const fileName = splittedJsLine[1].trim().replace(/"/g, '')
   let parsedJsLine = ''
-  let fileContents = readFileSync(join(`src/${config.data.base}/${config.data.path}/${fileName}`),{ encoding: 'utf8', flag: 'r' })
+  let fileContents = readFileSync(join(`src/${options.data.base}/${options.data.path}/${fileName}`),{ encoding: 'utf8', flag: 'r' })
 
   if (fileName.endsWith('.js') === true) {
     fileContents = fileContents.match(importJsObj)
@@ -114,16 +114,16 @@ const addRequestToJs = (returnJs, requestJs) => {
 }
 
 const addLoadEvent = (catRouteObject) => {
-  return `  const event = new CustomEvent("cat-gap-loaded", { detail: { route: '${catRouteObject.route}', id: '${catRouteObject.id}' } })`
+  return `  const event = new CustomEvent("cat-gap-loaded", { detail: { tag: '${catRouteObject.tag}', route: '${catRouteObject.route}', id: '${catRouteObject.id}' } })`
 }
 
-const parseScriptDataImportRequest = (config, jsSplitted, catRouteObject) => {
+const parseScriptDataImportRequest = (options, jsSplitted, catRouteObject) => {
   let createRequestFunction = false
   let returnJs = jsSplitted
   returnJs.splice(1, 0, addLoadEvent(catRouteObject))
   jsSplitted.forEach((jsLine, index) => {
     if(jsLine.match(importTemplateInstructionName) !== null) {
-      const parsedScript = parseScriptDataImport(config, jsLine)
+      const parsedScript = parseScriptDataImport(options, jsLine)
       returnJs[index] = parsedScript
     } 
     if (jsLine.match(requestInstructionName) !== null) {
@@ -162,17 +162,15 @@ const addDispatchEvent = (splittedScript) => {
 }
 class CatParseScripts {
   constructor() {}
-  parseMultipleScripts(config, parsedScripts, scripts) {
+  parseMultipleScripts(config, options, parsedScripts, scripts) {
     if (scripts.length > 0) {
       let defaultScriptCode = ''
       let scriptCode = ''
-
       scripts.forEach((s) => {
         const scriptWithOutComments = deleteComments(s.split(breaklinesRegExp))
         const idandroute = scriptWithOutComments[0].replace(`<script`, '').replace(`>`, '').trim().split(' ')
-        console.log(idandroute)
-        const catRouteObject = getIdandRoute(idandroute)
-        let splittedScript = parseScriptDataImportRequest(config, scriptWithOutComments, catRouteObject)
+        const catRouteObject = getIdandRoute(config, idandroute)
+        let splittedScript = parseScriptDataImportRequest(options, scriptWithOutComments, catRouteObject)
 
         if (splittedScript[0].match(getCatGapRouteScriptRegExp) === null && splittedScript[0].match(getImportScriptRegExp) === null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
