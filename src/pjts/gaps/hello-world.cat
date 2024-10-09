@@ -61,7 +61,6 @@
   const data = {
     test: "Hello World ID FOR INDEX"
   }
-  console.log(data.test)
   // export default data
 </script>
 <script #cat-gap="['foo']" #import-id="id-for">

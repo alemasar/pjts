@@ -65,7 +65,7 @@ const parseScriptDataImport = (config, jsLine) => {
   if (fileName.endsWith('.js') === true) {
     fileContents = fileContents.match(importJsObj)
   }
-  parsedJsLine = `const ${variableName} = JSON.parse(JSON.stringify(${fileContents}))`
+  parsedJsLine = `  const ${variableName} = JSON.parse(JSON.stringify(${fileContents}))`
   return parsedJsLine
 }
 
@@ -75,7 +75,7 @@ const parseScriptDataRequest = (jsLine) => {
   const url = splittedJsLine[1].trim()
   const returnObjRequest = {
     variableName,
-    importOFetch: `  import { ofetch } from "${nodeModulesPath}/ofetch"`,
+    importOFetch: `import { ofetch } from "${nodeModulesPath}/ofetch"`,
     makeRequestFunction: [`  const makeRequest = async (url) => {`,
       `    return ofetch(url)`,
       `  }`,
@@ -96,10 +96,14 @@ const addRequestToJs = (returnJs, requestJs) => {
   return returnJs
 }
 
+const addLoadEvent = () => {
+  return `  const event = new Event("cat-gap-loaded")`
+}
+
 const parseScriptDataImportRequest = (config, jsSplitted) => {
   let createRequestFunction = false
   let returnJs = jsSplitted
-
+  returnJs.splice(1, 0, addLoadEvent())
   jsSplitted.forEach((jsLine, index) => {
     if(jsLine.match(importInstructionName) !== null) {
       const parsedScript = parseScriptDataImport(config, jsLine)
@@ -109,7 +113,7 @@ const parseScriptDataImportRequest = (config, jsSplitted) => {
       const requestJs = parseScriptDataRequest(jsLine)
       if (createRequestFunction === false) {
         returnJs.splice(1, 0, requestJs.importOFetch)
-        returnJs.splice(2, 0, ...requestJs.makeRequestFunction)
+        returnJs.splice(3, 0, ...requestJs.makeRequestFunction)
         returnJs = addRequestToJs(returnJs, requestJs)
         createRequestFunction = true
       } else {
@@ -135,7 +139,10 @@ const deleteComments = (splittedScriptCode) => {
   })
   return cleanCode
 }
-
+const addDispatchEvent = (splittedScript) => {
+  splittedScript.push(`  document.dispatchEvent(event)`)
+  return splittedScript
+}
 class CatParseScripts {
   constructor() {}
   parseMultipleScripts(config, parsedScripts, scripts) {
@@ -145,20 +152,23 @@ class CatParseScripts {
 
       scripts.forEach((s) => {
         const scriptWithOutComments = deleteComments(s.split(breaklinesRegExp))
-        const splittedScript = parseScriptDataImportRequest(config, scriptWithOutComments)
+        let splittedScript = parseScriptDataImportRequest(config, scriptWithOutComments)
         const idandroute = splittedScript[0].replace(`<script`, '').replace(`>`, '').trim().split(' ')
 
         if (splittedScript[0].match(getCatGapRouteScriptRegExp) === null && splittedScript[0].match(getImportScriptRegExp) === null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
-          defaultScriptCode = splittedScript.join('\n').replace('<script>', '').replace('</script>', '')
+          splittedScript = addDispatchEvent(splittedScript)
+          defaultScriptCode = splittedScript.join('\n').replace(`<script>`, '').replace(`</script>`, '')
         }
         if (splittedScript[0].match(getCatGapRouteScriptRegExp) !== null && splittedScript[0].match(getImportScriptRegExp) !== null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
-          scriptCode = splittedScript.join('\n').replace('<script>', '').replace('</script>', '')
+          splittedScript = addDispatchEvent(splittedScript)
+          scriptCode = splittedScript.join('\n').replace(`<script>`, '').replace(`</script>`, '')
           parsedScripts = getScriptRouteImport(idandroute, parsedScripts, scriptCode, defaultScriptCode)
         } else if (splittedScript[0].match(getImportScriptRegExp) !== null) {
           splittedScript[0] = splittedScript[0].replace(splittedScript[0], '<script>')
-          scriptCode = splittedScript.join('\n').replace('<script>', '').replace('</script>', '')
+          splittedScript = addDispatchEvent(splittedScript)
+          scriptCode = splittedScript.join('\n').replace(`<script>`, '').replace(`</script>`, '')
           parsedScripts = getScriptIndexDefault(parsedScripts, defaultScriptCode)
           parsedScripts = getScriptImport(idandroute, parsedScripts, scriptCode)
         }  else {
