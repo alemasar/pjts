@@ -62,7 +62,7 @@
   console.log(example)
   // export default data
 </script>
-<script #import-id="id-for">
+<script #import-id="['id-for', 'id-show']">
   #request random_joke = "https://official-joke-api.appspot.com/random_joke"
   #request random_joke_1 = "https://official-joke-api.appspot.com/random_joke"
   #import example = "example.json"
@@ -72,7 +72,7 @@
   }
   // export default data
 </script>
-<script #cat-gap="['foo']" #import-id="id-for">
+<script #cat-gap="['foo']" #import-id="['id-for']">
   #request random_joke="https://official-joke-api.appspot.com/random_joke"
   console.log(random_joke)
   const data = {

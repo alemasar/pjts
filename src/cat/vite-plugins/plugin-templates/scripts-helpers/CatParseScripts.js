@@ -179,7 +179,7 @@ class CatParseScripts {
       scripts.forEach((s) => {
         const scriptWithOutComments = deleteComments(s.split(breaklinesRegExp))
         const idandroutes = new catParseScriptAttributes(scriptWithOutComments[0])
-        console.log(idandroutes.getRoutes())
+        console.log(idandroutes.getRoutes(config))
         /* const catRouteObject = getIdandRoute(config, idandroutes)
 
         console.log('ROUTESSSS', catRouteObject)
