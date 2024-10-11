@@ -1,19 +1,22 @@
 import CatApp from "@cat/index"
-// import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 class Gap extends HTMLElement {
   cat: CatApp
   gaps: Map<string, string>
   scripts: Map<string, string>
+  id: string
   handlerGapLoadedEvent: EventListener
   constructor() {
     super();
     this.cat = CatApp.instance;
     this.gaps = new Map<string, string>();
     this.scripts = new Map<string, string>();
+    this.id = uuidv4()
+    
     this.handlerGapLoadedEvent = ((event: CustomEvent) => {
       console.log('GAP LOADED', event.detail)
-      console.log('CAT', this.cat)
+      console.log('ID:::::', this.id)
     }) as EventListener
   }
   connectedCallback() {
@@ -34,16 +37,21 @@ class Gap extends HTMLElement {
   adoptedCallback() {
     console.log("Custom element moved to new page.");
   }
+
+  addDefaultScript(temporalTemplate: HTMLTemplateElement, gapScripts: Map<string, string>|undefined) {
+      const scriptTag = document.createElement("script")
+      scriptTag.type = "module"
+      const code = gapScripts?.get('default')
+      scriptTag.append(code as string)
+      temporalTemplate.content.appendChild(scriptTag)
+      this.appendChild(temporalTemplate.content.cloneNode(true))
+  }
+
   addGapCodeToWebComponent(temporalTemplate: HTMLTemplateElement, gapScripts: Map<string, string>|undefined) {
     const gapsTemplates = temporalTemplate.content.querySelectorAll('template')
     console.log('GAP SCRIPTS::::',gapScripts)
     if (gapScripts?.has('default') === true) {
-      const scriptTag = document.createElement("script")
-      scriptTag.type = "module"
-      const code = gapScripts.get('default')
-      scriptTag.append(code as string)
-      temporalTemplate.content.appendChild(scriptTag)
-      this.appendChild(temporalTemplate.content.cloneNode(true))
+      this.addDefaultScript(temporalTemplate, gapScripts)
     }
     
     gapsTemplates.forEach((tt) => {
@@ -64,8 +72,12 @@ class Gap extends HTMLElement {
   }
   changeGapRoute(route: string) {
     const temporalTemplate = document.createElement("template")
-    const script = this.scripts.get(route) as Map<string, string>|undefined
+    let script = this.scripts.get(route) as Map<string, string>|undefined
 
+    if (this.scripts.has('default') === true) {
+      this.addGapCodeToWebComponent(temporalTemplate, script)
+    }
+    console.log(this.gaps)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {

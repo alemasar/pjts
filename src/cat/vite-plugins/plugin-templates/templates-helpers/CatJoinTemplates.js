@@ -1,5 +1,5 @@
 import CatParseTemplates from './CatParseTemplates'
-import generateGap from '../plugin-templates/gapTemplate'
+import generateGap from '../gapTemplate'
 const breaklinesRegExp = /\r?\n|\r|\n/g
 
 class CatJoinTemplates {

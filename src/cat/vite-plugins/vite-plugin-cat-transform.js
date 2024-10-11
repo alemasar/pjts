@@ -1,6 +1,6 @@
 import {normalize} from "path";
 import { v4 as uuidv4 } from "uuid";
-import catTransformHelper from "./plugin-helpers/CatTransformHelper";
+import catTransformHelper from "./plugin-templates/CatTransformHelper";
 
 /* let pages = [];
 const getLayouts = (options) => {
@@ -104,7 +104,6 @@ export default function transformIndextemplate(options) {
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
           const catScriptGap = catTransformHelper.getScript(options, code, catConfigGap)
-          console.log('SCRIPT CODE STRING:::::',catScriptGap)
           /* if (catScriptComponent !== null) {
             catScriptComponent.forEach((csc) => {
               scriptCodeString += csc

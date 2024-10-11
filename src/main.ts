@@ -16,7 +16,7 @@ class Game {
       // console.log('HOOK CAT AFTER LOAD')
     })
     // console.log('CONSTRUCTOR GAME')
-    this.pjts = new PJTS()
+    this.pjts = PJTS.instance
     customElements.define("cat-page", CatPage);
   }
 }

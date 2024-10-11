@@ -7,9 +7,10 @@ class CatApp {
   static #instance: CatApp;
   client: Client
   server: Server
-  constructor() {
+  private constructor() {
     const context = CatContext.instance
     const catHooks = CatHooks.instance
+    console.log('CLIENT::::::')
     this.client = new Client(context, catHooks)
     this.server = new Server()
   }

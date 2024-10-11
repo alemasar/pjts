@@ -1,7 +1,7 @@
 import {readdirSync, readFileSync} from 'fs';
 import {join} from 'path';
-import CatJoinTemplates from './CatJoinTemplates';
-import CatJoinScripts from './CatJoinScripts';
+import CatJoinTemplates from './templates-helpers/CatJoinTemplates';
+import CatJoinScripts from './scripts-helpers/CatJoinScripts';
 
 class CatTransformHelper {
   constructor() {
@@ -45,7 +45,7 @@ class CatTransformHelper {
 
     if (scripts !== null) {
       const joinScript = new CatJoinScripts(scripts)
-      returnValue = joinScript.getScripts(config, options, scripts);
+      returnValue = joinScript.getScripts(options, config, scripts);
     } else {
       returnValue.set('default', new Map())
       returnValue.get('default').set('default', `const event = new CustomEvent("cat-gap-loaded", { detail: { tag: '${config.tag}', route: 'default', id: 'default' } })
