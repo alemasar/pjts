@@ -10,10 +10,17 @@
   <h1 #cat-if="dataBooleanoMetodo" class="hola">#test FROM DEMO SECOND TAG WEB COMPONENT</h1>
 </template>
 <template #import-id="id-show">
+  <!-- ESTO ES UN COMENTARIO DE UNA SOLA LINEA --> hola <!-- OTRO COMENTARIO DE UNA SOLA LINEA --> que tal
   <h1 #cat-show="dataBooleano" class="hola">BYE BYE FROM DEMO SECOND TAG WEB COMPONENT</h1>
+  <!--
+    ESTO ES UN COMENTARIO DE VARIAS LINEAS
+    ESTO ES UN COMENTARIO DE VARIAS LINEAS
+    ESTO ES UN COMENTARIO DE VARIAS LINEAS
+    ESTO ES UN COMENTARIO DE VARIAS LINEAS
+  -->
   <h1 #cat-show="dataBooleanoMetodo" class="hola">BYE BYE FROM DEMO SECOND TAG WEB COMPONENT</h1>
 </template>
-<template #import-id="id-for">
+<template #import-id="id-for" #otro-atributo = "valor random">
   <ul #cat-for-host="items">
     <li #cat-for-element="idItemElement">Elemento que #item.string(Esto seria printar una variable de item que devuelve un string, puede ser un metodo) se repite</li>
       <ul #cat-for-host="subitems">
@@ -28,7 +35,7 @@
   #import "id-if"
   #import "id-show"
 </template>
-<template #cat-gap='["foo"]'>
+<template #cat-gap='["foo", "bar", "otra-ruta"]' #otro-parametro="HOLA">
   #import "id-show"
   #import "id-for"
   #import "id-if"

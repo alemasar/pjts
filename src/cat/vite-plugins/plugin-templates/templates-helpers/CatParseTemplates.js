@@ -1,13 +1,16 @@
+import CatParseTemplatesAttributes from './CatParseTemplatesAttributes'
+
+const templateRegExp = /<template/
 const templateGapRegExp = /<template #cat-gap(.|[\s\S])*?<\/template>/g
 const templateImportRegExp = /<template #import-id(.|[\s\S])*?<\/template>/g
-const getRoutesGapRegExp = /#cat-gap="(.|[\s\S])*?"/g
-const getImportGapRegExp = /#import-id="(.|[\s\S])*?"/g
+const routesGapRegExp = /#cat-gap="(.|[\s\S])*?"/g
+const importGapRegExp = /#import-id="(.|[\s\S])*?"/g
 const breaklinesRegExp = /\r?\n|\r|\n/g
 
 const parseTemplates = (importTemplates, catTemplates) => {
   importTemplates.forEach((it) => {
     const parsedImportTemplates = it.split(breaklinesRegExp)  
-    const importId = it.match(getImportGapRegExp)[0].trim().split(/=/g)[1].replace(/"/g, '')
+    const importId = it.match(importGapRegExp)[0].trim().split(/=/g)[1].replace(/"/g, '')
 
     parsedImportTemplates[0] = parsedImportTemplates[0].replace('#import-', '')
     catTemplates.set(importId, parsedImportTemplates)
@@ -60,16 +63,79 @@ const parseGaps = (gapLinesMap, catTemplates) => {
   return resultMap
 }
 
+const deleteComments = (splittedTemplateCode) => {
+  const cleanCode = []
+  let startMultilineComment = false
+
+  splittedTemplateCode.forEach((templateLine, index) => {
+    let startLineIndex = -1
+    let endLineIndex = -1
+    if (templateLine.includes('<!--') === true) {
+      startLineIndex = index
+      startMultilineComment = true
+    } 
+    if (templateLine.includes('-->') === true) {
+      endLineIndex = index
+      startMultilineComment = false
+    }
+    if (startLineIndex !== -1 && startLineIndex === endLineIndex) {
+      let resultTemplate = ''
+      let startHtml = 0
+      let posStartComment = templateLine.indexOf('<!--')
+      while (posStartComment !== -1) {
+        resultTemplate += templateLine.substring(startHtml, posStartComment)
+        startHtml = templateLine.indexOf('-->', posStartComment) + 3
+        posStartComment = templateLine.indexOf('<!--', posStartComment + 1)
+      }
+      resultTemplate += templateLine.substring(startHtml, templateLine.length)
+      cleanCode.push(templateLine.replace(templateLine, resultTemplate))
+    } else if (startMultilineComment === false && templateLine.includes('-->') === false) {
+      cleanCode.push(templateLine)
+    }
+  })
+  return cleanCode
+}
+
 class CatParseTemplates {
-  constructor() {}
-  parseMultipleTemplates(templates) {
+  constructor() {
+    this.catParseTemplatesAttributes = new CatParseTemplatesAttributes()
+  }
+  setGaps(templateLine, catGaps, cleanTemplate) {
+    const gaps = this.catParseTemplatesAttributes.catGap(templateLine, cleanTemplate)
+    const catGap = catGaps
+
+    for (let [key, gap] of gaps.entries()) {
+      catGap.set(key, gap)
+    }
+    return catGap
+  }
+  parseMultipleTemplates(config, templatesArray) {
     let catGaps = new Map()
+    let templates = new Map()
+    let attributesTemplate = new Map()
     let parsedGaps = new Map()
     let catTemplates = new Map()
 
-    templates.forEach((template) => {
+    templatesArray.forEach((template) => {
+      const cleanTemplate = deleteComments(template.split(breaklinesRegExp))
+      const templateLine = cleanTemplate[0].replace(templateRegExp, '').
+        replace(/>/, '').
+        replace(/^\s/g, '')
+
+      if (templateLine.includes('#cat-gap') === true) {
+        if (catGaps.has(config.tag) === false) {
+          catGaps.set(config.tag, new Map())
+        }
+        console.log('CAT GAPS::::::', this.setGaps(templateLine, catGaps.get(config.tag), cleanTemplate))
+        catGaps.set(config.tag, this.setGaps(templateLine, catGaps.get(config.tag), cleanTemplate))
+      }
+    })
+    console.log('CAT GAP::::', catGaps)
+
+    return 'hola'
+    /* templates.forEach((template) => {
       const importTemplates = template.match(templateImportRegExp)
-      const routeGaps = template.match(getRoutesGapRegExp)
+      const routeGaps = template.match(routesGapRegExp)
       const defaultGaps = template.match(templateGapRegExp)
       if (importTemplates !== null) {
         catTemplates = parseTemplates(importTemplates, catTemplates)
@@ -82,7 +148,7 @@ class CatParseTemplates {
       }
     })
     parsedGaps = parseGaps(catGaps, catTemplates)
-    return parsedGaps
+    return parsedGaps */
   }
 }
 

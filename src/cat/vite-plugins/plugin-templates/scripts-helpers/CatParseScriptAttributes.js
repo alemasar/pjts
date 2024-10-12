@@ -5,12 +5,12 @@ const catGapRegExp = /^cat-gap=/
 const importTemplateRegExp = /^import-id=/
 
 const getAttributesValues = (regExp, attributes) => {
-  return attributes.replace(regExp, '')
-          .replace(/"|'/g, '')
-          .replace(/"|'+$/, '')
-          .replace(/^\[/, '')
-          .replace(/\]+$/, '')
-          .split(',')
+  return attributes.replace(regExp, '').
+          replace(/"|'/g, '').
+          replace(/"|'+$/, '').
+          replace(/^\[/, '').
+          replace(/\]+$/, '').
+          split(',')
 }
 
 class CatParseScriptAttributes {
@@ -31,10 +31,15 @@ class CatParseScriptAttributes {
           importTemplates = getAttributesValues(importTemplateRegExp, attributes)
         }
       })
-    } else if(this.scriptTag.catGapImportTemplateRegExp !== null) {
+    } else if(this.scriptTag.match(catGapImportTemplateRegExp) !== null) {
       const importTemplate = this.scriptTag.replace(/^#/g, '').replace(/\s/g, '')
       importTemplates = getAttributesValues(importTemplateRegExp, importTemplate)
-      console.log(importTemplates)
+    }
+    if (routes.length === 0) {
+      routes.push('default')
+    }
+    if (importTemplates.length === 0) {
+      importTemplates.push('default')
     }
     return {
       tag: config.tag,

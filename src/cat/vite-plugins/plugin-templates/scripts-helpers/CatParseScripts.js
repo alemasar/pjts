@@ -1,6 +1,6 @@
 import {join} from "path";
 import {readFileSync} from 'fs';
-import catParseScriptAttributes from "./CatParseScriptAttributes"
+import CatParseScriptAttributes from "./CatParseScriptAttributes"
 
 const breaklinesRegExp = /\r?\n|\r|\n/g
 const getCatGapRouteScriptRegExp = /#cat-gap="(.|[\s\S])*?"/g
@@ -178,8 +178,10 @@ class CatParseScripts {
       defaultScriptCode.set(tagName, new Map())
       scripts.forEach((s) => {
         const scriptWithOutComments = deleteComments(s.split(breaklinesRegExp))
-        const idandroutes = new catParseScriptAttributes(scriptWithOutComments[0])
-        console.log(idandroutes.getRoutes(config))
+        const idandroutes = new CatParseScriptAttributes(scriptWithOutComments[0])
+        const catRouteObject = idandroutes.getRoutes(config)
+        console.log('Cat Route Object', catRouteObject)
+        
         /* const catRouteObject = getIdandRoute(config, idandroutes)
 
         console.log('ROUTESSSS', catRouteObject)

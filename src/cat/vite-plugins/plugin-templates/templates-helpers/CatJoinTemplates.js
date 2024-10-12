@@ -7,15 +7,16 @@ class CatJoinTemplates {
     this.template = generateGap({
       className: config.name + 'Gap',
       tagName: config.tag,
-      parsedGaps: this.getTemplates(templates),
+      parsedGaps: this.getTemplates(config, templates),
       scripts,
     })
   }
-  getTemplates(templates) {
+  getTemplates(config, templates) {
     let parsedGaps = new Map()
+
     if (templates.length > 1) {
       const catParseTemplates = new CatParseTemplates()
-      parsedGaps = catParseTemplates.parseMultipleTemplates(templates)
+      parsedGaps = catParseTemplates.parseMultipleTemplates(config, templates)
     } else {
       const splittedGaps = templates[0].split(breaklinesRegExp)
       parsedGaps.set('default', splittedGaps.join(''))
