@@ -107,7 +107,8 @@ class CatParseTemplates {
     for (let [key, gap] of gaps.entries()) {
       catGap.set(key, gap)
     }
-    return catGap
+    console.log('CAT GAP:::::::::', catGap)
+    return gaps
   }
   parseMultipleTemplates(config, templatesArray) {
     let catGaps = new Map()
@@ -126,13 +127,11 @@ class CatParseTemplates {
         if (catGaps.has(config.tag) === false) {
           catGaps.set(config.tag, new Map())
         }
-        console.log('CAT GAPS::::::', this.setGaps(templateLine, catGaps.get(config.tag), cleanTemplate))
-        catGaps.set(config.tag, this.setGaps(templateLine, catGaps.get(config.tag), cleanTemplate))
+        this.setGaps(templateLine, catGaps.get(config.tag), cleanTemplate)
       }
     })
-    console.log('CAT GAP::::', catGaps)
+    return catGaps
 
-    return 'hola'
     /* templates.forEach((template) => {
       const importTemplates = template.match(templateImportRegExp)
       const routeGaps = template.match(routesGapRegExp)

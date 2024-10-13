@@ -3,14 +3,22 @@ const importRegExp = /import-id=/
 const catGapRegExp = /cat-gap/
 const breaklinesRegExp = /\r?\n|\r|\n/g
 
-const getAttributesValues = (regExp, attributes) => {
-  return attributes.replace(regExp, '').
+const getRoutesValues = (regExp, attributes) => {
+  const attributesArray = attributes.split(' #')
+  let returnRoute = []
+
+  attributesArray.forEach((aa) => {
+    if (aa.includes('cat-gap') === true) {
+      returnRoute = aa.replace(regExp, '').
         replace(/=/g, '').
-          replace(/"|'/g, '').
-          replace(/"|'+$/, '').
-          replace(/^\[/, '').
-          replace(/\]+$/, '').
-          split(',')
+        replace(/"|'/g, '').
+        replace(/"|'+$/, '').
+        replace(/^\[/, '').
+        replace(/\]+$/, '').
+        split(',')
+    }
+  })
+  return returnRoute
 }
 
 class CatParseTemplatesAttributes {
@@ -83,21 +91,24 @@ class CatParseTemplatesAttributes {
     let codeLine = catGapattributes.replace('#', '').replace(/\s=\s/g, '=')
 
     if (codeLine.match(catGapRegExp) !== null) {
-      let routesCatGap = getAttributesValues(catGapRegExp, codeLine)
+      let routesCatGap = getRoutesValues(catGapRegExp, codeLine)
 
       if (routesCatGap[0] === '') {
         if (catGaps.has('default') === false) {
           catGaps.set('default', cleanTemplate)
         }
       } else {
-        console.log(codeLine)
         routesCatGap.forEach((rcg) => {
+          const template = [...cleanTemplate]
           const route = rcg.replace(/\s/g, '')
-          const templateTag = cleanTemplate.shift().replace(codeLine, `cat-gap="${route}"`)
-          console.log(templateTag.replace(codeLine, `cat-gap="${route}"`))
-          cleanTemplate.unshift(templateTag)
+          const templateTag = template.shift()
+          const catGapAttribute = templateTag.
+            replace('<template ', '').
+            split(' #').
+            filter((cg) => cg.includes('#cat-gap'))[0]
 
-          catGaps.set(route, cleanTemplate)
+          template.unshift(templateTag.replace(catGapAttribute, `#cat-gap="${route}"`))
+          catGaps.set(route, template)
         })
       }
     }
