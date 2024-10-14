@@ -17,7 +17,7 @@ const generateGap = (config) => {
           `
         }
       }
-      if (config.scripts !== '') {
+      /* if (config.scripts !== '') {
         returnTemplate += `
           this.scripts = new Map()
         `
@@ -31,7 +31,7 @@ const generateGap = (config) => {
             `
           }
         }
-      }
+      } */
       returnTemplate += `
       // console.log(this.scripts)
     }

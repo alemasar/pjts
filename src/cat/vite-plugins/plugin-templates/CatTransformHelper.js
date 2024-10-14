@@ -8,6 +8,7 @@ class CatTransformHelper {
     this.templateRegExp = /<template(.|[\s\S])*?<\/template>/g
     this.configRegExp = /<config>(.|[\s\S])*?<\/config>/g
     this.scriptRegExp = /<script(.|[\s\S])*?<\/script>/g
+    this.template = ''
   }
 
   readAllFiles(dir, extension) {
@@ -54,15 +55,16 @@ class CatTransformHelper {
     }
     return returnValue;
   }
-  getGap(config, code, scripts) {
+  getTemplates(config, code) {
     const templates = code.match(this.templateRegExp)
-    let returnValue = code;
+    const joinTemplate = new CatJoinTemplates(config, templates)
 
-    const joinTemplate = new CatJoinTemplates(config, templates, scripts)
+    this.template = code;
     if (templates !== null) {
-      returnValue = joinTemplate.template;
+      this.template = joinTemplate.template
     }
-    return returnValue;
+
+    return this.template;
   }
 }
 
