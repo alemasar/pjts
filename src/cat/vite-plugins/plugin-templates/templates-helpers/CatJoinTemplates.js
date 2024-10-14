@@ -3,7 +3,7 @@ import generateGap from '../gapTemplate'
 const breaklinesRegExp = /\r?\n|\r|\n/g
 
 class CatJoinTemplates {
-  constructor(templates, config, scripts) {
+  constructor(config, templates, scripts) {
     this.template = generateGap({
       className: config.name + 'Gap',
       tagName: config.tag,

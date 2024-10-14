@@ -54,11 +54,11 @@ class CatTransformHelper {
     }
     return returnValue;
   }
-  getGap(code, config, scripts) {
+  getGap(config, code, scripts) {
     const templates = code.match(this.templateRegExp)
     let returnValue = code;
 
-    const joinTemplate = new CatJoinTemplates(templates, config, scripts)
+    const joinTemplate = new CatJoinTemplates(config, templates, scripts)
     if (templates !== null) {
       returnValue = joinTemplate.template;
     }

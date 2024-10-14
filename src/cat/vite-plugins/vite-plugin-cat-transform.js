@@ -110,7 +110,7 @@ export default function transformIndextemplate(options) {
             })
           } */
 
-          const catTemplateGap = catTransformHelper.getGap(code, catConfigGap, catScriptGap)
+          const catTemplateGap = catTransformHelper.getGap(catConfigGap, code, catScriptGap)
           code = `${catTemplateGap}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();
