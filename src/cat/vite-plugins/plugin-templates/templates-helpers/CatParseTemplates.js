@@ -1,67 +1,8 @@
 import CatParseTemplatesAttributes from './CatParseTemplatesAttributes'
 
 const templateRegExp = /<template/
-const templateGapRegExp = /<template #cat-gap(.|[\s\S])*?<\/template>/g
-const templateImportRegExp = /<template #import-id(.|[\s\S])*?<\/template>/g
-const routesGapRegExp = /#cat-gap="(.|[\s\S])*?"/g
-const importGapRegExp = /#import-id="(.|[\s\S])*?"/g
+const importIdRegExp = /(=?".*")/
 const breaklinesRegExp = /\r?\n|\r|\n/g
-
-const parseTemplates = (importTemplates, catTemplates) => {
-  importTemplates.forEach((it) => {
-    const parsedImportTemplates = it.split(breaklinesRegExp)  
-    const importId = it.match(importGapRegExp)[0].trim().split(/=/g)[1].replace(/"/g, '')
-
-    parsedImportTemplates[0] = parsedImportTemplates[0].replace('#import-', '')
-    catTemplates.set(importId, parsedImportTemplates)
-  })
-  return catTemplates
-}
-
-const parseRouteGaps = (defaultGaps, catGaps) => {
-  let routeName = {}
-  let splittedGaps = []
-
-  defaultGaps.forEach((dg) => {
-    splittedGaps = dg.split(breaklinesRegExp)
-    if (dg.includes('#cat-gap=') === true) {
-      const arrayRoutes = splittedGaps[0].
-        replace(`<template #cat-gap="`, '').
-        replace('"', '').
-        replace('>', '').
-        replace(/'/g,'"')
-      routeName = JSON.parse(`{"routes": ${arrayRoutes}}`)
-    }
-  })
-  routeName.routes.forEach((rn) => {
-    catGaps.set(rn, splittedGaps)
-  })
-  return catGaps
-}
-
-const parseImportTemplates = (line, resultArray, catTemplates) => {
-  const gapLinePos = line.indexOf('#import')
-
-  if (gapLinePos !== -1) {
-    const importId = line.trim().split(' ')[1].replace(/"/g, '')
-    resultArray = resultArray.concat(catTemplates.get(importId))
-  }
-  return resultArray
-}
-
-const parseGaps = (gapLinesMap, catTemplates) => {
-  const resultMap = new Map()
-  let resultArray = []
-
-  for (let [key, gapLines] of gapLinesMap.entries()) {
-    gapLines.forEach((line) => {
-      resultArray = parseImportTemplates(line, resultArray, catTemplates)
-    })
-    resultMap.set(key, resultArray.join(''))
-    resultArray.splice(0)
-  }
-  return resultMap
-}
 
 const deleteComments = (splittedTemplateCode) => {
   const cleanCode = []
@@ -100,6 +41,7 @@ class CatParseTemplates {
   constructor() {
     this.catParseTemplatesAttributes = new CatParseTemplatesAttributes()
   }
+ 
   setGaps(templateLine, catGaps, cleanTemplate) {
     const gaps = this.catParseTemplatesAttributes.catGap(templateLine, cleanTemplate)
     const catGap = catGaps
@@ -107,15 +49,20 @@ class CatParseTemplates {
     for (let [key, gap] of gaps.entries()) {
       catGap.set(key, gap)
     }
-    console.log('CAT GAP:::::::::', catGap)
-    return gaps
   }
-  parseMultipleTemplates(config, templatesArray) {
+
+  setImportTemplates(templateLine, importTemplates, cleanTemplate) {
+    const importIdsTemplates = this.catParseTemplatesAttributes.importTemplates(templateLine, cleanTemplate)
+    const importTemplate = importTemplates
+
+    for (let [key, template] of importIdsTemplates.entries()) {
+      importTemplate.set(key, template)
+    }
+  }
+
+  getGapsAndTemplates(config, templatesArray) {
     let catGaps = new Map()
-    let templates = new Map()
-    let attributesTemplate = new Map()
-    let parsedGaps = new Map()
-    let catTemplates = new Map()
+    let importTemplates = new Map()
 
     templatesArray.forEach((template) => {
       const cleanTemplate = deleteComments(template.split(breaklinesRegExp))
@@ -128,26 +75,71 @@ class CatParseTemplates {
           catGaps.set(config.tag, new Map())
         }
         this.setGaps(templateLine, catGaps.get(config.tag), cleanTemplate)
+      } else if (templateLine.includes('#cat-gap') === false) {
+        if (importTemplates.has(config.tag) === false) {
+          importTemplates.set(config.tag, new Map())
+        }
+        this.setImportTemplates(templateLine, importTemplates.get(config.tag), cleanTemplate)
       }
     })
-    return catGaps
 
-    /* templates.forEach((template) => {
-      const importTemplates = template.match(templateImportRegExp)
-      const routeGaps = template.match(routesGapRegExp)
-      const defaultGaps = template.match(templateGapRegExp)
-      if (importTemplates !== null) {
-        catTemplates = parseTemplates(importTemplates, catTemplates)
-      }
-      if (routeGaps !== null) {
-        catGaps = parseRouteGaps(defaultGaps, catGaps)
-      } else if (defaultGaps !== null && defaultGaps.length > 0) {
-        const splittedGaps = template.split(breaklinesRegExp)
-        catGaps.set('index', splittedGaps)
+    return {
+      catGaps,
+      importTemplates,
+    }
+  }
+
+  getGapsImport(tag, gapTemplate, templatesMap){
+    const template = []
+
+    console.log(templatesMap.get(tag))
+    if (templatesMap.get(tag).has('default') === true) {
+      template.push(...templatesMap.get(tag).get('default'))
+    }
+    gapTemplate.forEach((gt) => {
+      if (gt.includes('#import') === true) {
+        const importId = gt.match(importIdRegExp)[0].replace(/"/g, '')
+        if (templatesMap.get(tag).has(importId) === true) {
+          template.push(...templatesMap.get(tag).get(importId))
+        }
       }
     })
-    parsedGaps = parseGaps(catGaps, catTemplates)
-    return parsedGaps */
+
+    return template
+  }
+
+  joinGapsAndTemplates(gapsAndTemplates) {
+    const template = new Map()
+    const gapsMap = gapsAndTemplates.catGaps
+    const templatesMap = gapsAndTemplates.importTemplates
+
+    for (let [tag, catGaps] of gapsMap.entries()) {
+      let importId = 'default'
+
+      if (template.has(tag) === false) {
+        template.set(tag, new Map())
+      }
+
+      if (templatesMap.has(tag) === true && templatesMap.get(tag).has(importId) === true) {
+        if (template.get(tag).has('index') === false) {
+          template.get(tag).set('index', [])
+        }
+        template.get(tag).set('index', templatesMap.get(tag).get(importId))
+      }
+
+      for (let [id, gapTemplate] of catGaps.entries()) {
+        let idGap = id
+        if (id === 'default') {
+          idGap = 'index'
+        }
+        if (template.get(tag).has(idGap) === false) {
+          template.get(tag).set(idGap, [])
+        }
+        template.get(tag).set(idGap, this.getGapsImport(tag, gapTemplate, templatesMap))
+      }
+    }
+
+    return template
   }
 }
 

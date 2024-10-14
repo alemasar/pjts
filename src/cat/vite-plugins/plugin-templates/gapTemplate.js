@@ -10,17 +10,19 @@ const generateGap = (config) => {
       super();
       // console.log('GAP IN TEMPLATE')
       `
-      for (var [key, gap] of config.parsedGaps) {
-        returnTemplate += `
-          this.gaps.set('${key}', '${gap}')
-        `
+      if (config.parsedGaps.has(config.tagName) === true) {
+        for (var [key, gap] of config.parsedGaps.get(config.tagName)) {
+          returnTemplate += `
+            this.gaps.set('${key}', \`${gap.join('\n')}\`)
+          `
+        }
       }
       if (config.scripts !== '') {
         returnTemplate += `
           this.scripts = new Map()
         `
-        for (var [route, scriptsMap] of config.scripts) {
-          for (var [template, script] of scriptsMap) {
+        for (let [route, scriptsMap] of config.scripts) {
+          for (let [template, script] of scriptsMap) {
             returnTemplate += `
             if (this.scripts.has('${route}') === false) {
               this.scripts.set('${route}', new Map())

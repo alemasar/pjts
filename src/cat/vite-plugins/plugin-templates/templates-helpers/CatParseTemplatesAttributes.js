@@ -1,7 +1,6 @@
 const templateRegExp = /<template/
-const importRegExp = /import-id=/
+const importRegExp = /import-id/
 const catGapRegExp = /cat-gap/
-const breaklinesRegExp = /\r?\n|\r|\n/g
 
 const getRoutesValues = (regExp, attributes) => {
   const attributesArray = attributes.split(' #')
@@ -21,74 +20,27 @@ const getRoutesValues = (regExp, attributes) => {
   return returnRoute
 }
 
+const getImportIdsValues = (regExp, attributes) => {
+  const attributesArray = attributes.split(' #')
+  let returnImportId = ''
+
+  attributesArray.forEach((aa) => {
+    if (aa.includes('import-id') === true) {
+      returnImportId = aa.replace(regExp, '').
+        replace(/=/g, '').
+        replace(/"|'/g, '').
+        replace(/"|'+$/, '')
+    }
+  })
+  return returnImportId
+}
+
 class CatParseTemplatesAttributes {
-  constructor() {
-    /* const attributes = templateTag.replace(templateRegExp, '').
-      replace(/>/, '').
-      replace(/^\s/g, '').
-      split(breaklinesRegExp)
-    console.log('ATTRIBUTES::::::', attributes) */
-    /* const tag = config.tag
-    const catGaps = templateProperties.catGaps
-    const templates = templateProperties.templates
-    const attributesTemplate = templateProperties.attributesTemplate
-    const attributes = templateTag.replace(templateRegExp, '').
-      replace(/>/, '').
-      replace(/^\s/g, '').
-      split(breaklinesRegExp)
+  constructor() {}
 
-    if (catGaps.has(tag) === false) {
-      catGaps.set(tag, new Map())
-    }
-    if (templates.has(tag) === false) {
-      templates.set(tag, new Map())
-    }
-
-    attributes.forEach((tt) => {
-      let codeLine = tt.replace('#', '').replace(/\s=\s/g, '=')
-
-      if (codeLine.match(catGapRegExp) !== null) {
-        let routesCatGap = getAttributesValues(catGapRegExp, codeLine)
-
-        if (routesCatGap[0] === '') {
-          routesCatGap[0] = 'default'
-        }
-        catGaps.get(config.tag).set('cat-gap', new Map())
-        catGaps.get(config.tag).get('cat-gap').set('routes', routesCatGap)
-      } else if (codeLine.match(importRegExp) !== null) {
-        let importTemplateLine = codeLine.replace(importRegExp, '').
-          replace(/^"|'/, '').
-          replace(/"|'+$/, '').
-          split(' #')
-        const idTemplate = importTemplateLine.shift()
-
-        templates.get(config.tag).set('idTemplate', idTemplate)
-        while(importTemplateLine.length > 0) {
-          const attribute = importTemplateLine.shift()
-          const attributeSplitted = attribute.split('=')
-          const attributeName = attributeSplitted[0]
-          const attributeValue = attributeSplitted[1]
-
-          if (attributesTemplate.has(config.tag) === false) {
-            attributesTemplate.set(config.tag, new Map())
-            if (attributesTemplate.get(config.tag).has(idTemplate) === false) {
-              attributesTemplate.get(config.tag).set(idTemplate, new Map())
-            }
-          }
-          attributesTemplate.get(config.tag).get(idTemplate).set(attributeName, attributeValue)
-        }
-      }
-    })
-
-    return {
-      catGaps,
-      templates,
-      attributesTemplate,
-    }*/
-  }
-  catGap(catGapattributes, cleanTemplate) {
+  catGap(catGapAttributes, cleanTemplate) {
     const catGaps = new Map()
-    let codeLine = catGapattributes.replace('#', '').replace(/\s=\s/g, '=')
+    let codeLine = catGapAttributes.replace('#', '').replace(/\s=\s/g, '=')
 
     if (codeLine.match(catGapRegExp) !== null) {
       let routesCatGap = getRoutesValues(catGapRegExp, codeLine)
@@ -113,6 +65,22 @@ class CatParseTemplatesAttributes {
       }
     }
     return catGaps
+  }
+
+  importTemplates(importTemplatesAttributes, cleanTemplate) {
+    const template = [...cleanTemplate]
+    const importTemplates = new Map()
+    let codeLine = importTemplatesAttributes.replace('#', '').replace(/\s=\s/g, '=')
+
+    if (codeLine.match(catGapRegExp) === null) {
+      let importIds = getImportIdsValues(importRegExp, codeLine)
+
+      if (importIds === '') {
+        importIds = 'default'
+      }
+      importTemplates.set(importIds, template)
+    }
+    return importTemplates
   }
 }
 

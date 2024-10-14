@@ -5,6 +5,9 @@
     "className": "ComponentHelloWorld"
   }
 </config>
+<template #otro-atributo = "valor random">
+  <h1>TITULO DE LA PAGINA EN TEMPLATE DEFAULT</h1>
+</template>
 <template #import-id="id-if">
   <h1 #cat-if="dataBooleano" class="hola">#test FROM DEMO SECOND TAG WEB COMPONENT</h1>
   <h1 #cat-if="dataBooleanoMetodo" class="hola">#test FROM DEMO SECOND TAG WEB COMPONENT</h1>

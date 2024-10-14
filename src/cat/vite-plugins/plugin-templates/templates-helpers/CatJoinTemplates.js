@@ -1,6 +1,5 @@
 import CatParseTemplates from './CatParseTemplates'
 import generateGap from '../gapTemplate'
-import { convertToObject } from 'typescript'
 const breaklinesRegExp = /\r?\n|\r|\n/g
 
 class CatJoinTemplates {
@@ -13,17 +12,22 @@ class CatJoinTemplates {
     })
   }
   getTemplates(config, templates) {
-    let parsedGaps = new Map()
+    let parsedTemplates = new Map()
+    let gapsAndTemplates = {}
 
     if (templates.length > 1) {
       const catParseTemplates = new CatParseTemplates()
-      parsedGaps = catParseTemplates.parseMultipleTemplates(config, templates)
-      console.log('PARSED GAPS::::', parsedGaps)
+      gapsAndTemplates = catParseTemplates.getGapsAndTemplates(config, templates)
+      parsedTemplates = catParseTemplates.joinGapsAndTemplates(gapsAndTemplates)
+      console.log('GAPS AND TEMPLATES::::', parsedTemplates)
     } else {
       const splittedGaps = templates[0].split(breaklinesRegExp)
-      parsedGaps.set('default', splittedGaps.join(''))
+      if (parsedTemplates.has(config.tag) === false) {
+        parsedTemplates.set(config.tag, new Map())
+      }
+      parsedTemplates.get(config.tag).set('default', splittedGaps)
     }
-    return parsedGaps
+    return parsedTemplates
   }
 }
 

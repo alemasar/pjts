@@ -77,7 +77,6 @@ class Gap extends HTMLElement {
     if (this.scripts.has('default') === true) {
       this.addGapCodeToWebComponent(temporalTemplate, script)
     }
-    console.log(this.gaps)
     if (this.gaps.has(route) === true) {
       temporalTemplate.innerHTML = this.gaps.get(route) as string
     } else {
