@@ -92,7 +92,7 @@ class CatParseTemplates {
   getGapsImport(tag, gapTemplate, templatesMap){
     const template = []
 
-    console.log(templatesMap.get(tag))
+    // console.log(templatesMap.get(tag))
     if (templatesMap.get(tag).has('default') === true) {
       template.push(...templatesMap.get(tag).get('default'))
     }

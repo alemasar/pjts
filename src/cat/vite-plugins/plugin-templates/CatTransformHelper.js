@@ -51,7 +51,6 @@ class CatTransformHelper {
       returnValue.get('default').set('default', `const event = new CustomEvent("cat-gap-loaded", { detail: { tag: '${config.tag}', route: 'default', id: 'default' } })
         document.dispatchEvent(event)
         `)
-      console.log(returnValue)
     }
     return returnValue;
   }

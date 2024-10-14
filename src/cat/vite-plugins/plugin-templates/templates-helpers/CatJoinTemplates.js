@@ -19,7 +19,6 @@ class CatJoinTemplates {
       const catParseTemplates = new CatParseTemplates()
       gapsAndTemplates = catParseTemplates.getGapsAndTemplates(config, templates)
       parsedTemplates = catParseTemplates.joinGapsAndTemplates(gapsAndTemplates)
-      console.log('GAPS AND TEMPLATES::::', parsedTemplates)
     } else {
       const splittedGaps = templates[0].split(breaklinesRegExp)
       if (parsedTemplates.has(config.tag) === false) {
