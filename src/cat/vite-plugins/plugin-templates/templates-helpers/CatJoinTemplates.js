@@ -1,15 +1,9 @@
 import CatParseTemplates from './CatParseTemplates'
-import generateGap from '../gapTemplate'
 const breaklinesRegExp = /\r?\n|\r|\n/g
 
 class CatJoinTemplates {
-  constructor(config, templates, scripts) {
-    this.template = generateGap({
-      className: config.name + 'Gap',
-      tagName: config.tag,
-      parsedGaps: this.getTemplates(config, templates),
-      scripts,
-    })
+  constructor(config, templates) {
+    this.template = this.getTemplates(config, templates)
   }
   getTemplates(config, templates) {
     let parsedTemplates = new Map()
@@ -17,6 +11,7 @@ class CatJoinTemplates {
 
     if (templates.length > 1) {
       const catParseTemplates = new CatParseTemplates()
+
       gapsAndTemplates = catParseTemplates.getGapsAndTemplates(config, templates)
       parsedTemplates = catParseTemplates.joinGapsAndTemplates(gapsAndTemplates)
     } else {

@@ -10,8 +10,9 @@ const generateGap = (config) => {
       super();
       // console.log('GAP IN TEMPLATE')
       `
-      if (config.parsedGaps.has(config.tagName) === true) {
-        for (var [key, gap] of config.parsedGaps.get(config.tagName)) {
+      console.log('GAP IN TEMPLATE::::', config)
+      if (config.catTemplatesGap.has(config.tagName) === true) {
+        for (var [key, gap] of config.catTemplatesGap.get(config.tagName)) {
           returnTemplate += `
             this.gaps.set('${key}', \`${gap.join('\n')}\`)
           `

@@ -1,6 +1,7 @@
 import {normalize} from "path";
 import { v4 as uuidv4 } from "uuid";
 import catTransformHelper from "./plugin-templates/CatTransformHelper";
+import generateGap from './plugin-templates/gapTemplate'
 
 /* let pages = [];
 const getLayouts = (options) => {
@@ -103,15 +104,20 @@ export default function transformIndextemplate(options) {
             // console.error(`%c${e}`, 'color: red;')
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
-          const catScriptGap = catTransformHelper.getScript(options, code, catConfigGap)
+          const catScriptsGap = catTransformHelper.getScripts(catConfigGap, options, code)
           /* if (catScriptComponent !== null) {
             catScriptComponent.forEach((csc) => {
               scriptCodeString += csc
             })
           } */
-
-          const catTemplateGap = catTransformHelper.getTemplates(catConfigGap, code)
-          code = `${catTemplateGap}`;
+          const catTemplatesGap = catTransformHelper.getTemplates(catConfigGap, code)
+          const catGap = generateGap({
+            className: catConfigGap.name + 'Gap',
+            tagName: catConfigGap.tag,
+            catTemplatesGap,
+            catScriptsGap,
+          })
+          code = `${catGap}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {
           const uuid = uuidv4();
           const route = id.split("/").pop().replace(".html?special", "");

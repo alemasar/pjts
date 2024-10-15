@@ -9,6 +9,7 @@ class CatTransformHelper {
     this.configRegExp = /<config>(.|[\s\S])*?<\/config>/g
     this.scriptRegExp = /<script(.|[\s\S])*?<\/script>/g
     this.template = ''
+    this.scripts = ''
   }
 
   readAllFiles(dir, extension) {
@@ -40,7 +41,7 @@ class CatTransformHelper {
     }
     return returnValue;
   }
-  getScript(options, code, config) {
+  getScripts(config, options, code) {
     const scripts = code.match(this.scriptRegExp);
     let returnValue = new Map();
 
