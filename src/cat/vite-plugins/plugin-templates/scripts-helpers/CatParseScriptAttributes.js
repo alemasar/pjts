@@ -1,51 +1,101 @@
 const scriptRegExp = /<script/
-const catGapRouteScriptRegExp = /#cat-gap/g
-const catGapImportTemplateRegExp = /#import-id/g
-const catGapRegExp = /^cat-gap=/
-const importTemplateRegExp = /^import-id=/
+const importRegExp = /import-id/
+const catGapRegExp = /cat-gap/
 
-const getAttributesValues = (regExp, attributes) => {
+/* const getAttributesValues = (regExp, attributes) => {
   return attributes.replace(regExp, '').
           replace(/"|'/g, '').
           replace(/"|'+$/, '').
           replace(/^\[/, '').
           replace(/\]+$/, '').
           split(',')
+} */
+
+const getImportIdsValues = (regExp, attributes) => {
+  const attributesArray = attributes.split(' #')
+  let returnImportId = ''
+
+  attributesArray.forEach((aa) => {
+    if (aa.includes('import-id') === true) {
+      returnImportId = aa.replace(regExp, '').
+        replace(/=/g, '').
+        replace(/"|'/g, '').
+        replace(/"|'+$/, '').
+        replace(/^\[/, '').
+        replace(/\]+$/, '').
+        replace(/\s/g, '').
+        split(',')
+    }
+  })
+  return returnImportId
+}
+
+const getRoutesValues = (regExp, attributes) => {
+  const attributesArray = attributes.split(' #')
+  let returnRoute = []
+
+  attributesArray.forEach((aa) => {
+    if (aa.includes('cat-gap') === true) {
+      returnRoute = aa.replace(regExp, '').
+        replace(/=/g, '').
+        replace(/"|'/g, '').
+        replace(/"|'+$/, '').
+        replace(/^\[/, '').
+        replace(/\]+$/, '').
+        split(',')
+    }
+  })
+  return returnRoute
 }
 
 class CatParseScriptAttributes {
-  constructor(scriptTag) {
-    this.scriptTag = scriptTag.replace(scriptRegExp, '').replace(/>/, '').replace(/^\s/g, '')
+  constructor() {}
+  catGap(catGapAttributes, cleanScript) {
+    const catGaps = new Map()
+    let codeLine = catGapAttributes.replace('#', '').replace(/\s=\s/g, '=')
+
+    if (codeLine.match(catGapRegExp) !== null) {
+      let routesCatGap = getRoutesValues(catGapRegExp, codeLine)
+
+      if (routesCatGap[0] === '') {
+        if (catGaps.has('default') === false) {
+          catGaps.set('default', cleanScript)
+        }
+      } else {
+        routesCatGap.forEach((rcg) => {
+          const script = [...cleanScript]
+          const route = rcg.replace(/\s/g, '')
+          const scriptTag = script.shift()
+          const catGapAttribute = scriptTag.
+            replace('<script ', '').
+            split(' #').
+            filter((cg) => cg.includes('#cat-gap'))[0]
+
+          script.unshift(scriptTag.replace(catGapAttribute, `#cat-gap="${route}"`))
+          catGaps.set(route, script)
+        })
+      }
+    }
+    return catGaps
   }
-  getRoutes(config) {
-    let routes = [] 
-    let importTemplates = []
-    if (this.scriptTag.match(catGapRouteScriptRegExp) !== null) {
-      const splittedAttributes = this.scriptTag.split(/\s#/g)
-      splittedAttributes.forEach((sa) => {
-        const attributes = sa.replace(/^#/g, '').replace(/\s/g, '')
-        if (attributes.match(catGapRegExp) !== null) {
-          routes = getAttributesValues(catGapRegExp, attributes)
-        }
-        if (attributes.match(importTemplateRegExp) !== null) {
-          importTemplates = getAttributesValues(importTemplateRegExp, attributes)
-        }
-      })
-    } else if(this.scriptTag.match(catGapImportTemplateRegExp) !== null) {
-      const importTemplate = this.scriptTag.replace(/^#/g, '').replace(/\s/g, '')
-      importTemplates = getAttributesValues(importTemplateRegExp, importTemplate)
+
+  importScripts(importScriptsAttributes, cleanScript) {
+    const script = [...cleanScript]
+    const importScripts = new Map()
+    let codeLine = importScriptsAttributes.replace('#', '').replace(/\s=\s/g, '=')
+
+    if (codeLine.match(catGapRegExp) === null) {
+      const importIds = getImportIdsValues(importRegExp, codeLine)
+      
+      if (importIds.length === 0) {
+        importScripts.set('default', script)
+      } else {
+        importIds.forEach((ii) => {
+          importScripts.set(ii, script)
+        })
+      }
     }
-    if (routes.length === 0) {
-      routes.push('default')
-    }
-    if (importTemplates.length === 0) {
-      importTemplates.push('default')
-    }
-    return {
-      tag: config.tag,
-      routes,
-      importTemplates,
-    }
+    return importScripts
   }
 }
 

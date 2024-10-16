@@ -3,6 +3,8 @@ import {readFileSync} from 'fs';
 import CatParseScriptAttributes from "./CatParseScriptAttributes"
 
 const breaklinesRegExp = /\r?\n|\r|\n/g
+const scriptRegExp = /<script/
+const removeBlankSpaces = /^\s*/g
 const getCatGapRouteScriptRegExp = /#cat-gap="(.|[\s\S])*?"/g
 const getCatGapSentenceScriptRegExp = /#cat-gap/g
 const getImportScriptRegExp = /#import-id="(.|[\s\S])*?"/g
@@ -13,139 +15,124 @@ const requestInstructionName = `#request `
 const importJsObj = /{(.|[\s\S])*?}/g
 const nodeModulesPath = '/node_modules'
 
-const addLoadEvent = (catRouteObject) => {
+/* const addLoadEvent = (catRouteObject) => {
   return `  const event = new CustomEvent("cat-gap-loaded", { detail: { tag: '${catRouteObject.tag}', route: '${catRouteObject.route}', id: '${catRouteObject.id}' } })`
 }
 
 const addDispatchEvent = (splittedScript) => {
   splittedScript.push(`  document.dispatchEvent(event)`)
   return splittedScript
+} */
+const commentsAtLine = (jsLine) => {
+  let cleanLine = jsLine
+  if (jsLine.includes('//') === true) {
+    let posComment = jsLine.indexOf('//')
+    cleanLine = ''
+    while (posComment !== -1) {    
+      cleanLine += jsLine.substring(0, posComment)
+      if (cleanLine.endsWith('https:') === true || cleanLine.endsWith('http:') === true) {
+        const lastPosComment = posComment
+        posComment = jsLine.indexOf('//', posComment + 3)
+        if (posComment === -1) {
+          cleanLine += jsLine.substring(lastPosComment, jsLine.length - 1)
+        }
+      } else {
+        posComment = jsLine.indexOf('//', posComment + 1)
+      }
+    }
+  } else if (jsLine.includes('/*') === true && jsLine.includes('*/') === true) {
+    let posComment = jsLine.indexOf('/*')
+    let lastPosComment = 0
+    cleanLine =  ''
+    while (posComment !== -1) {
+      cleanLine += jsLine.substring(lastPosComment, posComment)
+      lastPosComment = jsLine.indexOf('*/', posComment + 1)
+      posComment = jsLine.indexOf('/*', lastPosComment + 1)
+    }
+    cleanLine += jsLine.substring(lastPosComment + 2, jsLine.length)
+  }
+  return cleanLine.replace(/\s*$/g, '')
 }
 
-const deleteComments = (splittedScriptCode) => {
+const deleteComments = (jsLines) => {
   const cleanCode = []
   let startMultilineComment = false
-
-  splittedScriptCode.forEach((jsLine) => {
-    if (jsLine.trim().startsWith('/*') === true) {
+  jsLines.forEach((jsLine) => {
+    const line = jsLine.replace(removeBlankSpaces, '')
+    if (line.startsWith('/*') === true) {
       startMultilineComment = true
-    } else if (jsLine.trim().startsWith('//') === false && startMultilineComment === false) {
-      cleanCode.push(jsLine)
-    } else if (jsLine.trim().startsWith('*/') === true) {
+    } else if (line.startsWith('//') === false && startMultilineComment === false) {
+      const addLine = commentsAtLine(line)
+      cleanCode.push(addLine)
+    } else if (line.startsWith('*/') === true) {
       startMultilineComment = false
     }
   })
   return cleanCode
 }
 
-const getIdandRoute = (config, idandroute) => {
-  let importIdTemplate = ''
-  let catGapRoutes = {
-    routes: []
-  }
-  let catRouteObject = {
-    routes: []
-  }
-  if (idandroute.length > 1) {
-    console.log(idandroute)
-    // idandroute.forEach((ir) => {
-      const sentenceType = idandroute.shift().trim()
-      const sentenceValue = idandroute.shift().trim()
-      console.log('SENTENCE TYPE:::::', sentenceType)
-      console.log('SENTENCE VALUE:::::', sentenceValue)
-      if (sentenceType.match(getCatGapSentenceScriptRegExp) !== null) {
-        const valueArray = sentenceValue.replace(/"/g, '').replace(/\[/,'').replace(/\]/, '').split(',')
-        valueArray.forEach((va) => {
-          catGapRoutes.routes.push(va.replace(/'/g, '').trim())
-        })
-        console.log(sentenceValue.replace(/"/g, '').replace(/\[/,'').replace(/\]/, '').split(','))
-        // catGapRoutes.routes.push()
-      }
-
-      if (sentenceType.match(getImportScriptRegExp) !== null) {
-        importIdTemplate = sentenceValue.replace(importScriptIdInstructionName, '').replace(`"`, '').replace(importTemplateInstructionName, '').replace(`"`, '')
-      }
-    // })
-  } /* else if (idandroute.length > 1) {
-    /* if (sentenceType.match(getImportScriptRegExp) !== null) {
-      importIdTemplate = sentenceValue.replace(importScriptIdInstructionName, '').replace(`"`, '').replace(importTemplateInstructionName, '').replace(`"`, '')
-    }
-  } */
-  console.log(catGapRoutes.routes)
-  if (importIdTemplate !== '') {
-    catRouteObject.routes.push('index')
-  }
-  console.log('CatGapRoutes::::', catGapRoutes.routes)
-  
-  return {
-    tag: config.tag,
-    routes: catRouteObject.routes,
-    id: importIdTemplate,
-  }
-}
-
-const getFileImport = (options, line) => {
-  const importElements = line.replace(importTemplateInstructionName, '').split('=')
-  const fileName = importElements[1].replace(/"/g, '').trim()
-  let fileContents = readFileSync(join(`src/${options.data.base}/${options.data.path}/${fileName}`),{ encoding: 'utf8', flag: 'r' })
-  let fileContentsString = ''
-
-  if (fileName.endsWith('.js') === true) {
-    fileContentsString = fileContents.match(importJsObj)[0].replace(breaklinesRegExp, '\n')
-  } else {
-    fileContentsString = JSON.stringify(fileContents).replace(/\\r/g, '')
-  }
-
-  return `  const ${importElements[0].trim()} = JSON.parse(${fileContentsString})`
-}
-
-const getRequestImportObject = (line)  => {
-  const splittedJsLine = line.split('=')
-  const variableName = splittedJsLine[0].replace(requestInstructionName, '').trim()
-  const url = splittedJsLine[1].trim()
-  const returnObjRequest = {
-    variableName,
-    importOFetch: `import { ofetch } from "${nodeModulesPath}/ofetch"`,
-    makeRequestFunction: [`  const makeRequest = async (url) => {`,
-      `    return ofetch(url)`,
-      `  }`,
-    ],
-    request: `  const ${variableName} = await makeRequest(${url})`,
-  }
-  return returnObjRequest
-}
-
-const parseScriptCode = (scriptWithOutComments, options) => {
-  const scriptCode = scriptWithOutComments
-  let addedImportOfecth = false
-
-  scriptWithOutComments.forEach((line, index) => {
-    if (line.match(importTemplateInstructionName) !== null) {
-      const parsedJsLine = getFileImport(options, line)
-      scriptCode[index] = parsedJsLine
-    } else if (line.match(requestInstructionName) !== null) {
-      const returnObjRequest = getRequestImportObject(line)
-      if (addedImportOfecth === false) {
-        scriptCode[0] = returnObjRequest.request
-        scriptCode.splice(0, 0, returnObjRequest.importOFetch)
-        scriptCode.splice(1, 0, ...returnObjRequest.makeRequestFunction)
-        addedImportOfecth = true
-      } else {
-        scriptCode[index] = returnObjRequest.request
-      }
-    }
-  })
-  return scriptCode.join('\n')
-}
 
 class CatParseScripts {
-  constructor() {}
+  constructor() {
+    this.catParseScriptAttributes = new CatParseScriptAttributes()
+  }
+
+  setGaps(scriptLine, catGaps, cleanScript) {
+    const gaps = this.catParseScriptAttributes.catGap(scriptLine, cleanScript)
+    const catGap = catGaps
+
+    for (let [key, gap] of gaps.entries()) {
+      catGap.set(key, gap)
+    }
+  }
+
+  setImportScripts(scriptLine, importScripts, cleanScript) {
+    const importIdsScripts = this.catParseScriptAttributes.importScripts(scriptLine, cleanScript)
+    const importScript = importScripts
+
+    for (let [key, script] of importIdsScripts.entries()) {
+      importScript.set(key, script)
+    }
+  }
+
+  getGapsAndScripts(config, scriptsArray) {
+    let catGaps = new Map()
+    let importScripts = new Map()
+
+    scriptsArray.forEach((script) => {
+      const cleanScript = deleteComments(script.split(breaklinesRegExp))
+      const scriptLine = cleanScript[0].replace(scriptRegExp, '').
+        replace(/>/, '').
+        replace(/^\s/g, '')
+
+        if (scriptLine.includes('#cat-gap') === true) {
+          if (catGaps.has(config.tag) === false) {
+            catGaps.set(config.tag, new Map())
+          }
+          this.setGaps(scriptLine, catGaps.get(config.tag), cleanScript)
+        } else if (scriptLine.includes('#cat-gap') === false) {
+          if (importScripts.has(config.tag) === false) {
+            importScripts.set(config.tag, new Map())
+          }
+          this.setImportScripts(scriptLine, importScripts.get(config.tag), cleanScript)
+        }
+    })
+
+    return {
+      catGaps,
+      importScripts,
+    }
+  }
+
+
+
+
   getScriptCode(scriptWithOutComments, options) {
     let scriptCode = ''
 
-    scriptWithOutComments.pop()
+    /* scriptWithOutComments.pop()
     scriptWithOutComments.shift()
-    scriptCode = parseScriptCode(scriptWithOutComments, options)
+    scriptCode = parseScriptCode(scriptWithOutComments, options) */
     return scriptCode
   }
 

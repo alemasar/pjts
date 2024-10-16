@@ -104,7 +104,7 @@ export default function transformIndextemplate(options) {
             // console.error(`%c${e}`, 'color: red;')
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
-          const catScriptsGap = catTransformHelper.getScripts(catConfigGap, options, code)
+          const catScriptsGap = catTransformHelper.getScripts(catConfigGap, code)
           /* if (catScriptComponent !== null) {
             catScriptComponent.forEach((csc) => {
               scriptCodeString += csc

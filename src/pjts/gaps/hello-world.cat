@@ -45,15 +45,15 @@
 </template>
 <script>
   #import example = "example.js"
-  #import exampleVariable = "example-variable.js"
+  #import exampleVariable = "example-variable.js" // COMENTARIO AL FINAL DE LA LINEA
   const data = {
     test: "Hello World DEFAULT"
   }
-  console.log(data.test)
+  console.log(data.test) /* COMENTARIO AL FINAL DE LA LINEA MULTIPLE LINES */
   /*
   console.log(example)
   */
-  console.log(exampleVariable)
+  console.log(/* COMENTARIO ENMEDIO DEL CODIGO DE MULTIPLE LINES */exampleVariable)
   // export default data
 </script>
 <script #import-id="id-if">
@@ -64,7 +64,7 @@
   console.log(example)
   // export default data
 </script>
-<script #cat-gap = "['foo', 'bar', 'ruta']">
+<script #cat-gap = "['foo', 'bar', 'otra-ruta']">
   #import example = "example.json"
   const data = {
     test: "Hello World ID IF DEFAULT FOOOOOO"

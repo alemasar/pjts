@@ -8,7 +8,7 @@ class CatTransformHelper {
     this.templateRegExp = /<template(.|[\s\S])*?<\/template>/g
     this.configRegExp = /<config>(.|[\s\S])*?<\/config>/g
     this.scriptRegExp = /<script(.|[\s\S])*?<\/script>/g
-    this.template = ''
+    this.templates = ''
     this.scripts = ''
   }
 
@@ -41,31 +41,33 @@ class CatTransformHelper {
     }
     return returnValue;
   }
-  getScripts(config, options, code) {
+  getScripts(config, code) {
     const scripts = code.match(this.scriptRegExp);
-    let returnValue = new Map();
-
+    
+    this.scripts = code
     if (scripts !== null) {
-      const joinScript = new CatJoinScripts(scripts)
-      returnValue = joinScript.getScripts(options, config, scripts);
-    } else {
+      const joinScript = new CatJoinScripts(config, scripts)
+      
+      this.scripts = joinScript.scripts
+    }/* else {
       returnValue.set('default', new Map())
       returnValue.get('default').set('default', `const event = new CustomEvent("cat-gap-loaded", { detail: { tag: '${config.tag}', route: 'default', id: 'default' } })
         document.dispatchEvent(event)
         `)
-    }
-    return returnValue;
+    } */
+    return this.scripts
   }
   getTemplates(config, code) {
     const templates = code.match(this.templateRegExp)
-    const joinTemplate = new CatJoinTemplates(config, templates)
-
-    this.template = code;
+    
+    this.templates = code
     if (templates !== null) {
-      this.template = joinTemplate.template
+      const joinTemplate = new CatJoinTemplates(config, templates)
+
+      this.templates = joinTemplate.templates
     }
 
-    return this.template;
+    return this.templates
   }
 }
 
