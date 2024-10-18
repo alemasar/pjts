@@ -1,6 +1,5 @@
 import {readdirSync, readFileSync} from 'fs';
 import {join} from 'path';
-import CatJoinTemplates from './templates-helpers/CatJoinTemplates';
 import CatJoinScripts from './scripts-helpers/CatJoinScripts';
 import getGaps from './gaps-helpers/CatGapHelpers'
 import deleteComments from './templates-helpers/CatTemplateHelper'
