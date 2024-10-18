@@ -8,7 +8,7 @@ class Client {
   constructor(context: CatContext, catHooks: CatHooks) {
     this.context = context
     this.catHooks = catHooks
-
+console.log('ELEMENTS GAPS::::', elements.gaps)
     elements.gaps.forEach((c: any) => {
       const gap = c()
       console.log('TAG NAME:::::',gap.tag)

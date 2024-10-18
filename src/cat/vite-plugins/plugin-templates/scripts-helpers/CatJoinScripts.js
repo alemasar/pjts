@@ -8,17 +8,20 @@ class CatJoinScripts {
   getScripts(config, scripts) {
     let parsedScripts = new Map()
 
-    if (scripts.length > 1) {
+    if (scripts.length > 0) {
       const catParseScripts = new CatParseScripts()
 
       parsedScripts = catParseScripts.getGapsAndScripts(config, scripts)
-    } else  if (scripts.length === 1) {
+      // console.log('CAT PARSED SCRIPTS', parsedScripts.get('foo'))
+    } /* else if (scripts.length === 1) {
       const splittedScript = templates[0].split(breaklinesRegExp)
+
       if (parsedScripts.has(config.tag) === false) {
         parsedScripts.set(config.tag, new Map())
       }
       parsedScripts.get(config.tag).set('default', splittedScript)
-    }
+    } */
+
     return parsedScripts
   }
 

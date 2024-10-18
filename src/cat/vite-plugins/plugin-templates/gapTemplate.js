@@ -1,5 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 
+const addToTemplate = (route, template) => {
+  const returnTemplate = `
+    this.gaps.set('${route}', \`${template.join('\n')}\`)
+  `
+  return returnTemplate
+}
+
+
+
 const generateGap = (config) => {
   let returnTemplate = `
   import Gap from "@cat/cat-classes/CatGap"
@@ -11,11 +20,11 @@ const generateGap = (config) => {
       // console.log('GAP IN TEMPLATE')
       `
       console.log('GAP IN TEMPLATE::::', config)
-      if (config.catTemplatesGap.has(config.tagName) === true) {
-        for (var [key, gap] of config.catTemplatesGap.get(config.tagName)) {
-          returnTemplate += `
-            this.gaps.set('${key}', \`${gap.join('\n')}\`)
-          `
+      if (config.catGaps.has(config.tagName) === true) {
+        for (let [route, gap] of config.catGaps.get(config.tagName)) {
+          if (gap.size === 1 || route !== 'default'){
+            returnTemplate += addToTemplate(route, gap.get('template'))
+          }
         }
       }
       /* if (config.scripts !== '') {
@@ -34,7 +43,7 @@ const generateGap = (config) => {
         }
       } */
       returnTemplate += `
-      // console.log(this.scripts)
+      console.log(this.gaps)
     }
   }
   export default ()=> {

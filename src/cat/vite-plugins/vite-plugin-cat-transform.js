@@ -104,18 +104,20 @@ export default function transformIndextemplate(options) {
             // console.error(`%c${e}`, 'color: red;')
             console.error(`\x1b[31m%s\x1b[0m`, e);
           }
-          const catScriptsGap = catTransformHelper.getScripts(catConfigGap, code)
+          const catGaps = catTransformHelper.getGaps(catConfigGap, code)
+          const catTemplates = catTransformHelper.getTemplates(catConfigGap, code, catGaps)
+          console.log('GAPS', catGaps)
+          // const catScriptsGap = catTransformHelper.getScripts(catConfigGap, code)
           /* if (catScriptComponent !== null) {
             catScriptComponent.forEach((csc) => {
               scriptCodeString += csc
             })
           } */
-          const catTemplatesGap = catTransformHelper.getTemplates(catConfigGap, code)
+          // const catTemplatesGap = catTransformHelper.getTemplates(catConfigGap, code)
           const catGap = generateGap({
             className: catConfigGap.name + 'Gap',
             tagName: catConfigGap.tag,
-            catTemplatesGap,
-            catScriptsGap,
+            catGaps,
           })
           code = `${catGap}`;
         } else if (id.endsWith(fileHTMLEndsWith) === true) {

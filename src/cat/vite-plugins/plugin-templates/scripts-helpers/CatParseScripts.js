@@ -23,33 +23,47 @@ const addDispatchEvent = (splittedScript) => {
   splittedScript.push(`  document.dispatchEvent(event)`)
   return splittedScript
 } */
+const simpleComment = (jsLine) => {
+  let posComment = jsLine.indexOf('//')
+  let cleanLine = ''
+
+  while (posComment !== -1) {    
+    cleanLine += jsLine.substring(0, posComment)
+    if (cleanLine.endsWith('https:') === true || cleanLine.endsWith('http:') === true) {
+      const lastPosComment = posComment
+      posComment = jsLine.indexOf('//', posComment + 3)
+      if (posComment === -1) {
+        cleanLine += jsLine.substring(lastPosComment, jsLine.length - 1)
+      }
+    } else {
+      posComment = jsLine.indexOf('//', posComment + 1)
+    }
+  }
+
+  return cleanLine
+}
+
+const multilineComments = (jsLine) => {
+  let posComment = jsLine.indexOf('/*')
+  let lastPosComment = 0
+  let cleanLine =  ''
+
+  while (posComment !== -1) {
+    cleanLine += jsLine.substring(lastPosComment, posComment)
+    lastPosComment = jsLine.indexOf('*/', posComment + 1)
+    posComment = jsLine.indexOf('/*', lastPosComment + 1)
+  }
+  cleanLine += jsLine.substring(lastPosComment + 2, jsLine.length)
+
+  return cleanLine
+}
+
 const commentsAtLine = (jsLine) => {
   let cleanLine = jsLine
   if (jsLine.includes('//') === true) {
-    let posComment = jsLine.indexOf('//')
-    cleanLine = ''
-    while (posComment !== -1) {    
-      cleanLine += jsLine.substring(0, posComment)
-      if (cleanLine.endsWith('https:') === true || cleanLine.endsWith('http:') === true) {
-        const lastPosComment = posComment
-        posComment = jsLine.indexOf('//', posComment + 3)
-        if (posComment === -1) {
-          cleanLine += jsLine.substring(lastPosComment, jsLine.length - 1)
-        }
-      } else {
-        posComment = jsLine.indexOf('//', posComment + 1)
-      }
-    }
+    cleanLine = simpleComment(jsLine)
   } else if (jsLine.includes('/*') === true && jsLine.includes('*/') === true) {
-    let posComment = jsLine.indexOf('/*')
-    let lastPosComment = 0
-    cleanLine =  ''
-    while (posComment !== -1) {
-      cleanLine += jsLine.substring(lastPosComment, posComment)
-      lastPosComment = jsLine.indexOf('*/', posComment + 1)
-      posComment = jsLine.indexOf('/*', lastPosComment + 1)
-    }
-    cleanLine += jsLine.substring(lastPosComment + 2, jsLine.length)
+    cleanLine = multilineComments(jsLine)
   }
   return cleanLine.replace(/\s*$/g, '')
 }
@@ -88,10 +102,14 @@ class CatParseScripts {
 
   setImportScripts(scriptLine, importScripts, cleanScript) {
     const importIdsScripts = this.catParseScriptAttributes.importScripts(scriptLine, cleanScript)
-    const importScript = importScripts
 
     for (let [key, script] of importIdsScripts.entries()) {
-      importScript.set(key, script)
+      let resultScript = [...script]
+      if (importScripts.has(key) === true) {
+        importScripts.get(key).push(...resultScript)
+      } else {
+        importScripts.set(key, resultScript)
+      }
     }
   }
 
@@ -102,22 +120,22 @@ class CatParseScripts {
     scriptsArray.forEach((script) => {
       const cleanScript = deleteComments(script.split(breaklinesRegExp))
       const scriptLine = cleanScript[0].replace(scriptRegExp, '').
-        replace(/>/, '').
-        replace(/^\s/g, '')
-
+        replace(/>/, '')
         if (scriptLine.includes('#cat-gap') === true) {
           if (catGaps.has(config.tag) === false) {
             catGaps.set(config.tag, new Map())
           }
           this.setGaps(scriptLine, catGaps.get(config.tag), cleanScript)
-        } else if (scriptLine.includes('#cat-gap') === false) {
+        } 
+    })
+        /* if (scriptLine.includes('#import-id') === true) {
           if (importScripts.has(config.tag) === false) {
             importScripts.set(config.tag, new Map())
           }
           this.setImportScripts(scriptLine, importScripts.get(config.tag), cleanScript)
-        }
-    })
-
+        } */
+    console.log('CAT GAPS:::::', catGaps)
+    console.log('IMPORT SCRIPTS:::::', importScripts)
     return {
       catGaps,
       importScripts,
