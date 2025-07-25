@@ -1,23 +1,17 @@
-import './main.css'
-//import "@pjts-game/components/hello-world.cat";
-import CatHooks from "@cat/cat-classes/CatHooks";
-import PJTS from "@cat/index";
-import CatPage from "@cat/cat-web-gaps-classes/CatPage";
+import type { Page } from "@cat/cat-vite-plugin/types/pages";
+import CatPage from "@cat/template/cat-page";
+import catPages from "virtual:page-files";
+import catGaps from "virtual:cat-files";
+import { CatRouter } from "@cat/core/cat-router";
 
-class Game {
-  hooks: CatHooks
-  pjts: PJTS
-  constructor() {
-    this.hooks = CatHooks.instance
-    this.hooks.addHook('cat-before-load', () =>{
-      // console.log('HOOK CAT BEFORE LOAD')
-    })
-    this.hooks.addHook('cat-after-load', () =>{
-      // console.log('HOOK CAT AFTER LOAD')
-    })
-    // console.log('CONSTRUCTOR GAME')
-    this.pjts = PJTS.instance
-    customElements.define("cat-page", CatPage);
-  }
-}
-export default new Game();
+const router = CatRouter.getInstance();
+
+catPages.forEach((page: Page) => {
+  console.log(page.routes.path);
+  router.addRoute(page.routes.id, page.routes.path);
+  router.addTemplate(page.templates.id, page.templates.template);
+});
+
+console.log(catGaps);
+
+customElements.define("cat-page", CatPage);

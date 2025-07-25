@@ -1,0 +1,29 @@
+@import "tailwindcss";
+/* override browser default */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* use viewport-relative units to cover page fully */
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* include border and padding in element width and height */
+*, ::after, ::before, ::backdrop, ::file-selector-button {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+/* full-sized  container that fills up the page */
+
+cat-page {
+  height: 100%;
+  width: 100%;
+  display:inline-block;
+}

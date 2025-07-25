@@ -1,0 +1,16 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": ["standard-with-typescript"],
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "rules": {
+    // Add custom rules here if needed
+  }
+}

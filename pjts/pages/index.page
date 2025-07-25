@@ -1,0 +1,16 @@
+<template>
+  <h1 class="text-3xl font-bold underline">
+    Hello world from INDEX!
+  </h1>
+  <demo-second-tag></demo-second-tag>
+  <demo-second-tag></demo-second-tag>
+  <second-gap-tag></second-gap-tag>
+  <another-gap-tag></another-gap-tag>
+  <a href="http://localhost:8080/category/foo/edit">GO TO FOO NO DEBERIA IR</a><br>
+  <a href="https://localhost:8080/category/foo/edit">GO TO FOO CON URL COMPLETA</a><br>
+  <a href="/category/foo/edit">GO TO FOO PATH RELATIVO</a><br>
+  <a href="/category/foo">GO TO FOO PATH RELATIVO CON PAGINA NO ENCONTRADA</a><br>
+</template>
+<script>
+  console.log('HOLA FROM INDEX PAGE')
+</script>

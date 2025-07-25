@@ -1,0 +1,24 @@
+<config>
+  {
+    "route": "/category/#foo/edit",
+    "params": {
+      "foo": "param"
+    }
+  }
+</config>
+<template>
+  <h1 class="text-3xl font-bold underline">
+    Hello world from FOOOOOO!
+  </h1>
+  <template>
+    <demo-second-tag></demo-second-tag>
+    <second-gap-tag></second-gap-tag>
+  </template>
+  <a href="/">GO TO INDEX</a>
+  <a href="https://www.google.es" target="_blank">GO TO GOOGLE</a>
+  <another-gap-tag></another-gap-tag>
+</template>
+<script>
+  console.log('HOLA FROM FOOO PAGE')
+  param='foo'
+</script>

@@ -1,0 +1,132 @@
+<config>
+  {
+    "name": "HelloWorld",
+    "tag": "demo-second-tag",
+    "className": "ComponentHelloWorld"
+  }
+</config>
+<!-- #content palabra reservada que nos indica donde poner el contenido de los distintos gaps -->
+<template #otro-atributo = "valor random">
+  <h1>TITULO DE LA PAGINA EN TEMPLATE DEFAULT</h1>
+  <div class="flex">
+    #content
+  </div>
+</template>
+<template #cat-gap="['index', 'foo']" #import-id="id-for" #class="w-3/6 bg-yellow-900">
+  <div>
+    <h1>ROUTE INDEX IMPORT ID ID-FOR</h1>
+    <div class="second-div" #cat-if="dataBooleano === true"><div class="second-div">HELLO WORLD</div></div><div #cat-if="dataBooleano" class="hola">#={test} FROM DEMO SECOND TAG WEB COMPONENT</div><div #cat-if="dataBooleano">ES ESTO
+    HELLO WORLD</div>
+    <template>
+    <div #cat-if="dataBooleanoMetodo" class="hola"><div #cat-if="dataBooleanoMetodo" class="hola">
+      <div #cat-if="dataBooleanoMetodo" class="second-div">
+        #={test} FROM DEMO SECOND TAG WEB COMPONENT
+      </div>
+      </div>
+    </div>
+    </template>
+    <div class="second-div">HELLO WORLD</div><h1 #cat-if="dataBooleanoMetodo" class="hola">
+      #={test} FROM DEMO SECOND TAG WEB COMPONENT</h1><h2>HELLO WROLD</h2>
+    <div #cat-if="dataBooleanoMetodo" class="second-div">HELLO WORLD</div>
+  </div>
+</template>
+<template #import-id="id-show" #class="w-3/6 bg-amber-600">
+  <div>
+    <h1>IMPORT ID ID-SHOW</h1>
+    <!-- ESTO ES UN COMENTARIO DE UNA SOLA LINEA --> hola <!-- OTRO COMENTARIO DE UNA SOLA LINEA --> que tal
+    <h1 #cat-if="dataBooleano" class="hola">CAT-IF BYE BYE FROM DEMO SECOND TAG WEB COMPONENT</h1>
+    <!--
+      ESTO ES UN COMENTARIO DE VARIAS LINEAS
+      ESTO ES UN COMENTARIO DE VARIAS LINEAS
+      ESTO ES UN COMENTARIO DE VARIAS LINEAS
+      ESTO ES UN COMENTARIO DE VARIAS LINEAS
+    -->
+    <h1 #cat-show="dataBooleanoMetodo" class="hola">BYE BYE FROM HELLOWORLD COMPONENT</h1>
+  </div>
+</template>
+<!-- #import-id siempre es el primer atributo -->
+<template #import-id="id-for" #class="w-3/6 bg-amber-400" #otro-atributo = "valor random">
+  <div>
+    <h1>IMPORT ID ID-FOR</h1>
+    <ul #cat-for-host="items">
+      <li #cat-for-element="idItemElement">Elemento que #={item.string}(Esto seria printar una variable de item que devuelve un string, puede ser un metodo) se repite</li>
+        <ul #cat-for-host="subitems">
+          <li #cat-for-element="idSubItemElement">Elemento que #={item.string}(Esto seria printar una variable de item que devuelve un string, puede ser un metodo) se repite</li>
+        </ul>
+      <li #cat-for-element="idItemElement">Elemento que se repite en la misma vuelta del bucle</li>
+      <li>Queda fuera del bucle for</li>
+    </ul>
+  </div>
+</template>
+<cat-gap>
+  #import "id-for"
+  #import "id-if"
+  #import "id-show"
+</cat-gap>
+<cat-gap #routes='["foo", "bar", "otra-ruta"]' #otro-parametro="HOLA">
+  #import "id-show"
+  #import "id-for"
+  #import "id-if"
+</cat-gap>
+<cat-gap #routes="other-route" #otro-parametro="HOLA">
+  #import "id-show"
+  #import "id-for"
+  #import "id-if"
+</cat-gap>
+<script>
+  const hello = 'HELLO WORLD CAT-GAP !!!!!!'
+  console.log(hello)
+  // this.push('dataBooleano', false)
+</script>
+<script #import-id="id-if">
+ /* #import example = "example.json"
+  const data = {
+    test: "Hello World ID IF INDEX"
+  }
+  console.log(example) */
+  // this.addObserver('dataBooleano', false)
+  // this.addObserverPage('dataBooleano', true)
+  // console.log('ANTES DEL PUSH')
+  this.push('dataBooleano', false)
+  // this.push('dataBooleano', false, this.idPage)
+  /* const callback = () => {
+    this.push('dataBooleano', true)
+  } */
+  // setTimeout(callback, 5000)
+  /* const callbackPage = () => {
+    this.push('dataBooleano', true, this.idPage)
+  }
+  setTimeout(callback, 10000) */
+  const hello = 'HELLO WORLD FROM IMPORT-ID ID-IF HELLO WORLD.CAT !!!!!!'
+  console.log(hello)
+    console.log("ID", this.getAttribute("cat-id"))
+  // export default data
+</script>
+<script #cat-gap = "['foo', 'bar', 'otra-ruta']">
+  /* #import example = "example.json"
+  const data = {
+    test: "Hello World ID IF DEFAULT FOOOOOO"
+  } */
+  // console.log('CONSOLE.LOG FROM CAT-GAP FOO, BAR, OTRA RUTA')
+  // export default data
+</script>
+<script #import-id="['id-for', 'id-show']">
+  /* #request random_joke = "https://official-joke-api.appspot.com/random_joke"
+  #request random_joke_1 = "https://official-joke-api.appspot.com/random_joke"
+  #import example = "example.json"
+  console.log(random_joke)
+  const data = {
+    test: "Hello World ID FOR INDEX"
+  } */
+  //  console.log('CONSOLE.LOG FROM IMPORT-ID ID-FOR, ID-SHOW')
+  // export default data
+</script>
+<script #cat-gap="['foo']" #import-id = "['id-for']">
+  /* #request random_joke="https://official-joke-api.appspot.com/random_joke"
+  console.log(random_joke)
+  const data = {
+    test: "Hello World ID FOR FOOOOOO"
+  } */
+  //  console.log('CONSOLE.LOG FROM CAT-GAP FOO IMPORT-ID ID-FOR')
+  // export default data
+</script>
