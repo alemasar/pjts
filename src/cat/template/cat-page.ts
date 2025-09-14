@@ -18,11 +18,21 @@ export class CatPage extends HTMLElement {
   private linkHandler (e: Event) {
     const target = e.composedPath()
     const checkLink = target[0] as HTMLAnchorElement
+
     if (checkLink.tagName.toUpperCase() === 'A'){
-      e.preventDefault()
       const pathname = checkLink.href
-      history.pushState({}, '', pathname)
-      this.loadPageFromRouter()
+
+      try {
+        this.loadPageFromRouter();
+        history.pushState({}, '', pathname);
+        e.preventDefault()
+      } catch (fallbackError) {
+       console.error('Fallback history.pushState also failed:', fallbackError);
+        // this.renderError('Route not found for pathname: ' + pathname);
+        // Don't call loadPageFromRouter() if navigation fails
+      }
+      // history.pushState({}, '', pathname)
+      // this.loadPageFromRouter()
     }
   }
 
@@ -39,7 +49,7 @@ export class CatPage extends HTMLElement {
     const routeId = router.getRouteTemplateName(pathname);
 
     console.log('Route ID found:', routeId);
-    if (routeId) {
+    if (routeId && routeId !== '') {
       // Get the template from templates map using the route ID
       const template = router.getTemplate(routeId);
       const parameters = router.getParameters(routeId);
@@ -48,10 +58,12 @@ export class CatPage extends HTMLElement {
       if (template) {
         this.render(template);
       } else {
-        this.renderError('Template not found for route ID: ' + routeId);
+        throw new Error('Template not found for route ID: ' + routeId);
+        // this.renderError('Template not found for route ID: ' + routeId);
       }
     } else {
-      this.renderError('Route not found for pathname: ' + pathname);
+      throw new Error('Route not found for pathname: ' + pathname);
+      // this.renderError('Route not found for pathname: ' + pathname);
     }
   }
 
@@ -65,6 +77,7 @@ export class CatPage extends HTMLElement {
         </div>
       </div>
     `;
+    this.shadow.innerHTML = ''
     this.shadow.appendChild(temporalTemplate.content.cloneNode(true))
   }
  

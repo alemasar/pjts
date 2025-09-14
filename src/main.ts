@@ -7,7 +7,7 @@ import { CatRouter } from "@cat/core/cat-router";
 const router = CatRouter.getInstance();
 
 catPages.forEach((page: Page) => {
-  console.log(page.routes.path);
+  console.log(page);
   router.addRoute(page.routes.id, page.routes.path);
   router.addTemplate(page.templates.id, page.templates.template);
 });

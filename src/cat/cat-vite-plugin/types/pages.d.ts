@@ -2,6 +2,7 @@
 export interface Route {
   id: string;
   path: string;
+  parameters: Object
 }
 
 export interface Template {

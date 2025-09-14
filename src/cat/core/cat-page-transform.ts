@@ -12,7 +12,8 @@ export class CatPageTransform {
     const id = uuidv4();
     const routes: Route = {
       id: "",
-      path: ""
+      path: "",
+      parameters: {},
     };
     const templates: Template = {
       id: "",
@@ -25,21 +26,24 @@ export class CatPageTransform {
     if (configMatch) {
       try {
         const config = JSON.parse(configMatch[1]);
-        
+        console.log('PARAMETERS::::', config)
         // If config has route parameter, add it to CatRouter
-        if (config.route) {
+        if (config.route && config.route !== "") {
           //router.addRoute(id, config.route);
           routes.id = id;
           routes.path = config.route;
-
+          routes.parameters = config.params;
+        } else {
+          console.error('Error add route parameter to config page:', name);
         }
+
       } catch (error) {
         console.error('Error parsing config JSON:', error);
       }
     } else {
       // router.addRoute(id, name.replace(".page", ""));
       routes.id = id;
-      routes.path = name.replace(".page", "");
+      routes.path = name;
     }
     // console.log(page)
     //console.log(templateMatch[0])

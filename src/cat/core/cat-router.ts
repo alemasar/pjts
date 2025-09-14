@@ -68,9 +68,11 @@ export class CatRouter {
 
   // Match a pathname to a route, supporting parameters (segments starting with '#')
   public getRouteTemplateName(path: string) {
+    console.log('Path:', path);
     const routeTemplate = path.replace('/', '')
     let route = ''
-    
+    console.log('ROUTES::::', this._routes)
+    console.log('PARAMETERS::::', this._parameters)
     if (routeTemplate !== ''){
       const splittedCheckedPath = path.split('/')
       const pathnames = Array.from(this._routes.keys())
@@ -89,9 +91,9 @@ export class CatRouter {
           while(samePath === true && index < splittedPath.length) {
             if (sp.includes('#') === false && sp !== scp) {
               samePath = false
-            } else if (sp.includes('#') === true) {
+            } else if (sp.includes('#{') === true) {
               parameters.push({
-                name: sp.replace('#', ''),
+                name: sp.replace('#{', '').replace('}', ''),
                 value: scp
               })
             }      
